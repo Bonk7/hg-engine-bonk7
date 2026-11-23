@@ -21,6 +21,11 @@ _Start:
     CompareVarToValue OPCODE_FLAG_SET, BSCRIPT_VAR_BATTLE_TYPE, BATTLE_TYPE_DOUBLES, _WildDoublesMessage
     // You encountered a wild {0}!
     PrintGlobalMessage 965, TAG_NICKNAME, BATTLER_CATEGORY_ENEMY
+    Wait
+    WaitButtonABTime 30
+    .long 0x130
+    .long (_SendOutPokemonMessage - . - 4) / 4
+    PrintGlobalMessage 1811, TAG_NONE
     GoTo _SendOutPokemonMessage
 
 _FirstEncounterMessage:
