@@ -516,6 +516,34 @@ static BOOL BtlCmd_SkipIfUncaught(void *bw, struct BattleStruct *sp)
     return FALSE;
 }
 
+static BOOL BtlCmd_BallEffectMessage(void *bw, struct BattleStruct *sp)
+{
+    int offset = sp->SkillSeqWork[sp->skill_seq_no + 1];
+    sp->skill_seq_no += 2;
+    u16 species = sp->battlemon[sp->defence_client].species;
+    BOOL bonus;
+
+    switch (sp->item_work) {
+    case ITEM_QUICK_BALL:
+        bonus = sp->total_turn == 0;
+        break;
+    case ITEM_REPEAT_BALL:
+        bonus = Battle_CheckIfHasCaughtMon(bw, species);
+        break;
+    case ITEM_NET_BALL:
+        bonus = HasType(sp, sp->defence_client, TYPE_WATER) || HasType(sp, sp->defence_client, TYPE_BUG);
+        break;
+    default:
+        sp->skill_seq_no += offset;
+        return FALSE;
+    }
+
+    if (IS_SPECIES_ULTRA_BEAST(species) || bonus) {
+        sp->skill_seq_no += offset;
+    }
+    return FALSE;
+}
+
 const btl_scr_cmd_func NewBattleScriptCmdTable[] = {
     [0xE1 - START_OF_NEW_BTL_SCR_CMDS] = btl_scr_cmd_E1_reduceweight,
     [0xE2 - START_OF_NEW_BTL_SCR_CMDS] = btl_scr_cmd_E2_heavyslamdamagecalc,
@@ -597,6 +625,7 @@ const btl_scr_cmd_func NewBattleScriptCmdTable[] = {
     [0x12E - START_OF_NEW_BTL_SCR_CMDS] = btl_scr_cmd_12E_TryActivateSymbiosis,
     [0x12F - START_OF_NEW_BTL_SCR_CMDS] = btl_scr_cmd_12F_RestoreBoosterEnergyBattler,
     [0x130 - START_OF_NEW_BTL_SCR_CMDS] = BtlCmd_SkipIfUncaught,
+    [0x131 - START_OF_NEW_BTL_SCR_CMDS] = BtlCmd_BallEffectMessage,
     // [BASE_ENGINE_BTL_SCR_CMDS_MAX - START_OF_NEW_BTL_SCR_CMDS + 1] = btl_scr_cmd_custom_01_your_custom_command,
 };
 

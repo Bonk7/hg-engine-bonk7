@@ -7,6 +7,12 @@ _000:
     // {0} used one {1}!
     PrintMessage 857, TAG_TRNAME_ITEM, BATTLER_CATEGORY_ATTACKER, BATTLER_CATEGORY_MSG_TEMP
     Wait
+    .long 0x131
+    .long (_ThrowBall - . - 4) / 4
+    PrintGlobalMessage 1812, TAG_NONE
+    Wait
+    WaitButtonABTime 30
+_ThrowBall:
     StartCatchMonTask CAPTURE_NORMAL
     WaitCatchMonTask
     UpdateVarFromVar OPCODE_GET, BSCRIPT_VAR_BATTLE_OUTCOME, BSCRIPT_VAR_TEMP_DATA
