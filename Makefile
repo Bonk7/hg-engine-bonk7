@@ -258,7 +258,7 @@ $(MOVEDATAGEN): $(wildcard tools/source/movedatagen/*.c) data/Moves.c include/mo
 
 TOOLS += $(MOVEDATAGEN)
 
-$(POKEDEXDATAGEN): $(wildcard tools/source/pokedexdatagen/*.c) data/PokedexSort.c data/PokedexArea.c data/RegionalDex.c include/pokedex_archive_data.h include/constants/pokedex.h include/constants/species.h
+$(POKEDEXDATAGEN): $(wildcard tools/source/pokedexdatagen/*.c) data/PokedexSort.c data/PokedexArea.c data/Encounters.c data/SafariEncounters.c data/RegionalDex.c include/encounter.h include/safari_encounter.h include/constants/encounter_tables.h include/pokedex_archive_data.h include/constants/pokedex.h include/constants/species.h
 	cd tools/source/pokedexdatagen ; $(MAKE) clean; $(MAKE)
 
 TOOLS += $(POKEDEXDATAGEN)
