@@ -15,3 +15,5 @@ Werk op `bonkhg`. Maak één commit per feature, push elke commit meteen naar `o
 De opstartregressie van de routegids is hersteld door de savefunctie van hg-engine te gebruiken. De herstelde ROM bereikte het titelscherm en laadde de bestaande testsave in Cherrygrove in DeSmuME.
 
 Runtimechecks in DeSmuME op de cloudbuild. Cherrygrove toont de gedeelde Center-services. De gids toonde de eerste Route 30-encounter. In een wild gevecht toonde de Quick Ball eerst een actieve bonus en na één beurt geen bonus. Een worp eindigde in de normale Pokédex-registratie.
+
+De standaard Pokédex-entry toont nu de bediening van de gidsen. SELECT opent evoluties, SELECT+X vindplaatsen, SELECT+Y het soortprofiel en SELECT+X+Y de huidige route. SELECT+L+R toont de oorspronkelijke soortbeschrijving. De hulppagina is in DeSmuME zichtbaar gecontroleerd.

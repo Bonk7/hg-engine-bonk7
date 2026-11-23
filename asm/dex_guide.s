@@ -4,16 +4,15 @@
 .align 2
 .thumb
 
-// The original entry text stays selected unless SELECT is held when it opens.
-// L and R select additional pages while holding SELECT.
-// X selects encounters and Y selects the species reference. L and R turn pages.
+// The default entry explains how to open the guides.
+// Holding SELECT and both shoulders opens the original description.
 .global DexGuide_SelectText_hook
 DexGuide_SelectText_hook:
     ldr r3, =gSystem
     ldr r3, [r3, #0x44] // heldKeys
     mov r2, #PAD_BUTTON_SELECT
     tst r3, r2
-    beq DefaultText
+    beq GuideHelp
 
     ldr r2, =PAD_BUTTON_X
     tst r3, r2
@@ -21,6 +20,12 @@ DexGuide_SelectText_hook:
     ldr r2, =PAD_BUTTON_Y
     tst r3, r2
     bne SpeciesText
+
+    ldr r2, =(PAD_BUTTON_L | PAD_BUTTON_R)
+    and r2, r3
+    lsr r2, r2, #8
+    cmp r2, #3
+    beq DefaultText
 
     lsl r1, r5, #2
     lsr r3, r3, #8
@@ -52,6 +57,11 @@ GuidePage:
     bl DexGuide_GetPage
     mov r1, r0
     mov r0, r4
+    b LoadText
+
+GuideHelp:
+    ldr r0, =858
+    mov r1, #0
     b LoadText
 
 DefaultText:
