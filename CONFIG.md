@@ -61,7 +61,7 @@
 
  ``PROTEAN_GENERATION`` (``include/config.h`` only) defines the generation that Protean's behavior is implemented from.  Later generations make Protean only activate once per appearance in battle.
 
- ``IMPLEMENT_REUSABLE_REPELS`` (``include/config.h`` only) implements reusable repels, queuing up the next repel in the order of max, super, and then normal repels depending on which the player yet has.
+ ``IMPLEMENT_REUSABLE_REPELS`` (``include/config.h`` only) offers another Repel of the same type when the effect wears off. If that type is unavailable or unknown after loading a save, it offers Max Repel, Super Repel, then Repel in that order.
 
  ``UPDATE_VITAMIN_EV_CAPS`` (``include/config.h`` only) updates the EV caps for vitamins from 100 to 252 like later generations.
 

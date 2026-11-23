@@ -5,10 +5,11 @@
 #include "../include/constants/item.h"
 #include "../include/item.h"
 
-void Repel_SetCurrentType();
+void Repel_SetCurrentType(u8 steps);
 
 #ifdef IMPLEMENT_REUSABLE_REPELS
-u16 ALIGN4 CurrentRepelType = 0;
+static u16 CurrentRepelType;
+static const u16 RepelTypes[] = { ITEM_MAX_REPEL, ITEM_SUPER_REPEL, ITEM_REPEL };
 
 bool32 PlayerStepEvent_RepelCounterDecrement(SaveData *saveData, FieldSystem *fieldSystem)
 {
@@ -19,9 +20,8 @@ bool32 PlayerStepEvent_RepelCounterDecrement(SaveData *saveData, FieldSystem *fi
         (*repel_addr)--;
 
         if (*repel_addr == 0) {
-            BAG_DATA *bag = Sav2_Bag_get(saveData);
             u16 currentRepel = Repel_GetMostRecent();
-            if (Bag_HasItem(bag, currentRepel, 1, HEAPID_WORLD)) {
+            if (currentRepel != ITEM_NONE) {
                 EventSet_Script(fieldSystem, 2072, NULL);
             } else {
                 EventSet_Script(fieldSystem, 2022, NULL);
@@ -34,10 +34,19 @@ bool32 PlayerStepEvent_RepelCounterDecrement(SaveData *saveData, FieldSystem *fi
     return FALSE;
 }
 
-u16 Repel_GetMostRecent()
+u16 Repel_GetMostRecent(void)
 {
-    Repel_SetCurrentType();
-    return CurrentRepelType;
+    BAG_DATA *bag = Sav2_Bag_get(SaveBlock2_get());
+    if (CurrentRepelType != ITEM_NONE && Bag_HasItem(bag, CurrentRepelType, 1, HEAPID_MAIN_HEAP)) {
+        return CurrentRepelType;
+    }
+
+    for (unsigned i = 0; i < NELEMS(RepelTypes); i++) {
+        if (Bag_HasItem(bag, RepelTypes[i], 1, HEAPID_MAIN_HEAP)) {
+            return RepelTypes[i];
+        }
+    }
+    return ITEM_NONE;
 }
 
 BOOL Repel_Use(u16 item_id, u32 heap_id)
@@ -48,9 +57,8 @@ BOOL Repel_Use(u16 item_id, u32 heap_id)
 
     BAG_DATA *bag = Sav2_Bag_get(saveData);
 
-    item_id = Repel_GetMostRecent();
-
-    if (Bag_TakeItem(bag, item_id, 1, heap_id)) {
+    if (item_id != ITEM_NONE && Bag_TakeItem(bag, item_id, 1, heap_id)) {
+        CurrentRepelType = item_id;
         *repel_addr = Repel_GetSteps(item_id, heap_id);
         return TRUE;
     }
@@ -64,19 +72,17 @@ u8 Repel_GetSteps(u16 item_id, u32 heap_id)
 }
 #endif
 
-void Repel_SetCurrentType()
+void Repel_SetCurrentType(u8 steps)
 {
 #ifdef IMPLEMENT_REUSABLE_REPELS
-    u16 item_id = 0;
-    BAG_DATA *bag = Sav2_Bag_get(SaveBlock2_get());
-    if (Bag_HasItem(bag, ITEM_MAX_REPEL, 1, HEAPID_MAIN_HEAP)) {
-        item_id = ITEM_MAX_REPEL;
-    } else if (Bag_HasItem(bag, ITEM_SUPER_REPEL, 1, HEAPID_MAIN_HEAP)) {
-        item_id = ITEM_SUPER_REPEL;
-    } else {
-        item_id = ITEM_REPEL;
+    CurrentRepelType = ITEM_NONE;
+    for (unsigned i = 0; i < NELEMS(RepelTypes); i++) {
+        if (Repel_GetSteps(RepelTypes[i], HEAPID_MAIN_HEAP) == steps) {
+            CurrentRepelType = RepelTypes[i];
+            break;
+        }
     }
-
-    CurrentRepelType = item_id;
+#else
+    (void)steps;
 #endif
 }

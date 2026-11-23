@@ -588,6 +588,7 @@ BagApp_GetRepelStepCountAddr:
     ldr r3, =0x0202DB04 | 1 // SaveData_GetRepelPtr
     bl bx_r3
     strb r4, [r0]
+    add r0, r4, #0
     bl Repel_SetCurrentType
     pop {r4, pc}
 

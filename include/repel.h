@@ -8,7 +8,7 @@
 
 bool32 PlayerStepEvent_RepelCounterDecrement(SaveData *saveData, FieldSystem *fieldSystem);
 
-u16 Repel_GetMostRecent();
+u16 Repel_GetMostRecent(void);
 BOOL Repel_Use(u16 item_id, u32 heap_id);
 u8 Repel_GetSteps(u16 item_id, u32 heap_id);
 
