@@ -146,3 +146,5 @@ Max\r
 -10\r
 Set to zero\r
 Reset all six values?\r
+Adjust IVs\r
+Beat the Pokémon League Champion\nbefore adjusting IVs.\r

@@ -1,3 +1,4 @@
+#include "constants/save.h"
 #include "pokemon.h"
 #include "save.h"
 
@@ -12,7 +13,7 @@ u16 Training_GetTargetLevel(void *saveData)
         johtoBadges += !!PlayerProfile_TestBadgeFlag(profile, badge);
         kantoBadges += !!PlayerProfile_TestBadgeFlag(profile, badge + 8);
     }
-    return CheckScriptFlag(2404) ? kanto[kantoBadges] : johto[johtoBadges];
+    return CheckScriptFlag(FLAG_CHAMPION_CLEARED) ? kanto[kantoBadges] : johto[johtoBadges];
 }
 
 BOOL Training_TrainPartyMember(void *saveData, u16 slot)
@@ -37,10 +38,11 @@ BOOL Training_TrainPartyMember(void *saveData, u16 slot)
     return TRUE;
 }
 
-u16 Training_EditEVs(void *saveData, u16 slot, u16 stat, u16 operation)
+u16 Training_EditStats(void *saveData, u16 slot, u16 stat, u16 operation, BOOL editIVs)
 {
     struct Party *party = SaveData_GetPlayerPartyPtr(saveData);
-    if (slot >= party->count || stat > 6 || operation > 7) {
+    if (slot >= party->count || stat > 6 || operation > 7
+        || (editIVs && !CheckScriptFlag(FLAG_CHAMPION_CLEARED))) {
         return 0xFFFF;
     }
     struct PartyPokemon *mon = Party_GetMonByIndex(party, slot);
@@ -48,10 +50,11 @@ u16 Training_EditEVs(void *saveData, u16 slot, u16 stat, u16 operation)
         return 0xFFFF;
     }
 
+    int firstStat = editIVs ? MON_DATA_HP_IV : MON_DATA_HP_EV;
     if (operation == 7) {
         u8 zero = 0;
         for (unsigned i = 0; i < 6; i++) {
-            SetMonData(mon, MON_DATA_HP_EV + i, &zero);
+            SetMonData(mon, firstStat + i, &zero);
         }
         RecalcPartyPokemonStats(mon);
         return 0;
@@ -60,27 +63,37 @@ u16 Training_EditEVs(void *saveData, u16 slot, u16 stat, u16 operation)
         return 0xFFFF;
     }
 
-    int current = GetMonData(mon, MON_DATA_HP_EV + stat, NULL);
+    int current = GetMonData(mon, firstStat + stat, NULL);
     if (!operation) {
         return current;
     }
     static const int adjustments[] = { 0, 1, 10, 252, -1, -10, -252 };
     int otherEVs = 0;
-    for (unsigned i = 0; i < 6; i++) {
-        if (i != stat) {
-            otherEVs += GetMonData(mon, MON_DATA_HP_EV + i, NULL);
+    if (!editIVs) {
+        for (unsigned i = 0; i < 6; i++) {
+            if (i != stat) {
+                otherEVs += GetMonData(mon, firstStat + i, NULL);
+            }
         }
     }
     int desired = current + adjustments[operation];
     if (desired > current) {
-        int maximum = 510 - otherEVs;
-        if (maximum > 252) maximum = 252;
-        if (maximum < current) maximum = current;
-        if (desired > maximum) desired = maximum;
+        int maximum = editIVs ? 31 : 510 - otherEVs;
+        if (maximum > 252) {
+            maximum = 252;
+        }
+        if (maximum < current) {
+            maximum = current;
+        }
+        if (desired > maximum) {
+            desired = maximum;
+        }
     }
-    if (desired < 0) desired = 0;
+    if (desired < 0) {
+        desired = 0;
+    }
     u8 value = desired;
-    SetMonData(mon, MON_DATA_HP_EV + stat, &value);
+    SetMonData(mon, firstStat + stat, &value);
     RecalcPartyPokemonStats(mon);
     return value;
 }

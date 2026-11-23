@@ -7,16 +7,31 @@ VioletTrainingMenu:
     menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
     menu_item_add 129, 255, 0
     menu_item_add 130, 255, 1
-    menu_item_add 131, 255, 2
+    menu_item_add 148, 255, 2
+    menu_item_add 131, 255, 3
     menu_exec
     closemsg
     touchscreen_menu_show
     switch VAR_SPECIAL_RESULT
     case 0, VioletTrainingCatchUp
     case 1, VioletTrainingEV
+    case 2, VioletTrainingIV
     goto VioletTrainingExit
 
+VioletTrainingIV:
+    goto_if_set FLAG_GAME_CLEAR, VioletTrainingIVUnlocked
+    npc_msg 149
+    wait_button
+    closemsg
+    goto VioletTrainingExit
+
+VioletTrainingIVUnlocked:
+    setvar VAR_SPECIAL_x8009, 1
+    goto VioletTrainingSelectMon
+
 VioletTrainingEV:
+    setvar VAR_SPECIAL_x8009, 0
+VioletTrainingSelectMon:
     fade_screen 6, 1, 0, RGB_BLACK
     wait_fade
     party_select_ui

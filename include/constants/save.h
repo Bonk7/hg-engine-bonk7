@@ -2,6 +2,7 @@
 #define CONSTANTS_SAVE_H
 
 #define FLAG_TEAM_EXP_ENABLED 2602
+#define FLAG_CHAMPION_CLEARED 2404
 
 #define OFFSET_saveSlotSpecs    0x2F2B4
 #define OFFSET_lastGoodSaveSlot 0x2F2F0
