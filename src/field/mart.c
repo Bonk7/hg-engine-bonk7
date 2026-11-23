@@ -61,6 +61,8 @@ const struct BadgeMartItems sBadgeMart[] = {
     { ITEM_JOLLY_MINT, 3 },
     { ITEM_NAIVE_MINT, 3 },
     { ITEM_SERIOUS_MINT, 3 },
+    { ITEM_ABILITY_CAPSULE, 3 },
+    { ITEM_ABILITY_PATCH, 8 },
 };
 
 void LONG_CALL InitMartUI(void *taskManager, FieldSystem *fieldSystem, const u16 *items, int kind, int buySell, int decoWhich, const struct MartItem *priceOverrides);
