@@ -157,8 +157,7 @@ void ReadPng(char *path, struct Image *image)
     if (color_type != PNG_COLOR_TYPE_GRAY && color_type != PNG_COLOR_TYPE_PALETTE)
         FATAL_ERROR("\"%s\" has an unsupported color type.\n", path);
 
-    // Check if the image has a palette so that we can tell if the colors need to be inverted later.
-    // Don't read the palette because it's not needed for now.
+    // The decoder writes indexed PNGs in native Pokéwalker color order.
     image->hasPalette = (color_type == PNG_COLOR_TYPE_PALETTE);
 
     image->width = png_get_image_width(png_ptr, info_ptr);
@@ -239,6 +238,9 @@ int main(int argc, char** argv)
         encoded[i] = 0;
     }
 
+    // Indexed PNGs store codes 0–3. Grayscale PNGs store the corresponding intensities.
+    static const unsigned char indexedShades[] = {0xFF, 0xC0, 0x80, 0x00};
+
     // encode
     for (r = 0; r < image.height; r += 8)
     {
@@ -246,7 +248,12 @@ int main(int argc, char** argv)
         {
             for (r2 = 0; r2 < 8; r2++)
             {
-                switch (image.pixels[(r+r2)*image.width + c])
+                unsigned int pixel = image.pixels[(r+r2)*image.width + c];
+                unsigned int shade = pixel;
+                if (image.hasPalette) {
+                    shade = pixel < sizeof(indexedShades) ? indexedShades[pixel] : 0x100;
+                }
+                switch (shade)
                 {
                 //case 0b00: // white - do nothing
                 case 0xFF:
@@ -265,7 +272,7 @@ int main(int argc, char** argv)
                     break;
                 default:
                     FATAL_ERROR("%s: unsupported Pokéwalker pixel 0x%02X at (%d, %d).\n",
-                                argv[2], (unsigned int)image.pixels[(r+r2)*image.width + c], c, r+r2);
+                                argv[2], pixel, c, r+r2);
                 }
             }
         }
