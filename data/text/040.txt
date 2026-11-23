@@ -165,3 +165,10 @@ Collect your first Egg from\nthe Day Care family on Route 34.\r
 Battle pace\r
 Shorten battle pauses and skip\nroutine animations?\r
 Restore the standard battle pace?\r
+Shiny Trial\r
+Beat three trainers in a row\nwithout a break to earn a Shiny Ball.\fThe opponents change each run.\nWant to enter the Shiny Trial?\r
+Round 1 of 3. Meet your first opponent!\r
+Round 2 of 3. An Elite Four rematch!\r
+Final round. Good luck, Champion!\r
+You cleared the trial and earned\na Shiny Ball! Enter again anytime.\r
+Make room for a Shiny Ball\nin your Bag first.\r

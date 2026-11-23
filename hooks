@@ -684,3 +684,6 @@ arm9 FieldHm_ScrCmdGetPartySlot 0204D3CC 3
 
 # Battle Bag item description call, with the displayed Bag's battle system.
 0008 BattleBagCaptureDescriptionHook 02223A6C 3
+
+# The catch task has confirmed the capture and is assigning ownership.
+0012 ShinyBallFinalizeCaptureHook 02256818 3

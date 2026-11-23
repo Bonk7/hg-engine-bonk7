@@ -116,7 +116,12 @@ scr_seq_0003_002:
     menu_item_add 157, 255, 2
     menu_item_add 158, 255, 3
     menu_item_add 164, 255, 4
+    goto_if_set FLAG_GAME_CLEAR, CenterAddShinyTrial
     menu_item_add 131, 255, 5
+    goto CenterMenuExec
+CenterAddShinyTrial:
+    menu_item_add 167, 255, 6
+CenterMenuExec:
     menu_exec
     touchscreen_menu_show
     closemsg
@@ -126,6 +131,7 @@ scr_seq_0003_002:
     case 2, CenterMoveReminder
     case 3, CenterTeamExp
     case 4, CenterBattlePace
+    case 6, CenterShinyTrial
     releaseall
     endstd
     end
@@ -1878,6 +1884,81 @@ CenterNormalPace:
     clearflag FLAG_SHORT_BATTLE_PAUSES
 CenterPaceDone:
     closemsg
+    releaseall
+    endstd
+    end
+
+CenterShinyTrial:
+    npc_msg 168
+    yesno VAR_SPECIAL_RESULT
+    closemsg
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterShinyTrialExit
+    hasspaceforitem ITEM_SHINY_BALL, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterShinyTrialBagFull
+
+    random VAR_SPECIAL_RESULT, 2
+    setvar VAR_SPECIAL_x8004, TRAINER_LEADER_MORTY_MORTY_2
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterShinyTrialRoundOne
+    setvar VAR_SPECIAL_x8004, TRAINER_LEADER_JASMINE_JASMINE_2
+CenterShinyTrialRoundOne:
+    npc_msg 169
+    wait_button
+    closemsg
+    call CenterShinyTrialBattle
+
+    random VAR_SPECIAL_RESULT, 2
+    setvar VAR_SPECIAL_x8004, TRAINER_ELITE_FOUR_KOGA_KOGA_2
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterShinyTrialRoundTwo
+    setvar VAR_SPECIAL_x8004, TRAINER_ELITE_FOUR_KAREN_KAREN_2
+CenterShinyTrialRoundTwo:
+    npc_msg 170
+    wait_button
+    closemsg
+    call CenterShinyTrialBattle
+
+    random VAR_SPECIAL_RESULT, 2
+    setvar VAR_SPECIAL_x8004, TRAINER_CHAMPION_LANCE_2
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterShinyTrialFinal
+    setvar VAR_SPECIAL_x8004, TRAINER_LEADER_BLUE_BLUE_2
+CenterShinyTrialFinal:
+    npc_msg 171
+    wait_button
+    closemsg
+    call CenterShinyTrialBattle
+
+    giveitem ITEM_SHINY_BALL, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterShinyTrialBagFull
+    play_fanfare SEQ_ME_KEYITEM
+    npc_msg 172
+    wait_fanfare
+    wait_button
+    closemsg
+    goto CenterShinyTrialExit
+
+CenterShinyTrialBattle:
+    trainer_battle VAR_SPECIAL_x8004, 0, 0, 0
+    check_battle_won VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterShinyTrialLost
+    return
+
+CenterShinyTrialLost:
+    white_out
+    releaseall
+    endstd
+    end
+
+CenterShinyTrialBagFull:
+    npc_msg 173
+    wait_button
+    closemsg
+CenterShinyTrialExit:
     releaseall
     endstd
     end
