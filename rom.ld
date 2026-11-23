@@ -946,3 +946,8 @@ LoadVanillaBattleItemDescription = 0x02077D64 | 1;
 PlayerMenu_DestroyCursor = 0x0203C38C | 1;
 PlayerMenu_SetInteractionMode = 0x0203DF64 | 1;
 PlayerMenu_TransitionToAction = 0x021F6B50 | 1;
+
+CaptureSummary_CreateArgs = 0x0203E76C | 1;
+CaptureSummary_Launch = 0x0203E4EC | 1;
+CaptureParty_Remove = 0x0207456C | 1;
+CaptureParty_ClearSlotModifiers = 0x02074708 | 1;

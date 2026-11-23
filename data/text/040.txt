@@ -243,3 +243,11 @@ We have already recorded this signal.\r
 The signal has faded for now.\nYou may try again.\r
 Bring a Pokémon that can battle.\r
 Need help preparing your team?\r
+What should we do with\nyour newly caught Pokémon?\r
+Summary\r
+Send to Box\r
+Put in team\r
+There is no room in your Boxes.\r
+Keep a Pokémon that can battle\nin your team.\r
+Which team member should\ngo to the Box?\r
+Remove the Mail or Seal Capsule\nbefore boxing that Pokémon.\r

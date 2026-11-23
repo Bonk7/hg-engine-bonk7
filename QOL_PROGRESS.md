@@ -33,3 +33,7 @@ Legendaries, eerste groep. Na de Champion toont de onderzoeker in het Ruins of A
 Cloudbuild, opstartcontrole en de verwijzing naar het oorspronkelijke onderzoeksgesprek zijn getest. De vangsten zijn nog niet in de emulator gespeeld. De overige legendaries en de beschikbaarheid van alle soorten voor de Arceus-voorwaarde staan nog open.
 
 De medewerker staat in de gewone lobby's rechts van de ontvangstmat en heeft een eigen plek bij de Pokémon League. De zone-events bevatten precies één nieuwe medewerker per lobby. In DeSmuME gecontroleerd dat de medewerker in Cherrygrove het dienstenmenu opent en de verpleegster haar gewone herstelgesprek gebruikt.
+
+Bij reguliere wilde vangsten vervalt de Pokédex-preview. Na de bijnaamvraag en terugkeer naar het veld kun je het overzicht bekijken, de vangst in de box zetten of haar aan je team toevoegen. Bij een vol team kies je wie plaatsmaakt. Een teamlid met Mail of een Seal Capsule kan pas naar de box als je die hebt verwijderd. Speciale vangstmodi zoals Safari en Bug-Catching Contest behouden hun eigen afhandeling.
+
+Cloudbuild geslaagd. In DeSmuME is een wilde Oddish gevangen met een vol team. Alle drie de menuopties zijn gecontroleerd. Bij de wissel op de derde teamplek is gecontroleerd dat Oddish daar stond, het gekozen teamlid in de box stond en de overige vijf teamplekken dezelfde Pokémon behielden.

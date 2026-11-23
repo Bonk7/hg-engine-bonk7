@@ -693,3 +693,9 @@ arm9 FieldHm_ScrCmdGetPartySlot 0204D3CC 3
 
 # SELECT inside the overworld player menu, before normal action dispatch.
 arm9 DebugSave_PlayerMenuHook 0203C4A2 3
+
+# Capture UI and destination hooks, limited to the capture task.
+0012 CaptureReview_DexPreviewHook 0224695E 3
+0012 CaptureReview_PartyHook 02246F18 3
+0012 CaptureReview_BoxHook 02246FC0 3
+arm9 CaptureReview_FieldHook 02040764 3

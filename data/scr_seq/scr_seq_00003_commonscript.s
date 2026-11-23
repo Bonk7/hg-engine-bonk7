@@ -106,6 +106,7 @@ scrdef DebugSaveSetup
 scrdef DebugMenuPlayer
 scrdef AlphResearch
 scrdef CenterServices
+scrdef CaptureReview
 scrdef_end
 
 CenterServices:
@@ -1971,3 +1972,5 @@ CenterShinyTrialExit:
 #include "debug_menu.inc"
 
 #include "alph_research.inc"
+
+.include "data/scr_seq/capture_review.inc"

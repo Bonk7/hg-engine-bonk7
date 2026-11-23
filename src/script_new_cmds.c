@@ -1,4 +1,5 @@
 #include "../include/config.h"
+#include "../include/capture_review.h"
 #include "../include/constants/file.h"
 #include "../include/constants/species.h"
 #include "../include/repel.h"
@@ -64,6 +65,13 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         *GetVarPointer(ctx->fsys, arg0) = missing;
         break;
     }
+
+    case 5:
+        return CaptureReview_ShowSummary(ctx);
+
+    case 6:
+        *GetVarPointer(ctx->fsys, arg0) = CaptureReview_Apply(ctx, VarGet(ctx->fsys, 0x8004));
+        break;
 
     default:
         break;
