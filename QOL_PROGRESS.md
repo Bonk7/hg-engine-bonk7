@@ -9,5 +9,5 @@ Werk op `bonkhg`. Maak één commit per feature, push elke commit meteen naar `o
 | Nature Mints | Cloudbuild geslaagd. Alle 21 Mints zijn vanaf drie badges verkrijgbaar bij de gewone Poké Mart. |
 | Ability Capsule en Patch | Cloudbuild geslaagd. Capsule vanaf drie badges, Patch vanaf acht badges bij de gewone Poké Mart. |
 | Vanginformatie in gevechten | Open. Gevangen status en balwerking. |
-| Fokken | Open. Eieren ophalen en sneller uitbroeden. |
+| Fokken | Cloudbuild geslaagd. Uitbroeden gaat circa driemaal sneller. Eieren ophalen staat nog open. |
 | Optionele korte gevechtsanimaties | Open. |

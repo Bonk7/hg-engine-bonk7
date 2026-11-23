@@ -575,3 +575,11 @@ arm9 020708B0 06 E0
 # Gym Leaders can accept a rematch call at any time. Keep the prior
 # registration, progression, location and pending-rematch checks.
 0101 021F3FA2 12 E0
+
+
+# Hatch cycles are 85 steps normally or 76 on the original bonus dates.
+# Accept counters above the new threshold when loading an older save.
+arm9 0206CCF8 55 20
+arm9 0206CD06 4C 20
+arm9 0206CD12 55 20
+arm9 0206CDBC 3D DB
