@@ -180,13 +180,14 @@ DEXAREA_NARC := $(BUILD_NARC)/dexareas.narc
 DEXAREA_TARGET := $(FILESYS)/a/1/3/3
 DEXAREA_DEPENDENCIES := data/PokedexArea.c include/pokedex_archive_data.h include/constants/pokedex.h $(POKEDEXDATAGEN)
 
-$(DEXAREA_NARC): $(DEXAREA_DEPENDENCIES) $(BUILD)/dex_encounter_index.bin $(BUILD)/dex_species_index.bin
+$(DEXAREA_NARC): $(DEXAREA_DEPENDENCIES) $(BUILD)/dex_encounter_index.bin $(BUILD)/dex_species_index.bin $(BUILD)/dex_route_index.bin
 	mkdir -p $(BUILD_NARC)
 	rm -rf $(DEXAREA_DIR)
 	mkdir -p $(DEXAREA_DIR)
 	$(POKEDEXDATAGEN) a133 $(DEXAREA_DIR)
 	cp $(BUILD)/dex_encounter_index.bin $(DEXAREA_DIR)/3_8603
 	cp $(BUILD)/dex_species_index.bin $(DEXAREA_DIR)/3_8604
+	cp $(BUILD)/dex_route_index.bin $(DEXAREA_DIR)/3_8605
 	$(NARCHIVE) create $@ $(DEXAREA_DIR) -nf
 
 NARC_FILES += $(DEXAREA_NARC)
@@ -929,6 +930,15 @@ $(DEX_SPECIES_GUIDE_TEXT) $(DEX_SPECIES_GUIDE_INDEX) &: scripts/build_dex_specie
 	$(PYTHON) tools/source/dumptools/validate_text_archive.py $(CHARMAP) $(DEX_SPECIES_GUIDE_TEXT)
 
 MSGDATA_COMPILETIME_DEPENDENCIES += $(DEX_SPECIES_GUIDE_TEXT)
+
+DEX_ROUTE_GUIDE_TEXT := $(BUILD)/rawtext/857.txt
+DEX_ROUTE_GUIDE_INDEX := $(BUILD)/dex_route_index.bin
+$(DEX_ROUTE_GUIDE_TEXT) $(DEX_ROUTE_GUIDE_INDEX) &: scripts/build_dex_route_guide.py scripts/build_dex_encounter_guide.py \
+        $(ENCOUNTER_NARC) $(BUILD_NARC)/personal.narc asm/include/maps.inc
+	$(PYTHON) scripts/build_dex_route_guide.py $(BUILD) $(DEX_ROUTE_GUIDE_TEXT) $(DEX_ROUTE_GUIDE_INDEX)
+	$(PYTHON) tools/source/dumptools/validate_text_archive.py $(CHARMAP) $(DEX_ROUTE_GUIDE_TEXT)
+
+MSGDATA_COMPILETIME_DEPENDENCIES += $(DEX_ROUTE_GUIDE_TEXT)
 
 # only the archives that were built replace what the rom already has, so every archive left out stays as rom.nds had it
 # if no keys.csv, fall back to msgenc's own key as before

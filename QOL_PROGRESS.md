@@ -5,7 +5,7 @@ Werk op `bonkhg`. Maak één commit per feature, push elke commit meteen naar `o
 | Feature | Status |
 | --- | --- |
 | Services in alle Pokémon Centers | Cloudbuild geslaagd. Alle Centers die het gedeelde verpleegstersscript gebruiken bieden de services via de verpleegster aan. |
-| Pokédex per route | Open. De bestaande gids zoekt per soort. |
+| Pokédex per route | Cloudbuild geslaagd. SELECT+X+Y bij het openen van een entry toont de huidige route met vangmethodes, levels en gevangen status. L of R bladert. |
 | Nature Mints | Cloudbuild geslaagd. Alle 21 Mints zijn vanaf drie badges verkrijgbaar bij de gewone Poké Mart. |
 | Ability Capsule en Patch | Cloudbuild geslaagd. Capsule vanaf drie badges, Patch vanaf acht badges bij de gewone Poké Mart. |
 | Vanginformatie in gevechten | Cloudbuild geslaagd. Gewone wilde gevechten melden wanneer je de soort al gevangen hebt. Contextuele balwerking staat nog open. |

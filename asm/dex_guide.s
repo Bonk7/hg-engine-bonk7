@@ -17,7 +17,7 @@ DexGuide_SelectText_hook:
 
     ldr r2, =PAD_BUTTON_X
     tst r3, r2
-    bne EncounterText
+    bne CheckRouteGuide
     ldr r2, =PAD_BUTTON_Y
     tst r3, r2
     bne SpeciesText
@@ -28,6 +28,15 @@ DexGuide_SelectText_hook:
     and r3, r2 // R = page offset 1, L = page offset 2
     add r1, r1, r3
     ldr r0, =854
+    b LoadText
+
+CheckRouteGuide:
+    ldr r2, =PAD_BUTTON_Y
+    tst r3, r2
+    beq EncounterText
+    bl DexGuide_GetRoutePage
+    mov r1, r0
+    ldr r0, =857
     b LoadText
 
 EncounterText:

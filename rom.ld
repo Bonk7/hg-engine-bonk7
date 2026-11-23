@@ -937,3 +937,6 @@ sub_0207294C = 0x0207294C | 1;
 sub_02017068 = 0x02017068 | 1;
 MapObjectManager_RestoreFromSave = 0x0205E648 | 1;
 Save_MapObjects_Get = 0x0203B9D0 | 1;
+/* Pokédex route guide reads the current local-field save and caught flags. */
+SaveArray_Get = 0x020272C8 | 1;
+Pokedex_CheckMonCaughtFlag = 0x02029FF8 | 1;
