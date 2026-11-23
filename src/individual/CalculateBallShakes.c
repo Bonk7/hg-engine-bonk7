@@ -24,29 +24,6 @@ u32 get_shake_chance(int input_value);
 
 extern u8 gSafariBallRateTable[13][2];
 
-u16 MoonBallSpecies[] = {
-    SPECIES_NIDORINA,
-    SPECIES_NIDORINO,
-    SPECIES_CLEFAIRY,
-    SPECIES_JIGGLYPUFF,
-    SPECIES_SKITTY,
-    SPECIES_MUNNA,
-
-#if MOON_BALL_GENERATION == 4
-    SPECIES_NIDORAN_F,
-    SPECIES_NIDOQUEEN,
-    SPECIES_NIDORAN_M,
-    SPECIES_NIDOKING,
-    SPECIES_CLEFFA,
-    SPECIES_CLEFABLE,
-    SPECIES_IGGLYBUFF,
-    SPECIES_WIGGLYTUFF,
-    SPECIES_DELCATTY,
-    SPECIES_MUSHARNA,
-#endif
-
-};
-
 /**
  *  @brief calculate the amount of times a ball shakes
  *
@@ -57,7 +34,8 @@ u16 MoonBallSpecies[] = {
 u32 __attribute__((section(".init"))) CalculateBallShakesInternal(void *bw, struct BattleStruct *sp)
 {
     u32 i, speciesCatchRate, ballCaptureRatio, criticalCapture = FALSE;
-    u32 heavyBallMod = 0, modifiedCatchRate = 0;
+    int heavyBallMod;
+    u32 modifiedCatchRate = 0;
     u64 a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, captureValueCoeffcient = 0, badgePenalty = UQ412__1_0, statusModifier = 0, criticalCatchModifier = 0, speciesInDex = 0, criticalCatchRate = 0, shakeChecks = 4, shakeChance = 0;
     int badges, missingBadges;
     BOOL isCriticalCatch = FALSE;
@@ -75,207 +53,14 @@ u32 __attribute__((section(".init"))) CalculateBallShakesInternal(void *bw, stru
         speciesCatchRate = PokePersonalParaGet(sp->battlemon[sp->defence_client].species, PERSONAL_CATCH_RATE);
     }
 
-    ballCaptureRatio = 0x1000;
-
-    switch (sp->item_work) {
-    case ITEM_MASTER_BALL:
+    if (sp->item_work == ITEM_MASTER_BALL) {
         if (Battle_CheckIfHasCaughtMon(bw, sp->battlemon[sp->defence_client].species)) {
             return 1 | CRITICAL_CAPTURE_MASK;
         }
         return 4;
-    case ITEM_ULTRA_BALL:
-        ballCaptureRatio = 0x2000;
-        break;
-    case ITEM_GREAT_BALL:
-        ballCaptureRatio = 0x1800;
-        break;
-    case ITEM_POKE_BALL:
-        ballCaptureRatio = 0x1000;
-        break;
-#if SAFARI_BALL_GENERATION == 4
-    case ITEM_SAFARI_BALL:
-        if (BattleTypeGet(bw) & BATTLE_TYPE_SAFARI) {
-            ballCaptureRatio = 0x1800;
-        }
-        break;
-#endif
-    case ITEM_NET_BALL:
-        if (HasType(sp, sp->defence_client, TYPE_WATER) || HasType(sp, sp->defence_client, TYPE_BUG)) {
-#if NET_BALL_GENERATION < 8
-            ballCaptureRatio = 0x3000;
-#else
-            ballCaptureRatio = 0x3800;
-#endif
-        }
-        break;
-    case ITEM_DIVE_BALL:
-        if (BattleWorkGroundIDGet(bw) == 7) { // if the battle is happening with a water background
-            ballCaptureRatio = 0x3800;
-        }
-        break;
-    case ITEM_NEST_BALL:
-#if NEST_BALL_GENERATION == 4
-        ballCaptureRatio = (40 - sp->battlemon[sp->defence_client].level) / 10 * 0x1000;
-        if (ballCaptureRatio < 0x1000) {
-            ballCaptureRatio = 0x1000;
-        }
-#else
-        if (sp->battlemon[sp->defence_client].level <= 30) {
-            // TODO: Probably wrong
-            ballCaptureRatio = QMul_RoundDown((41 - sp->battlemon[sp->defence_client].level) * 0x1000 + UQ412__0_5, UQ412__0_1);
-        }
-#endif
-        break;
-    case ITEM_REPEAT_BALL:
-        if (Battle_CheckIfHasCaughtMon(bw, sp->battlemon[sp->defence_client].species)) {
-#if REPEAT_BALL_GENERATION < 8
-            ballCaptureRatio = 0x3000;
-#else
-            ballCaptureRatio = 0x3800;
-#endif
-        }
-        break;
-    case ITEM_TIMER_BALL:
-#if TIMER_BALL_GENERATION < 5
-        ballCaptureRatio = (sp->total_turn + 10) / 10 * 0x1000;
-#else
-        ballCaptureRatio = 1229 * sp->total_turn + 0x1000;
-#endif
-        if (ballCaptureRatio > 0x4000) {
-            ballCaptureRatio = 0x4000;
-        }
-        break;
-    // case ITEM_LUXURY_BALL:
-    //
-    //     break;
-    // case ITEM_PREMIER_BALL:
-    //
-    //     break;
-    case ITEM_DUSK_BALL:
-        if (Battle_GetTimeOfDay(bw) == 3 || Battle_GetTimeOfDay(bw) == 4 || BattleWorkGroundIDGet(bw) == 5) {
-#if DUSK_BALL_GENERATION < 7
-            ballCaptureRatio = 0x3800;
-#else
-            ballCaptureRatio = 0x3000;
-#endif
-        }
-        break;
-    // case ITEM_HEAL_BALL:
-    //
-    //     break;
-    case ITEM_QUICK_BALL:
-        if (sp->total_turn < 1) {
-#if QUICK_BALL_GENERATION == 4
-            ballCaptureRatio = 0x4000;
-#else
-            ballCaptureRatio = 0x5000;
-#endif
-        }
-        break;
-    // case ITEM_CHERISH_BALL:
-    //
-    //     break;
-    case ITEM_FAST_BALL:
-        if (PokePersonalParaGet(sp->battlemon[sp->defence_client].species, PERSONAL_BASE_SPEED) >= 100) {
-            ballCaptureRatio = 0x4000;
-        }
-        break;
-    case ITEM_LEVEL_BALL: {
-        u32 defLevel = sp->battlemon[sp->defence_client].level;
-        u32 atkLevel = sp->battlemon[sp->attack_client].level;
-
-        if (atkLevel >= 4 * defLevel) {
-            ballCaptureRatio = 0x8000;
-        } else if (atkLevel >= 2 * defLevel) {
-            ballCaptureRatio = 0x4000;
-        } else if (atkLevel > defLevel) { // yes the pattern apparently doesn't hold
-            ballCaptureRatio = 0x2000;
-        }
-    } break;
-    case ITEM_LURE_BALL: {
-#if LURE_BALL_GENERATION == 4
-        if (Battle_IsFishingEncounter(bw)) { // HGSS
-            ballCaptureRatio = 0x3000; // 3x
-        }
-#elif LURE_BALL_GENERATION == 7
-        if (Battle_IsFishingEncounter(bw)) { // SMUSUM
-            ballCaptureRatio = 0x5000; // 5x
-        }
-#elif LURE_BALL_GENERATION == 8
-        if (Battle_IsFishingEncounter(bw)) { // SwSh
-            ballCaptureRatio = 0x4000; // 4x
-        }
-#else
-        if (BattleWorkGroundIDGet(bw) == 7) { // if the battle is happening with a water background
-            ballCaptureRatio = 0x4000; // 4x
-        }
-#endif
-    } break;
-    case ITEM_HEAVY_BALL:
-        if (GetPokemonWeight(bw, sp, -1, sp->defence_client) < 999) {
-            heavyBallMod = -20;
-        } else if (GetPokemonWeight(bw, sp, -1, sp->defence_client) < 1999) {
-            heavyBallMod = 0;
-        } else if (GetPokemonWeight(bw, sp, -1, sp->defence_client) < 2999) {
-            heavyBallMod = 20;
-        } else {
-            heavyBallMod = 30;
-        }
-        break;
-    case ITEM_LOVE_BALL: {
-        u32 gender1 = BattlePokemonParamGet(sp, sp->attack_client, BATTLE_MON_DATA_SEX, NULL);
-        u32 gender2 = BattlePokemonParamGet(sp, sp->defence_client, BATTLE_MON_DATA_SEX, NULL);
-
-        if (sp->battlemon[sp->attack_client].species == sp->battlemon[sp->defence_client].species
-            && gender1 != gender2
-            && gender1 != POKEMON_GENDER_UNKNOWN
-            && gender2 != POKEMON_GENDER_UNKNOWN) {
-            ballCaptureRatio = 0x8000;
-        }
-    } break;
-    // case ITEM_FRIEND_BALL: // assume that this and the heal ball are handled elsewhere
-    //                        // Friend ball is handled at the end of the function, no clue for heal ball
-    //     break;
-    case ITEM_MOON_BALL:
-        for (i = 0; i < NELEMS(MoonBallSpecies); i++) // yes, this is how game freak coded it in heart gold/soul silver
-        {
-            if (sp->battlemon[sp->defence_client].species == MoonBallSpecies[i]) {
-                break;
-            }
-        }
-        if (i != NELEMS(MoonBallSpecies)) {
-            ballCaptureRatio = 0x4000;
-        }
-        break;
-#if SPORT_BALL_GENERATION == 4
-    case ITEM_SPORT_BALL:
-        if (BattleTypeGet(bw) & BATTLE_TYPE_BUG_CONTEST) {
-            ballCaptureRatio = 0x1800;
-        }
-        break;
-#endif
-    // case ITEM_PARK_BALL:
-    //
-    //     break;
-    case ITEM_DREAM_BALL:
-        if (sp->battlemon[sp->defence_client].condition & (STATUS_SLEEP)
-            || (GetBattlerAbility(sp, sp->defence_client) == ABILITY_COMATOSE)) {
-            ballCaptureRatio = 0x4000;
-        }
-        break;
     }
 
-    if (IS_SPECIES_ULTRA_BEAST(sp->battlemon[sp->defence_client].species)) {
-        if (sp->item_work == ITEM_BEAST_BALL) {
-            ballCaptureRatio = 0x5000;
-        } else {
-            ballCaptureRatio = 0x19A;
-        }
-    } else {
-        if (sp->item_work == ITEM_BEAST_BALL) {
-            ballCaptureRatio = 0x19A;
-        }
-    }
+    ballCaptureRatio = GetBallCaptureBonus(bw, sp, sp->item_work, sp->attack_client, sp->defence_client, &heavyBallMod);
 
     // https://xcancel.com/Sibuna_Switch/status/1610341810655608833
 

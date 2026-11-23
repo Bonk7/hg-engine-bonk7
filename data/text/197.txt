@@ -1810,4 +1810,3 @@ The opposing {STRVAR_1 1, 0, 0} shared its\n{STRVAR_1 8, 1, 0} with the\fopposin
 The wild {STRVAR_1 1, 0, 0} used its\nBooster Energy to activate\fits Quark Drive!
 The opposing {STRVAR_1 1, 0, 0} used its\nBooster Energy to activate\fits Quark Drive!
 You’ve caught this species before.\r
-This Ball has no catch bonus here.\r

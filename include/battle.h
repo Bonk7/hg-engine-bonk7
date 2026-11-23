@@ -2351,6 +2351,8 @@ u32 LONG_CALL GetBattleItemData(struct BattleStruct *sp, u16 item, u32 field);
  */
 u32 LONG_CALL BattleWorkGroundIDGet(void *bw);
 
+u32 LONG_CALL GetBallCaptureBonus(void *bw, struct BattleStruct *sp, u16 item, u32 thrower, u32 target, int *heavyBallMod);
+
 /**
  *  @brief check if the species has been registered as caught in the pokédex
  *

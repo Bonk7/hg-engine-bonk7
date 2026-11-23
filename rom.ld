@@ -939,3 +939,6 @@ MapObjectManager_RestoreFromSave = 0x0205E648 | 1;
 Save_MapObjects_Get = 0x0203B9D0 | 1;
 /* The route guide reads the caught flag for an encounter species. */
 Pokedex_CheckMonCaughtFlag = 0x02029FF8 | 1;
+
+GetCapturePreviewBattleContext = 0x0223A7E4 | 1;
+LoadVanillaBattleItemDescription = 0x02077D64 | 1;

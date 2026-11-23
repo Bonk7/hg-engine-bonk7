@@ -681,3 +681,6 @@ arm9 FieldHm_ScrCmdGetPartySlot 0204D3CC 3
 
 # Alternate Pokédex entry text selected at render time.
 0018 DexGuide_SelectText_hook 021E59FA 3
+
+# Battle Bag item description call, with the displayed Bag's battle system.
+0008 BattleBagCaptureDescriptionHook 02223A6C 3
