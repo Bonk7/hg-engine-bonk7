@@ -27,3 +27,7 @@ Bij New Game verschijnt in de slaapkamer eenmaal de keuze Normal game of Debug m
 Cloudbuild geslaagd. In DeSmuME verschenen beide keuzes bij een echte nieuwe game. De normale en debugkeuze zijn gecontroleerd op de opgeslagen savevlag. Op een testfixture werkte het toevoegen van de Zephyr Badge, een Poké Ball en een Pikachu.
 
 De debugtoegang is verplaatst van de verpleegster naar het spelermenu. In DeSmuME heb ik de SELECT-sneltoets op een normale save en debugsave gecontroleerd en de debugtools gesloten en opnieuw geopend op straat.
+
+Legendaries, eerste groep. Na de Champion toont de onderzoeker in het Ruins of Alph Research Center de nieuwe signalen. Regirock, Regice en Registeel zijn vaste gevechten op level 66. De drie vangsten openen Regigigas op level 76. Arceus verschijnt op level 100 zodra alle andere reguliere soorten in de uitgebreide nationale Pokédex gevangen zijn. De teller slaat Arceus zelf, Egg en Bad Egg over. Gevluchte en verslagen legendaries kunnen opnieuw worden uitgedaagd.
+
+Cloudbuild, opstartcontrole en de verwijzing naar het oorspronkelijke onderzoeksgesprek zijn getest. De vangsten zijn nog niet in de emulator gespeeld. De overige legendaries en de beschikbaarheid van alle soorten voor de Arceus-voorwaarde staan nog open.

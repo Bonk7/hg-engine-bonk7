@@ -224,3 +224,21 @@ Earth\r
 7\r
 8\r
 9\r
+The ruins are sending signals.\nWhich reading should we follow?\r
+Stone signal\r
+Frost signal\r
+Metal signal\r
+Central chamber\r
+Final signal\r
+Research notes\r
+The stone dial has locked into place.\nAnswer the signal?\r
+Frost has formed on the receiver.\nAnswer the signal?\r
+The metal dial is vibrating.\nAnswer the signal?\r
+All three signals are in phase.\nOpen the central chamber?\r
+Your Pokédex has answered the final\nsignal. Are you ready to face it?\r
+Catch the three guardians before\nwe open the central chamber.\r
+The final signal is silent.\nYour Pokédex needs {STRVAR_1 0, 0, 0} more species.\r
+The signal has been recorded.\r
+We have already recorded this signal.\r
+The signal has faded for now.\nYou may try again.\r
+Bring a Pokémon that can battle.\r

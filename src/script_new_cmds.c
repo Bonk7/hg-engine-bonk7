@@ -1,5 +1,6 @@
 #include "../include/config.h"
 #include "../include/constants/file.h"
+#include "../include/constants/species.h"
 #include "../include/repel.h"
 #include "../include/roamer.h"
 #include "../include/script.h"
@@ -10,10 +11,13 @@
 #define SCRIPT_NEW_CMD_TRAINING_TARGET 1
 #define SCRIPT_NEW_CMD_TRAIN_PARTY_MEMBER 2
 #define SCRIPT_NEW_CMD_EDIT_STATS 3
+#define SCRIPT_NEW_CMD_COUNT_MISSING_DEX 4
 
 u16 Training_GetTargetLevel(void *saveData);
 BOOL Training_TrainPartyMember(void *saveData, u16 slot);
 u16 Training_EditStats(void *saveData, u16 slot, u16 stat, u16 operation, BOOL editIVs);
+
+BOOL LONG_CALL Pokedex_CheckMonCaughtFlag(const void *pokedex, u16 species);
 
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 {
@@ -45,6 +49,19 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         u16 operation = *GetVarPointer(ctx->fsys, 0x8008);
         BOOL editIVs = *GetVarPointer(ctx->fsys, 0x8009) == 1;
         *GetVarPointer(ctx->fsys, arg0) = Training_EditStats(ctx->fsys->savedata, slot, stat, operation, editIVs);
+        break;
+    }
+
+    case SCRIPT_NEW_CMD_COUNT_MISSING_DEX: {
+        const void *dex = SaveData_GetDexPtr(ctx->fsys->savedata);
+        u16 missing = 0;
+        for (u16 species = 1; species <= MAX_CANONICAL_MON_NUM; species++) {
+            if (species != SPECIES_ARCEUS && species != SPECIES_EGG && species != SPECIES_BAD_EGG
+                && !Pokedex_CheckMonCaughtFlag(dex, species)) {
+                missing++;
+            }
+        }
+        *GetVarPointer(ctx->fsys, arg0) = missing;
         break;
     }
 

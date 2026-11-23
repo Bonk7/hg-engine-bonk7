@@ -104,6 +104,7 @@ scrdef VioletTrainingMenu
 scrdef PortableBoxLink
 scrdef DebugSaveSetup
 scrdef DebugMenuPlayer
+scrdef AlphResearch
 scrdef_end
 
 scr_seq_0003_002:
@@ -1966,3 +1967,5 @@ CenterShinyTrialExit:
     end
 
 #include "debug_menu.inc"
+
+#include "alph_research.inc"
