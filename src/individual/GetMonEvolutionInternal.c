@@ -387,7 +387,8 @@ u16 GetMonEvolutionInternal(struct Party *party, struct PartyPokemon *pokemon, u
                 *method_ret = 0;
                 break;
             }
-            if (evoTable[i].method == EVO_TRADE_ITEM && heldItem == evoTable[i].param && usedItem == ITEM_LINKING_CORD) {
+            if (evoTable[i].method == EVO_TRADE_ITEM
+                && (usedItem == evoTable[i].param || (usedItem == ITEM_LINKING_CORD && heldItem == evoTable[i].param))) {
                 target = evoTable[i].target & 0x7FF;
                 *method_ret = 0;
                 break;
@@ -401,8 +402,9 @@ u16 GetMonEvolutionInternal(struct Party *party, struct PartyPokemon *pokemon, u
         {
             species = GetMonEvolutionInternal(party, pokemon, EVOCTX_LEVELUP, usedItem, NULL);
             if (species) {
-                target = species;
                 *method_ret = 0;
+                sys_FreeMemoryEz(evoTable);
+                return species;
             }
         }
         break;
