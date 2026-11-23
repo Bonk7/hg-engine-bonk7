@@ -21,3 +21,7 @@ De standaard Pokédex-entry toont nu de bediening van de gidsen. SELECT opent ev
 De Shiny Trial staat na de Champion in het verpleegstersmenu. Drie opeenvolgende rematches zonder herstel tussen de rondes leveren één Shiny Ball op. Elke ronde kiest uit twee teams. Er is geen limiet op deelname. De Shiny Ball garandeert een geldige vangst en gebruikt in de worp en de opslag het bestaande Poké Ball-model. De gevechtstas toont een eigen icoon en beschrijving.
 
 De cloudbuild slaagde. In DeSmuME heb ik de uitleg en de eerste rematch van de Shiny Trial gezien met een testsave waarop de Champion-vlag was gezet. Ik heb met een testexemplaar van de Shiny Ball een Caterpie gevangen en de shinywaarde van het opgeslagen exemplaar gecontroleerd. De volledige reeks van drie overwinningen is niet doorgespeeld.
+
+Bij New Game verschijnt in de slaapkamer eenmaal de keuze Normal game of Debug menu. Een debugsave biedt Pokémon Center → Team services → Debug menu. Kies een Johto- of Kanto-badge op naam, een item met ID en hoeveelheid, of een Pokémon met interne soort-ID en level. De badge-optie verandert de badge op de Trainer Card. Verhaalvlaggen blijven intact.
+
+Cloudbuild geslaagd. In DeSmuME verschenen beide keuzes bij een echte nieuwe game. De normale en debugkeuze zijn gecontroleerd op de opgeslagen savevlag. Op een testfixture werkte het toevoegen van de Zephyr Badge, een Poké Ball en een Pikachu.

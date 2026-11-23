@@ -10,7 +10,12 @@ VioletTrainingMenu:
     menu_item_add 148, 255, 2
     menu_item_add 150, 255, 3
     menu_item_add 159, 255, 4
+    goto_if_set FLAG_DEBUG_MENU_ENABLED, TrainingAddDebugMenu
     menu_item_add 131, 255, 5
+    goto TrainingMenuExec
+TrainingAddDebugMenu:
+    menu_item_add 176, 255, 5
+TrainingMenuExec:
     menu_exec
     closemsg
     touchscreen_menu_show
@@ -20,6 +25,7 @@ VioletTrainingMenu:
     case 2, VioletTrainingIV
     case 3, VioletBoxLink
     case 4, CenterCollectEgg
+    case 5, TrainingOpenDebug
     goto VioletTrainingExit
 
 VioletBoxLink:
@@ -183,4 +189,8 @@ CenterPartyFull:
 CenterEggDone:
     wait_button
     closemsg
+    goto VioletTrainingExit
+
+TrainingOpenDebug:
+    callstd 2077
     goto VioletTrainingExit

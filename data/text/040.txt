@@ -172,3 +172,55 @@ Round 2 of 3. An Elite Four rematch!\r
 Final round. Good luck, Champion!\r
 You cleared the trial and earned\na Shiny Ball! Enter again anytime.\r
 Make room for a Shiny Ball\nin your Bag first.\r
+Choose how to start this save.\r
+Normal game\r
+Debug menu\r
+Debug enabled for this save.\nAt a Pokémon Center, choose\fTeam services, then Debug menu.\r
+What would you like to add?\r
+Badge\r
+Item\r
+Pokémon\r
+Choose a badge.\r
+Badge added to your Trainer Card.\r
+Item ID (4 digits).\nUse leading zeroes. B cancels.\r
+Quantity (3 digits).\nUse leading zeroes. B cancels.\r
+Add {STRVAR_1 8, 0, 0}?\r
+Items added to your Bag.\r
+Species ID (4 digits).\nUse leading zeroes. B cancels.\r
+Level (3 digits, 001 to 100).\nUse leading zeroes. B cancels.\r
+Add {STRVAR_1 7, 0, 0} to your party?\r
+Pokémon added to your party.\r
+That ID or level is out of range.\r
+The Bag could not hold those items.\r
+Make room in your party first.\r
+\r
+\r
+\r
+\r
+\r
+Zephyr\r
+Hive\r
+Plain\r
+Fog\r
+Storm\r
+Mineral\r
+Glacier\r
+Rising\r
+Boulder\r
+Cascade\r
+Thunder\r
+Rainbow\r
+Soul\r
+Marsh\r
+Volcano\r
+Earth\r
+0\r
+1\r
+2\r
+3\r
+4\r
+5\r
+6\r
+7\r
+8\r
+9\r

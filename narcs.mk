@@ -740,6 +740,7 @@ $(SCR_SEQ_NARC): $(SCR_SEQ_OBJS) $(VIOLET_MOVE_REMINDER) $(VIOLET_TEAM_EXP) $(VI
 	$(NARCHIVE) extract $(SCR_SEQ_TARGET) -o $(SCR_SEQ_DIR) -nf
 	$(if $(SCR_SEQ_OBJS),cp $(SCR_SEQ_OBJS) $(SCR_SEQ_DIR)/)
 	$(PYTHON) scripts/patch_violet_center.py $(SCR_SEQ_DIR)/2_860 $(VIOLET_MOVE_REMINDER) $(VIOLET_TEAM_EXP) $(VIOLET_TRAINING)
+	$(PYTHON) scripts/patch_debug_bedroom.py $(SCR_SEQ_DIR)/2_619 $(SCR_SEQ_DIR)/2_846
 	$(NARCHIVE) create $@ $(SCR_SEQ_DIR) -nf
 
 # for convenience, rebuild SCR_SEQ_NARC every build so that DSPRE changes are not overwritten
