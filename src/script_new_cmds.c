@@ -7,7 +7,11 @@
 
 #define SCRIPT_NEW_CMD_REPEL_USE 0
 
-#define SCRIPT_NEW_CMD_MAX 256
+#define SCRIPT_NEW_CMD_TRAINING_TARGET 1
+#define SCRIPT_NEW_CMD_TRAIN_PARTY_MEMBER 2
+
+u16 Training_GetTargetLevel(void *saveData);
+BOOL Training_TrainPartyMember(void *saveData, u16 slot);
 
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 {
@@ -22,6 +26,16 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         Repel_Use(most_recent_repel, HEAPID_MAIN_HEAP);
 #endif
         break;
+
+    case SCRIPT_NEW_CMD_TRAINING_TARGET:
+        *GetVarPointer(ctx->fsys, arg0) = Training_GetTargetLevel(ctx->fsys->savedata);
+        break;
+
+    case SCRIPT_NEW_CMD_TRAIN_PARTY_MEMBER: {
+        u16 slot = *GetVarPointer(ctx->fsys, 0x8005);
+        *GetVarPointer(ctx->fsys, arg0) = Training_TrainPartyMember(ctx->fsys->savedata, slot);
+        break;
+    }
 
     default:
         break;

@@ -123,3 +123,6 @@ I can help your Pokémon remember\na move for free. Want to try?\r
 This Pokémon has no moves\nit can remember right now.\r
 Team Exp. Share is off.\nTurn it on?\r
 Team Exp. Share is on.\nTurn it off?\r
+I can train one team member up to\nLv. {STRVAR_1 52, 0, 0}. Want to train?\r
+Training complete! The Move Reminder\ncan help with any missed moves.\r
+That Pokémon cannot be trained here.\nTry a team member below my target level.\r

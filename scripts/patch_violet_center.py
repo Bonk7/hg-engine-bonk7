@@ -9,7 +9,7 @@ PATCH_MARKER = b"VIOLET_QOL\0\0"
 
 
 def main():
-    map_script, reminder, team_exp = map(Path, sys.argv[1:])
+    map_script, reminder, team_exp, training = map(Path, sys.argv[1:])
     data = bytearray(map_script.read_bytes())
     table_end = 6 * 4
     if data[table_end:table_end + 2] != b"\x13\xfd":
@@ -22,7 +22,7 @@ def main():
     else:
         original_size = len(data)
 
-    for entry, script in ((2, reminder), (3, team_exp)):
+    for entry, script in ((1, training), (2, reminder), (3, team_exp)):
         entry_offset = entry * 4
         struct.pack_into("<I", data, entry_offset, len(data) - entry_offset - 4)
         data.extend(script.read_bytes())
