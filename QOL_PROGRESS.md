@@ -10,4 +10,4 @@ Werk op `bonkhg`. Maak één commit per feature, push elke commit meteen naar `o
 | Ability Capsule en Patch | Cloudbuild geslaagd. Capsule vanaf drie badges, Patch vanaf acht badges bij de gewone Poké Mart. |
 | Vanginformatie in gevechten | Open. Gevangen status en balwerking. |
 | Fokken | Cloudbuild geslaagd. Uitbroeden gaat circa driemaal sneller. Na het eerste ei op Route 34 kun je wachtende eieren in Pokémon Centers ophalen. |
-| Optionele korte gevechtsanimaties | Open. |
+| Optionele korte gevechtsanimaties | Kortere berichtpauzes gebouwd en schakelbaar per save. Animaties zelf inkorten staat nog open. |

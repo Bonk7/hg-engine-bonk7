@@ -623,7 +623,16 @@ BOOL BattleScriptCommandHandler(void *bw, struct BattleStruct *sp)
         }
 #endif // DEBUG_BATTLE_SCRIPT_COMMANDS
 
-        if (command < START_OF_NEW_BTL_SCR_CMDS) {
+        if (command == 30 && !(BattleTypeGet(bw) & BATTLE_TYPE_LINK) && CheckScriptFlag(FLAG_SHORT_BATTLE_PAUSES)) {
+            // WaitButtonABTime may rewind its script pointer until the pause ends.
+            int argumentIndex = sp->skill_seq_no + 1;
+            int originalFrames = sp->SkillSeqWork[argumentIndex];
+            if (originalFrames > 8) {
+                sp->SkillSeqWork[argumentIndex] = 8;
+            }
+            ret = BattleScriptCmdTable[command](bw, sp);
+            sp->SkillSeqWork[argumentIndex] = originalFrames;
+        } else if (command < START_OF_NEW_BTL_SCR_CMDS) {
             ret = BattleScriptCmdTable[command](bw, sp);
         } else {
             ret = NewBattleScriptCmdTable[command - START_OF_NEW_BTL_SCR_CMDS](bw, sp);

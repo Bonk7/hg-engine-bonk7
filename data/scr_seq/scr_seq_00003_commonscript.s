@@ -115,7 +115,8 @@ scr_seq_0003_002:
     menu_item_add 156, 255, 1
     menu_item_add 157, 255, 2
     menu_item_add 158, 255, 3
-    menu_item_add 131, 255, 4
+    menu_item_add 164, 255, 4
+    menu_item_add 131, 255, 5
     menu_exec
     touchscreen_menu_show
     closemsg
@@ -124,6 +125,7 @@ scr_seq_0003_002:
     case 1, VioletTrainingMenu
     case 2, CenterMoveReminder
     case 3, CenterTeamExp
+    case 4, CenterBattlePace
     releaseall
     endstd
     end
@@ -1855,6 +1857,26 @@ CenterTeamExpOfferDisable:
     clearflag FLAG_TEAM_EXP_ENABLED
 
 CenterTeamExpDone:
+    closemsg
+    releaseall
+    endstd
+    end
+
+CenterBattlePace:
+    goto_if_set FLAG_SHORT_BATTLE_PAUSES, CenterNormalPace
+    npc_msg 165
+    yesno VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterPaceDone
+    setflag FLAG_SHORT_BATTLE_PAUSES
+    goto CenterPaceDone
+CenterNormalPace:
+    npc_msg 166
+    yesno VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterPaceDone
+    clearflag FLAG_SHORT_BATTLE_PAUSES
+CenterPaceDone:
     closemsg
     releaseall
     endstd

@@ -162,3 +162,6 @@ You received the Day Care Egg!\r
 There is no Egg waiting at the Day Care.\r
 Make room in your party for the Egg.\r
 Collect your first Egg from\nthe Day Care family on Route 34.\r
+Battle pace\r
+Shorten pauses between battle messages?\r
+Restore standard battle pauses?\r
