@@ -103,7 +103,7 @@ scrdef scr_seq_0003_073_autobattle_testing
 scrdef VioletTrainingMenu
 scrdef PortableBoxLink
 scrdef DebugSaveSetup
-scrdef DebugMenuCenter
+scrdef DebugMenuPlayer
 scrdef_end
 
 scr_seq_0003_002:
@@ -1789,7 +1789,7 @@ scr_seq_0003_073_autobattle_testing:
     end
 
 .equ VIOLET_BOX_LINK_ITEM, ITEM_POKEMON_BOX_LINK
-#include "violet_training_menu.inc"
+.include "data/scr_seq/violet_training_menu.inc"
 
 
 PortableBoxLink:

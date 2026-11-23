@@ -22,6 +22,8 @@ De Shiny Trial staat na de Champion in het verpleegstersmenu. Drie opeenvolgende
 
 De cloudbuild slaagde. In DeSmuME heb ik de uitleg en de eerste rematch van de Shiny Trial gezien met een testsave waarop de Champion-vlag was gezet. Ik heb met een testexemplaar van de Shiny Ball een Caterpie gevangen en de shinywaarde van het opgeslagen exemplaar gecontroleerd. De volledige reeks van drie overwinningen is niet doorgespeeld.
 
-Bij New Game verschijnt in de slaapkamer eenmaal de keuze Normal game of Debug menu. Een debugsave biedt Pokémon Center → Team services → Debug menu. Kies een Johto- of Kanto-badge op naam, een item met ID en hoeveelheid, of een Pokémon met interne soort-ID en level. De badge-optie verandert de badge op de Trainer Card. Verhaalvlaggen blijven intact.
+Bij New Game verschijnt in de slaapkamer eenmaal de keuze Normal game of Debug menu. Op een debugsave open je het spelermenu met X en druk je daarna op SELECT voor het debugmenu. Kies een Johto- of Kanto-badge op naam, een item met ID en hoeveelheid, of een Pokémon met interne soort-ID en level. De badge-optie verandert de badge op de Trainer Card. Verhaalvlaggen blijven intact.
 
 Cloudbuild geslaagd. In DeSmuME verschenen beide keuzes bij een echte nieuwe game. De normale en debugkeuze zijn gecontroleerd op de opgeslagen savevlag. Op een testfixture werkte het toevoegen van de Zephyr Badge, een Poké Ball en een Pikachu.
+
+De debugtoegang is verplaatst van de verpleegster naar het spelermenu. In DeSmuME heb ik de SELECT-sneltoets op een normale save en debugsave gecontroleerd en de debugtools gesloten en opnieuw geopend op straat.

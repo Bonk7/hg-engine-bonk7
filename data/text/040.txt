@@ -175,7 +175,7 @@ Make room for a Shiny Ball\nin your Bag first.\r
 Choose how to start this save.\r
 Normal game\r
 Debug menu\r
-Debug enabled for this save.\nAt a Pokémon Center, choose\fTeam services, then Debug menu.\r
+Debug enabled for this save.\nOpen the player menu with X,\fthen press SELECT for debug tools.\r
 What would you like to add?\r
 Badge\r
 Item\r

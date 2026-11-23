@@ -690,3 +690,6 @@ arm9 FieldHm_ScrCmdGetPartySlot 0204D3CC 3
 
 # Set the debug prompt marker only when the player selects New Game.
 0036 DebugSave_InitNewGameHook 021E5BCC 3
+
+# SELECT inside the overworld player menu, before normal action dispatch.
+arm9 DebugSave_PlayerMenuHook 0203C4A2 3

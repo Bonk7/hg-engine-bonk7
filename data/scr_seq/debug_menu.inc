@@ -21,7 +21,8 @@ DebugSaveSetupDone:
     endstd
     end
 
-DebugMenuCenter:
+DebugMenuPlayer:
+    lockall
     goto_if_unset FLAG_DEBUG_MENU_ENABLED, DebugMenuExit
 DebugMenu:
     npc_msg 178
@@ -39,7 +40,7 @@ DebugMenu:
     case 1, DebugGiveItem
     case 2, DebugGivePokemon
 DebugMenuExit:
-    endstd
+    releaseall
     end
 
 DebugGiveBadge:

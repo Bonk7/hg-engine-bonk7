@@ -942,3 +942,7 @@ Pokedex_CheckMonCaughtFlag = 0x02029FF8 | 1;
 
 GetCapturePreviewBattleContext = 0x0223A7E4 | 1;
 LoadVanillaBattleItemDescription = 0x02077D64 | 1;
+
+PlayerMenu_DestroyCursor = 0x0203C38C | 1;
+PlayerMenu_SetInteractionMode = 0x0203DF64 | 1;
+PlayerMenu_TransitionToAction = 0x021F6B50 | 1;
