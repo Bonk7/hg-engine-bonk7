@@ -347,6 +347,7 @@ struct PlayerProfile *LONG_CALL Sav2_PlayerData_GetProfileAddr(void *saveData);
 u16 LONG_CALL PlayerProfile_GetTrainerID_VisibleHalf(void *profile);
 u8 *LONG_CALL SaveData_GetRepelPtr(void *saveData);
 void *LONG_CALL SaveData_GetEventPtr(void *saveData);
+void *LONG_CALL SaveArray_Get(SaveData *saveData, int id);
 void *LONG_CALL SaveData_GetDexPtr(void *saveData);
 void *LONG_CALL SaveData_GetPlayerPartyPtr(void *saveData);
 u32 LONG_CALL Pokedex_CountDexOwned(void *dexSaveData);

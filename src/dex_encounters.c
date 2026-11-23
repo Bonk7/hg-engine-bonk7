@@ -39,7 +39,6 @@ u16 DexGuide_GetPage(u16 species, BOOL speciesGuide)
 
 #include "save.h"
 
-void *LONG_CALL SaveArray_Get(void *saveData, int block);
 BOOL LONG_CALL Pokedex_CheckMonCaughtFlag(const void *pokedex, u16 species);
 
 u16 DexGuide_GetRoutePage(void)
