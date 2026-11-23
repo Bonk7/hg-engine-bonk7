@@ -63,6 +63,7 @@
 #define CODE_ADDON_BACKGROUND_GFX_IDS     17
 #define CODE_ADDON_HIDDEN_ITEM_PARAMS     18
 #define CODE_ADDON_ABILITY_FLAGS          19
+#define CODE_ADDON_MACHINE_MOVES          20
 
 // a015 file indexes
 #define BAG_HM_ICON 37
@@ -148,6 +149,7 @@
 #define OVERLAY_PARTY_HANDLEUSEITEMONMON             149
 #define OVERLAY_INHERITMOVES                         150
 #define OVERLAY_CREATETRADEMON                       151
+#define OVERLAY_BATTLE_SELECTIONSCREENINPUT          152
 
 #define MAX_ACTIVE_OVERLAYS 8
 
