@@ -723,10 +723,14 @@ endef
 $(foreach i,$(shell seq 1 $(words $(SCR_SEQ_SRCS))),\
 	$(eval $(call SCR_SEQ_RULE,$(word $(i),$(SCR_SEQ_SRCS)),$(word $(i),$(SCR_SEQ_MEMBERS)))))
 
+VIOLET_MOVE_REMINDER := $(SCR_SEQ_OBJ_DIR)/violet_move_reminder
+$(eval $(call SCR_SEQ_RULE,$(SCR_SEQ_DEPENDENCIES_DIR)/violet_move_reminder.s,violet_move_reminder))
+
 # only the members that were built replace what the rom already has, so every script left out stays as rom.nds had it
-$(SCR_SEQ_NARC): $(SCR_SEQ_OBJS) | $(SCR_SEQ_DIR)
+$(SCR_SEQ_NARC): $(SCR_SEQ_OBJS) $(VIOLET_MOVE_REMINDER) | $(SCR_SEQ_DIR)
 	$(NARCHIVE) extract $(SCR_SEQ_TARGET) -o $(SCR_SEQ_DIR) -nf
 	$(if $(SCR_SEQ_OBJS),cp $(SCR_SEQ_OBJS) $(SCR_SEQ_DIR)/)
+	$(PYTHON) scripts/patch_violet_move_reminder.py $(SCR_SEQ_DIR)/2_860 $(VIOLET_MOVE_REMINDER)
 	$(NARCHIVE) create $@ $(SCR_SEQ_DIR) -nf
 
 # for convenience, rebuild SCR_SEQ_NARC every build so that DSPRE changes are not overwritten

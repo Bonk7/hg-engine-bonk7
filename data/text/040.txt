@@ -119,3 +119,5 @@ NOT TELLING
 The repellent’s effect wore off!\nWould you like to use another one?
 You used the {STRVAR_1 8, 1, 0}.
 Begin auto-battle.
+I can help your Pokémon remember\na move for free. Want to try?\r
+This Pokémon has no moves\nit can remember right now.\r
