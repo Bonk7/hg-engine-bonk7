@@ -7,6 +7,7 @@
 #include "../include/constants/item.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/species.h"
+#include "../include/field_hm.h"
 #include "../include/message.h"
 #include "../include/overlay.h"
 #include "../include/pokemon.h"
@@ -33,6 +34,7 @@ u8 LONG_CALL sub_0207B0B0(struct PartyMenu *wk, u8 *buf)
     u8 i;
     u8 count = 0;
     u8 fieldEffect;
+    BOOL knowsFly = FALSE;
 
     u8 isEgg = GetMonData(pp, MON_DATA_IS_EGG, NULL);
     u32 item = GetMonData(pp, MON_DATA_HELD_ITEM, NULL);
@@ -60,6 +62,9 @@ u8 LONG_CALL sub_0207B0B0(struct PartyMenu *wk, u8 *buf)
                     break;
                 }
 
+                if (move == MOVE_FLY) {
+                    knowsFly = TRUE;
+                }
                 fieldEffect = MoveId_GetFieldEffectId(move);
                 if (fieldEffect != 0xFF) {
                     buf[count] = fieldEffect;
@@ -67,6 +72,11 @@ u8 LONG_CALL sub_0207B0B0(struct PartyMenu *wk, u8 *buf)
                     PartyMenu_ContextMenuAddFieldMove(wk, move, fieldMoveIndex);
                     ++fieldMoveIndex;
                 }
+            }
+            if (!knowsFly && fieldMoveIndex < MAX_MON_MOVES
+                && FieldHm_IsUnlocked(SaveBlock2_get(), MOVE_FLY)) {
+                buf[count++] = MoveId_GetFieldEffectId(MOVE_FLY);
+                PartyMenu_ContextMenuAddFieldMove(wk, MOVE_FLY, fieldMoveIndex);
             }
         } else {
             buf[count] = PARTY_MON_CONTEXT_MENU_QUIT;

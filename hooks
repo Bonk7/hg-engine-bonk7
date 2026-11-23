@@ -670,3 +670,7 @@ arm9 ScrCmd_CreateRoamer 02045264 1
 0012 PlayerTrainerVictoryBGM_hook 0224DA9E 3
 
 arm9 FieldSystem_RestoreMapObjectsFromSave 0203B9F4 1
+
+# Party slot for contextual HMs (including native Surf and Waterfall checks).
+arm9 FieldHm_GetPartySlot 020542E8 3
+arm9 FieldHm_ScrCmdGetPartySlot 0204D3CC 3
