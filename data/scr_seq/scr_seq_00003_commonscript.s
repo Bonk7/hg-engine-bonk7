@@ -16,6 +16,7 @@
 .include "asm/include/trainers.inc"
 
 #include "constants/item.h"
+#include "constants/save.h"
 #include "constants/moves.h"
 #include "constants/species.h"
 
@@ -107,6 +108,27 @@ scr_seq_0003_002:
     play_se SEQ_SE_DP_SELECT
     lockall
     faceplayer
+    npc_msg 154
+    touchscreen_menu_hide
+    menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    menu_item_add 155, 255, 0
+    menu_item_add 156, 255, 1
+    menu_item_add 157, 255, 2
+    menu_item_add 158, 255, 3
+    menu_item_add 131, 255, 4
+    menu_exec
+    touchscreen_menu_show
+    closemsg
+    switch VAR_SPECIAL_RESULT
+    case 0, CenterHeal
+    case 1, VioletTrainingMenu
+    case 2, CenterMoveReminder
+    case 3, CenterTeamExp
+    releaseall
+    endstd
+    end
+
+CenterHeal:
     get_trcard_stars VAR_SPECIAL_RESULT
     compare VAR_SPECIAL_RESULT, 4
     goto_if_ge _03E3
@@ -1769,4 +1791,71 @@ PortableBoxLink:
     fade_screen 6, 1, 1, RGB_BLACK
     wait_fade
     releaseall
+    end
+
+CenterMoveReminder:
+    get_std_msg_naix 3, VAR_SPECIAL_RESULT
+    msgbox_extern VAR_SPECIAL_RESULT, 121
+    getmenuchoice VAR_SPECIAL_RESULT
+    closemsg
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterMoveReminderDone
+
+    fade_screen 6, 1, 0, RGB_BLACK
+    wait_fade
+    party_select_ui
+    get_party_selection VAR_SPECIAL_x8005
+    restore_overworld
+    fade_screen 6, 1, 1, RGB_BLACK
+    wait_fade
+    compare VAR_SPECIAL_x8005, 255
+    goto_if_eq CenterMoveReminderDone
+    get_partymon_species VAR_SPECIAL_x8005, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterMoveReminderNoMoves
+    scrcmd_466 VAR_SPECIAL_RESULT, VAR_SPECIAL_x8005
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterMoveReminderNoMoves
+
+    fade_screen 6, 1, 0, RGB_BLACK
+    wait_fade
+    move_relearner_init VAR_SPECIAL_x8005
+    move_relearner_get_result VAR_SPECIAL_RESULT
+    restore_overworld
+    fade_screen 6, 1, 1, RGB_BLACK
+    wait_fade
+    goto CenterMoveReminderDone
+
+CenterMoveReminderNoMoves:
+    get_std_msg_naix 3, VAR_SPECIAL_RESULT
+    msgbox_extern VAR_SPECIAL_RESULT, 122
+    wait_button
+    closemsg
+CenterMoveReminderDone:
+    releaseall
+    endstd
+    end
+
+CenterTeamExp:
+    goto_if_set FLAG_TEAM_EXP_ENABLED, CenterTeamExpOfferDisable
+    get_std_msg_naix 3, VAR_SPECIAL_RESULT
+    msgbox_extern VAR_SPECIAL_RESULT, 123
+    getmenuchoice VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterTeamExpDone
+    setflag FLAG_TEAM_EXP_ENABLED
+    goto CenterTeamExpDone
+
+CenterTeamExpOfferDisable:
+    get_std_msg_naix 3, VAR_SPECIAL_RESULT
+    msgbox_extern VAR_SPECIAL_RESULT, 124
+    getmenuchoice VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterTeamExpDone
+    clearflag FLAG_TEAM_EXP_ENABLED
+
+CenterTeamExpDone:
+    closemsg
+    releaseall
+    endstd
     end

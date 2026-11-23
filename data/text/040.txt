@@ -152,3 +152,8 @@ Get Box Link\r
 Here is a Pokémon Box Link!\nUse it from the Bag to open your boxes.\r
 You already have a Pokémon Box Link.\r
 Make some room in your Bag first.\r
+Welcome to the Pokémon Center!\r
+Heal Pokémon\r
+Team services\r
+Move Reminder\r
+Team Exp. Share\r
