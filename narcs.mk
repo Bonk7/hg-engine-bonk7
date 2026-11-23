@@ -896,6 +896,15 @@ clean_trgfx:
 	rm -rf $(TRAINER_GFX_DIR) $(TRAINER_GFX_NARC) $(TRAINER_GFX_BACK_DIR) $(TRAINER_GFX_BACK_NARC)
 
 
+DEX_EVOLUTION_GUIDE_TEXT := $(BUILD)/rawtext/854.txt
+$(DEX_EVOLUTION_GUIDE_TEXT): scripts/build_dex_evolution_guide.py data/Evolutions.c data/text/222.txt \
+        include/constants/species.h include/constants/item.h include/constants/moves.h \
+        $(BUILD_NARC)/personal.narc $(BUILD_NARC)/a011.narc
+	$(PYTHON) scripts/build_dex_evolution_guide.py $(BUILD)/rawtext $@
+	$(PYTHON) tools/source/dumptools/validate_text_archive.py $(CHARMAP) $@
+
+MSGDATA_COMPILETIME_DEPENDENCIES += $(DEX_EVOLUTION_GUIDE_TEXT)
+
 # only the archives that were built replace what the rom already has, so every archive left out stays as rom.nds had it
 # if no keys.csv, fall back to msgenc's own key as before
 $(MSGDATA_NARC): $(MSGDATA_DEPENDENCIES) $(MSGDATA_COMPILETIME_DEPENDENCIES) $(wildcard $(MSGDATA_KEYS))
