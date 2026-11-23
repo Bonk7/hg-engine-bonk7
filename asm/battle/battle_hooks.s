@@ -780,3 +780,33 @@ ldr r0, =0x0224DB3C | 1 // Immediately after the switch case. No registers are i
 bx r0
 
 .pool
+
+.global TeamExp_SelectPartyMon_hook
+TeamExp_SelectPartyMon_hook:
+    mov r0, r6
+    bl TeamExp_CanSelect
+    cmp r0, #0
+    beq 1f
+    ldr r3, =0x0224591A | 1
+    bx r3
+1:
+    ldr r3, =0x022458F6 | 1
+    bx r3
+
+.global TeamExp_AddShare_hook
+TeamExp_AddShare_hook:
+    mov r0, r6
+    ldr r1, [sp, #24] // Actual held-item effect; Lucky Egg is checked after this hook.
+    bl TeamExp_ReceivesShare
+    cmp r0, #0
+    beq 1f
+    ldr r0, [sp, #36] // Battle context
+    add r0, #160     // EXP Share payout
+    ldr r1, [r0]
+    ldr r0, [sp, #56] // EXP already awarded to participants
+    add r0, r0, r1
+    str r0, [sp, #56]
+1:
+    ldr r3, =0x02245A68 | 1
+    bx r3
+.pool

@@ -674,3 +674,7 @@ arm9 FieldSystem_RestoreMapObjectsFromSave 0203B9F4 1
 # Party slot for contextual HMs (including native Surf and Waterfall checks).
 arm9 FieldHm_GetPartySlot 020542E8 3
 arm9 FieldHm_ScrCmdGetPartySlot 0204D3CC 3
+
+# Use the optional team EXP flag in native recipient selection and payout.
+0012 TeamExp_SelectPartyMon_hook 022458E6 3
+0012 TeamExp_AddShare_hook 02245A54 3

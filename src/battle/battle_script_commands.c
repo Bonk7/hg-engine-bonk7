@@ -10,6 +10,7 @@
 #include "constants/item.h"
 #include "constants/move_effects.h"
 #include "constants/moves.h"
+#include "constants/save.h"
 #include "constants/species.h"
 #include "constants/system_control.h"
 #include "constants/weather_numbers.h"
@@ -1431,6 +1432,24 @@ BOOL btl_scr_cmd_27_shouldgetexp(void *bw, struct BattleStruct *sp)
     return FALSE;
 }
 
+// The optional team share uses the existing EXP Share pool, preserving held-item bonuses.
+BOOL TeamExp_ReceivesShare(struct PartyPokemon *mon, int holdEffect)
+{
+    if (holdEffect == HOLD_EFFECT_EXP_SHARE) {
+        return TRUE;
+    }
+
+    return CheckScriptFlag(FLAG_TEAM_EXP_ENABLED)
+        && GetMonData(mon, MON_DATA_HP, NULL) != 0
+        && !GetMonData(mon, MON_DATA_IS_EGG, NULL);
+}
+
+BOOL TeamExp_CanSelect(struct PartyPokemon *mon)
+{
+    u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+    return TeamExp_ReceivesShare(mon, GetItemData(item, ITEM_PARAM_HOLD_EFFECT, HEAPID_BATTLE_HEAP));
+}
+
 // global variables to track experience
 u8 ALIGN4 scratchpad[4] = { 0, 0, 0, 0 };
 
@@ -1467,7 +1486,7 @@ void Task_DistributeExp_Extend(void *arg0, void *work)
             item = GetMonData(pp, MON_DATA_HELD_ITEM, NULL);
             eqp = GetItemData(item, ITEM_PARAM_HOLD_EFFECT, 5);
 
-            if ((eqp == HOLD_EFFECT_EXP_SHARE) || (sp->obtained_exp_right_flag[client_no] & No2Bit(sel_mons_no))) {
+            if (TeamExp_ReceivesShare(pp, eqp) || (sp->obtained_exp_right_flag[client_no] & No2Bit(sel_mons_no))) {
                 break;
             }
         }
@@ -1493,7 +1512,7 @@ void Task_DistributeExp_Extend(void *arg0, void *work)
                 item = GetMonData(pploop, MON_DATA_HELD_ITEM, NULL);
                 eqp = BattleItemDataGet(sp, item, 1);
 
-                if (eqp == HOLD_EFFECT_EXP_SHARE) {
+                if (TeamExp_ReceivesShare(pploop, eqp)) {
                     monCountFromItem++;
                 }
             }
@@ -1532,7 +1551,7 @@ void Task_DistributeExp_Extend(void *arg0, void *work)
             // debug_printf("[Task_DistributeExp_Extend] L = %d, Lp = %d, b = %d, top = %d, bottom = %d, exp = %d\n", level, Lp, base, top, bottom, totalexp);
 
             if (monCountFromItem) {
-                sp->obtained_exp = (totalexp / 2) / monCount;
+                sp->obtained_exp = monCount ? (totalexp / 2) / monCount : 0;
                 if (sp->obtained_exp == 0) {
                     sp->obtained_exp = 1;
                 }
@@ -1541,7 +1560,7 @@ void Task_DistributeExp_Extend(void *arg0, void *work)
                     sp->exp_share_obtained_exp = 1;
                 }
             } else {
-                sp->obtained_exp = totalexp / monCount;
+                sp->obtained_exp = monCount ? totalexp / monCount : 0;
                 if (sp->obtained_exp == 0) {
                     sp->obtained_exp = 1;
                 }
@@ -1580,7 +1599,7 @@ void Task_DistributeExp_Extend(void *arg0, void *work)
                     item = GetMonData(pploop, MON_DATA_HELD_ITEM, NULL);
                     eqp = BattleItemDataGet(sp, item, 1);
 
-                    if (eqp == HOLD_EFFECT_EXP_SHARE) {
+                    if (TeamExp_ReceivesShare(pploop, eqp)) {
                         monCountFromItem++;
                     }
                 }
@@ -1590,7 +1609,7 @@ void Task_DistributeExp_Extend(void *arg0, void *work)
         totalexp = 255 * GetSpeciesBaseExp(sp->battlemon[sp->fainting_client].species, sp->battlemon[sp->fainting_client].form_no) / 390; // PokePersonalParaGet(sp->battlemon[sp->fainting_client].species, PERSONAL_EXP_YIELD);
         totalexp = (totalexp * sp->battlemon[sp->fainting_client].level) / 7;
         if (monCountFromItem) {
-            sp->obtained_exp = (totalexp / 2) / monCount;
+            sp->obtained_exp = monCount ? (totalexp / 2) / monCount : 0;
             if (sp->obtained_exp == 0) {
                 sp->obtained_exp = 1;
             }
@@ -1599,7 +1618,7 @@ void Task_DistributeExp_Extend(void *arg0, void *work)
                 sp->exp_share_obtained_exp = 1;
             }
         } else {
-            sp->obtained_exp = totalexp / monCount;
+            sp->obtained_exp = monCount ? totalexp / monCount : 0;
             if (sp->obtained_exp == 0) {
                 sp->obtained_exp = 1;
             }
@@ -1687,7 +1706,7 @@ BOOL Task_DistributeExp_capture_experience(void *arg0, void *work, u32 get_clien
                 item = GetMonData(pp, MON_DATA_HELD_ITEM, NULL);
                 eqp = GetItemData(item, ITEM_PARAM_HOLD_EFFECT, 5);
 
-                if ((eqp == HOLD_EFFECT_EXP_SHARE) || (expcalc->sp->obtained_exp_right_flag[(expcalc->sp->fainting_client >> 1) & 1] & No2Bit(sel_mons_no))) {
+                if (TeamExp_ReceivesShare(pp, eqp) || (expcalc->sp->obtained_exp_right_flag[(expcalc->sp->fainting_client >> 1) & 1] & No2Bit(sel_mons_no))) {
                     expcalc->work[6] = sel_mons_no;
                     trackPartyExperience |= No2Bit(sel_mons_no);
                     break;

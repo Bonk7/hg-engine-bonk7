@@ -121,3 +121,5 @@ You used the {STRVAR_1 8, 1, 0}.
 Begin auto-battle.
 I can help your Pokémon remember\na move for free. Want to try?\r
 This Pokémon has no moves\nit can remember right now.\r
+Team Exp. Share is off.\nTurn it on?\r
+Team Exp. Share is on.\nTurn it off?\r

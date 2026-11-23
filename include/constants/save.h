@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_SAVE_H
 #define CONSTANTS_SAVE_H
 
+#define FLAG_TEAM_EXP_ENABLED 2602
+
 #define OFFSET_saveSlotSpecs    0x2F2B4
 #define OFFSET_lastGoodSaveSlot 0x2F2F0
 #define OFFSET_lastGoodSaveNo   0x2F2F4

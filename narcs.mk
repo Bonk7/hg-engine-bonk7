@@ -686,7 +686,7 @@ REQUIRED_DIRECTORIES += $(PW_POKEICON_DIR) $(PW_POKEICON_ART_DIR)
 # field scripts and zone event data are plain GNU as sources
 # they only emit pc-relative references, so linker.ld's nonzero base does not reach the output
 SCRIPT_LD := $(C_SUBDIR)/linker.ld
-SCRIPT_INCLUDES := $(wildcard asm/include/*.inc) $(SCRIPT_LD)
+SCRIPT_INCLUDES := $(wildcard asm/include/*.inc) $(SCRIPT_LD) include/constants/save.h
 
 SCR_SEQ_DIR := $(BUILD)/a012
 SCR_SEQ_OBJ_DIR := $(BUILD)/scr_seq
@@ -700,7 +700,7 @@ SCR_SEQ_DEPS := $(SCRIPT_INCLUDES) $(wildcard $(SCR_SEQ_DEPENDENCIES_DIR)/*.inc)
 SCR_SEQ_ENGINE_SRCS := $(sort $(wildcard $(SCR_SEQ_DEPENDENCIES_DIR)/scr_seq_[0-9][0-9][0-9][0-9][0-9]_*.s))
 
 # the four digit scripts are the vanilla dump, only built when BUILD_DUMPED_SCR_SEQ is enabled
-SCR_SEQ_VANILLA_SRCS := $(filter-out $(SCR_SEQ_ENGINE_SRCS),$(sort $(wildcard $(SCR_SEQ_DEPENDENCIES_DIR)/*.s)))
+SCR_SEQ_VANILLA_SRCS := $(sort $(wildcard $(SCR_SEQ_DEPENDENCIES_DIR)/scr_seq_[0-9][0-9][0-9][0-9]_*.s))
 
 ifeq ($(BUILD_DUMPED_SCR_SEQ),1)
 SCR_SEQ_SRCS := $(SCR_SEQ_ENGINE_SRCS) $(SCR_SEQ_VANILLA_SRCS)
@@ -723,14 +723,17 @@ endef
 $(foreach i,$(shell seq 1 $(words $(SCR_SEQ_SRCS))),\
 	$(eval $(call SCR_SEQ_RULE,$(word $(i),$(SCR_SEQ_SRCS)),$(word $(i),$(SCR_SEQ_MEMBERS)))))
 
+VIOLET_TEAM_EXP := $(SCR_SEQ_OBJ_DIR)/violet_team_exp
+$(eval $(call SCR_SEQ_RULE,$(SCR_SEQ_DEPENDENCIES_DIR)/violet_team_exp.s,violet_team_exp))
+
 VIOLET_MOVE_REMINDER := $(SCR_SEQ_OBJ_DIR)/violet_move_reminder
 $(eval $(call SCR_SEQ_RULE,$(SCR_SEQ_DEPENDENCIES_DIR)/violet_move_reminder.s,violet_move_reminder))
 
 # only the members that were built replace what the rom already has, so every script left out stays as rom.nds had it
-$(SCR_SEQ_NARC): $(SCR_SEQ_OBJS) $(VIOLET_MOVE_REMINDER) | $(SCR_SEQ_DIR)
+$(SCR_SEQ_NARC): $(SCR_SEQ_OBJS) $(VIOLET_MOVE_REMINDER) $(VIOLET_TEAM_EXP) | $(SCR_SEQ_DIR)
 	$(NARCHIVE) extract $(SCR_SEQ_TARGET) -o $(SCR_SEQ_DIR) -nf
 	$(if $(SCR_SEQ_OBJS),cp $(SCR_SEQ_OBJS) $(SCR_SEQ_DIR)/)
-	$(PYTHON) scripts/patch_violet_move_reminder.py $(SCR_SEQ_DIR)/2_860 $(VIOLET_MOVE_REMINDER)
+	$(PYTHON) scripts/patch_violet_center.py $(SCR_SEQ_DIR)/2_860 $(VIOLET_MOVE_REMINDER) $(VIOLET_TEAM_EXP)
 	$(NARCHIVE) create $@ $(SCR_SEQ_DIR) -nf
 
 # for convenience, rebuild SCR_SEQ_NARC every build so that DSPRE changes are not overwritten
