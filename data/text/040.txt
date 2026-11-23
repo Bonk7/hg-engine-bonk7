@@ -157,3 +157,8 @@ Heal Pokémon\r
 Team services\r
 Move Reminder\r
 Team Exp. Share\r
+Collect an Egg\r
+You received the Day Care Egg!\r
+There is no Egg waiting at the Day Care.\r
+Make room in your party for the Egg.\r
+Collect your first Egg from\nthe Day Care family on Route 34.\r
