@@ -6,6 +6,7 @@
 
 // The original entry text stays selected unless SELECT is held when it opens.
 // L and R select additional pages while holding SELECT.
+// X selects the encounter guide; L and R move through its pages.
 .global DexGuide_SelectText_hook
 DexGuide_SelectText_hook:
     ldr r3, =gSystem
@@ -14,12 +15,23 @@ DexGuide_SelectText_hook:
     tst r3, r2
     beq DefaultText
 
+    ldr r2, =PAD_BUTTON_X
+    tst r3, r2
+    bne EncounterText
+
     lsl r1, r5, #2
     lsr r3, r3, #8
     mov r2, #3
     and r3, r2 // R = page offset 1, L = page offset 2
     add r1, r1, r3
     ldr r0, =854
+    b LoadText
+
+EncounterText:
+    mov r0, r5
+    bl DexGuide_GetEncounterPage
+    mov r1, r0
+    ldr r0, =855
     b LoadText
 
 DefaultText:
