@@ -623,7 +623,16 @@ BOOL BattleScriptCommandHandler(void *bw, struct BattleStruct *sp)
         }
 #endif // DEBUG_BATTLE_SCRIPT_COMMANDS
 
-        if (command == 30 && !(BattleTypeGet(bw) & BATTLE_TYPE_LINK) && CheckScriptFlag(FLAG_SHORT_BATTLE_PAUSES)) {
+        BOOL fastPace = (command == 30 || command == 69)
+            && !(BattleTypeGet(bw) & BATTLE_TYPE_LINK)
+            && CheckScriptFlag(FLAG_SHORT_BATTLE_PAUSES);
+        int animation = fastPace && command == 69 ? sp->SkillSeqWork[sp->skill_seq_no + 2] : BATTLE_ANIMATION_NONE;
+        if ((animation >= BATTLE_ANIMATION_STAT_BOOST && animation <= BATTLE_ANIMATION_RESTORE_HP)
+            || (animation >= BATTLE_ANIMATION_WEATHER_FOG && animation <= BATTLE_ANIMATION_WEATHER_SUN)
+            || animation == BATTLE_ANIMATION_WEATHER_SNOW) {
+            sp->skill_seq_no += 3;
+            ret = FALSE;
+        } else if (fastPace && command == 30) {
             // WaitButtonABTime may rewind its script pointer until the pause ends.
             int argumentIndex = sp->skill_seq_no + 1;
             int originalFrames = sp->SkillSeqWork[argumentIndex];
