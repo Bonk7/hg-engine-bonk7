@@ -63,6 +63,7 @@ ifneq ($(PYTHON_VENV_VERSION), 0)
 VENV_ACTIVATE = $(VENV)/bin/activate
 PYTHON = . $(VENV_ACTIVATE); $(PYTHON_NO_VENV)
 REQUIREMENTS = requirements.txt
+VENV_READY = $(VENV)/.requirements-installed
 else
 # there is no need to use a virtual environment because python does not have the requirements installed
 PYTHON = $(PYTHON_NO_VENV)
@@ -80,16 +81,19 @@ default: all
 
 ifneq ($(PYTHON_VENV_VERSION), 0)
 # only set up venv if we need to
-venv: $(VENV_ACTIVATE)
+venv: $(VENV_READY)
 
 # divorce this python3 from venv so that it works
 $(VENV_ACTIVATE):
 	$(PYTHON_NO_VENV) -m venv $(VENV)
+
+$(VENV_READY): $(REQUIREMENTS) Makefile | $(VENV_ACTIVATE)
 ifeq ($(MSYS2), 0)
 	$(PYTHON) -m pip install ndspy==4.1.0 PyYAML
 else
 	$(PYTHON) -m pip install -r $(REQUIREMENTS)
 endif
+	touch $@
 
 endif
 
@@ -338,13 +342,13 @@ $(OUTPUT):$(LINK)
 
 # only reextract from the rom if the romname is newer than the extracted arm9.bin
 ifeq ($(ROM_TOOL),$(DSROM))
-$(BASE)/arm9.bin: $(ROMNAME) $(DSROM) $(VENV_ACTIVATE) scripts/dsrom_bridge.py
+$(BASE)/arm9.bin: $(ROMNAME) $(DSROM) scripts/dsrom_bridge.py | $(VENV_READY)
 	rm -rf $(BASE) $(BASE)_dsrom
 	@mkdir -p $(REQUIRED_DIRECTORIES)
 	$(DSROM_BRIDGE) extract --rom $(ROMNAME)
 	$(NARCHIVE) extract $(FILESYS)/a/0/2/8 -o $(BUILD)/a028/ -nf
 else
-$(BASE)/arm9.bin: $(ROMNAME) $(NDSTOOL) $(VENV_ACTIVATE)
+$(BASE)/arm9.bin: $(ROMNAME) $(NDSTOOL) | $(VENV_READY)
 	rm -rf $(BASE)
 	@mkdir -p $(REQUIRED_DIRECTORIES)
 	$(NDSTOOL) -x $(ROMNAME) -9 $(BASE)/arm9.bin -7 $(BASE)/arm7.bin -y9 $(BASE)/overarm9.bin -y7 $(BASE)/overarm7.bin -d $(FILESYS) -y $(BASE)/overlay -t $(BASE)/banner.bin -h $(BASE)/header.bin
@@ -598,7 +602,7 @@ endif
 	@echo "machine moves:"
 	cp $(MACHINE_MOVES_PARAMS_BIN) $(MACHINE_MOVES_PARAMS_TARGET)
 
-update_machine_moves: $(VENV_ACTIVATE)
+update_machine_moves: $(VENV_READY)
 	$(PYTHON) scripts/update_machine_moves.py --descriptions --sprites
 	@echo "Updated item descriptions and sprites. Double check formatting"
 
