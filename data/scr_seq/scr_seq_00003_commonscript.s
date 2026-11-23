@@ -105,31 +105,30 @@ scrdef PortableBoxLink
 scrdef DebugSaveSetup
 scrdef DebugMenuPlayer
 scrdef AlphResearch
+scrdef CenterServices
 scrdef_end
 
-scr_seq_0003_002:
+CenterServices:
     play_se SEQ_SE_DP_SELECT
     lockall
     faceplayer
-    npc_msg 154
+    npc_msg 244
     touchscreen_menu_hide
     menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
-    menu_item_add 155, 255, 0
     menu_item_add 156, 255, 1
     menu_item_add 157, 255, 2
     menu_item_add 158, 255, 3
     menu_item_add 164, 255, 4
     goto_if_set FLAG_GAME_CLEAR, CenterAddShinyTrial
-    menu_item_add 131, 255, 5
     goto CenterMenuExec
 CenterAddShinyTrial:
     menu_item_add 167, 255, 6
 CenterMenuExec:
+    menu_item_add 131, 255, 5
     menu_exec
     touchscreen_menu_show
     closemsg
     switch VAR_SPECIAL_RESULT
-    case 0, CenterHeal
     case 1, VioletTrainingMenu
     case 2, CenterMoveReminder
     case 3, CenterTeamExp
@@ -139,7 +138,10 @@ CenterMenuExec:
     endstd
     end
 
-CenterHeal:
+scr_seq_0003_002:
+    play_se SEQ_SE_DP_SELECT
+    lockall
+    faceplayer
     get_trcard_stars VAR_SPECIAL_RESULT
     compare VAR_SPECIAL_RESULT, 4
     goto_if_ge _03E3

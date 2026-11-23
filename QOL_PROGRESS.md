@@ -4,7 +4,7 @@ Werk op `bonkhg`. Maak één commit per feature, push elke commit meteen naar `o
 
 | Feature | Status |
 | --- | --- |
-| Services in alle Pokémon Centers | Cloudbuild geslaagd. Alle Centers die het gedeelde verpleegstersscript gebruiken bieden de services via de verpleegster aan. |
+| Services in alle Pokémon Centers | Cloudbuild geslaagd. Een aparte medewerker biedt de diensten aan in alle 24 Center-lobby’s en de Pokémon League. De verpleegster gebruikt haar gewone herstelgesprek. |
 | Pokédex per route | Cloudbuild geslaagd. SELECT+X+Y bij het openen van een entry toont de huidige route met vangmethodes, levels en gevangen status. L of R bladert. |
 | Nature Mints | Cloudbuild geslaagd. Alle 21 Mints zijn vanaf drie badges verkrijgbaar bij de gewone Poké Mart. |
 | Ability Capsule en Patch | Cloudbuild geslaagd. Capsule vanaf drie badges, Patch vanaf acht badges bij de gewone Poké Mart. |
@@ -31,3 +31,5 @@ De debugtoegang is verplaatst van de verpleegster naar het spelermenu. In DeSmuM
 Legendaries, eerste groep. Na de Champion toont de onderzoeker in het Ruins of Alph Research Center de nieuwe signalen. Regirock, Regice en Registeel zijn vaste gevechten op level 66. De drie vangsten openen Regigigas op level 76. Arceus verschijnt op level 100 zodra alle andere reguliere soorten in de uitgebreide nationale Pokédex gevangen zijn. De teller slaat Arceus zelf, Egg en Bad Egg over. Gevluchte en verslagen legendaries kunnen opnieuw worden uitgedaagd.
 
 Cloudbuild, opstartcontrole en de verwijzing naar het oorspronkelijke onderzoeksgesprek zijn getest. De vangsten zijn nog niet in de emulator gespeeld. De overige legendaries en de beschikbaarheid van alle soorten voor de Arceus-voorwaarde staan nog open.
+
+De medewerker staat in de gewone lobby's rechts van de ontvangstmat en heeft een eigen plek bij de Pokémon League. De zone-events bevatten precies één nieuwe medewerker per lobby. In DeSmuME gecontroleerd dat de medewerker in Cherrygrove het dienstenmenu opent en de verpleegster haar gewone herstelgesprek gebruikt.

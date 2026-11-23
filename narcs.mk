@@ -783,25 +783,24 @@ endef
 $(foreach i,$(shell seq 1 $(words $(ZONE_EVENT_JSONS))),\
 	$(eval $(call ZONE_EVENT_RULE,$(word $(i),$(ZONE_EVENT_JSONS)),$(word $(i),$(ZONE_EVENT_MEMBERS)))))
 
-# like the scripts, the built maps are laid over the rom's own zone event data rather than replacing the narc wholesale
-$(ZONE_EVENT_NARC): $(ZONE_EVENT_OBJS) | $(ZONE_EVENT_DIR)
-	$(NARCHIVE) extract $(ZONE_EVENT_TARGET) -o $(ZONE_EVENT_DIR) -nf
-	$(if $(ZONE_EVENT_OBJS),cp $(ZONE_EVENT_OBJS) $(ZONE_EVENT_DIR)/)
-	$(NARCHIVE) create $@ $(ZONE_EVENT_DIR) -nf
-
-# for convenience, rebuild ZONE_EVENT_NARC every build so that DSPRE changes are not overwritten
-.PHONY: $(ZONE_EVENT_NARC)
-
 ifneq ($(strip $(ZONE_EVENT_OBJS)),)
 ifeq ($(strip $(wildcard $(SCR_SEQ_DEPENDENCIES_DIR)/include/event_*.inc)),)
 $(error BUILD_DUMPED_EVENTDATA is enabled, but the script labels the maps reference are not in $(SCR_SEQ_DEPENDENCIES_DIR)/include/event_*.inc$(n)Either restore them or turn the toggle back off in $(CONFIG_H))
 endif
-NARC_FILES += $(ZONE_EVENT_NARC)
 endif
-REQUIRED_DIRECTORIES += $(ZONE_EVENT_DIR) $(ZONE_EVENT_OBJ_DIR)
 
 endif
 # BUILD_DUMPED_EVENTDATA
+
+$(ZONE_EVENT_NARC): $(ZONE_EVENT_OBJS) | $(ZONE_EVENT_DIR)
+	$(NARCHIVE) extract $(ZONE_EVENT_TARGET) -o $(ZONE_EVENT_DIR) -nf
+	$(if $(ZONE_EVENT_OBJS),cp $(ZONE_EVENT_OBJS) $(ZONE_EVENT_DIR)/)
+	$(PYTHON) scripts/add_center_staff.py $(ZONE_EVENT_DIR)
+	$(NARCHIVE) create $@ $(ZONE_EVENT_DIR) -nf
+
+.PHONY: $(ZONE_EVENT_NARC)
+NARC_FILES += $(ZONE_EVENT_NARC)
+REQUIRED_DIRECTORIES += $(ZONE_EVENT_DIR) $(ZONE_EVENT_OBJ_DIR)
 
 $(SCR_SEQ_DIR) $(SCR_SEQ_OBJ_DIR) $(ZONE_EVENT_DIR) $(ZONE_EVENT_OBJ_DIR):
 	@mkdir -p $@

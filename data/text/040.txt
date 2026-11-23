@@ -242,3 +242,4 @@ The signal has been recorded.\r
 We have already recorded this signal.\r
 The signal has faded for now.\nYou may try again.\r
 Bring a Pokémon that can battle.\r
+Need help preparing your team?\r
