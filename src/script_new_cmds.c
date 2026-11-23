@@ -9,9 +9,11 @@
 
 #define SCRIPT_NEW_CMD_TRAINING_TARGET 1
 #define SCRIPT_NEW_CMD_TRAIN_PARTY_MEMBER 2
+#define SCRIPT_NEW_CMD_EDIT_EVS 3
 
 u16 Training_GetTargetLevel(void *saveData);
 BOOL Training_TrainPartyMember(void *saveData, u16 slot);
+u16 Training_EditEVs(void *saveData, u16 slot, u16 stat, u16 operation);
 
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 {
@@ -34,6 +36,14 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
     case SCRIPT_NEW_CMD_TRAIN_PARTY_MEMBER: {
         u16 slot = *GetVarPointer(ctx->fsys, 0x8005);
         *GetVarPointer(ctx->fsys, arg0) = Training_TrainPartyMember(ctx->fsys->savedata, slot);
+        break;
+    }
+
+    case SCRIPT_NEW_CMD_EDIT_EVS: {
+        u16 slot = *GetVarPointer(ctx->fsys, 0x8005);
+        u16 stat = *GetVarPointer(ctx->fsys, 0x8007);
+        u16 operation = *GetVarPointer(ctx->fsys, 0x8008);
+        *GetVarPointer(ctx->fsys, arg0) = Training_EditEVs(ctx->fsys->savedata, slot, stat, operation);
         break;
     }
 

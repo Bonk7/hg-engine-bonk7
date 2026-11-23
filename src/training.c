@@ -36,3 +36,51 @@ BOOL Training_TrainPartyMember(void *saveData, u16 slot)
     RecalcPartyPokemonStats(mon);
     return TRUE;
 }
+
+u16 Training_EditEVs(void *saveData, u16 slot, u16 stat, u16 operation)
+{
+    struct Party *party = SaveData_GetPlayerPartyPtr(saveData);
+    if (slot >= party->count || stat > 6 || operation > 7) {
+        return 0xFFFF;
+    }
+    struct PartyPokemon *mon = Party_GetMonByIndex(party, slot);
+    if (!GetMonData(mon, MON_DATA_SPECIES, NULL) || GetMonData(mon, MON_DATA_IS_EGG, NULL)) {
+        return 0xFFFF;
+    }
+
+    if (operation == 7) {
+        u8 zero = 0;
+        for (unsigned i = 0; i < 6; i++) {
+            SetMonData(mon, MON_DATA_HP_EV + i, &zero);
+        }
+        RecalcPartyPokemonStats(mon);
+        return 0;
+    }
+    if (stat >= 6) {
+        return 0xFFFF;
+    }
+
+    int current = GetMonData(mon, MON_DATA_HP_EV + stat, NULL);
+    if (!operation) {
+        return current;
+    }
+    static const int adjustments[] = { 0, 1, 10, 252, -1, -10, -252 };
+    int otherEVs = 0;
+    for (unsigned i = 0; i < 6; i++) {
+        if (i != stat) {
+            otherEVs += GetMonData(mon, MON_DATA_HP_EV + i, NULL);
+        }
+    }
+    int desired = current + adjustments[operation];
+    if (desired > current) {
+        int maximum = 510 - otherEVs;
+        if (maximum > 252) maximum = 252;
+        if (maximum < current) maximum = current;
+        if (desired > maximum) desired = maximum;
+    }
+    if (desired < 0) desired = 0;
+    u8 value = desired;
+    SetMonData(mon, MON_DATA_HP_EV + stat, &value);
+    RecalcPartyPokemonStats(mon);
+    return value;
+}

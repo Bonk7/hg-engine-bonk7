@@ -126,3 +126,23 @@ Team Exp. Share is on.\nTurn it off?\r
 I can train one team member up to\nLv. {STRVAR_1 52, 0, 0}. Want to train?\r
 Training complete! The Move Reminder\ncan help with any missed moves.\r
 That Pokémon cannot be trained here.\nTry a team member below my target level.\r
+How can I help your team?\r
+Catch-up training\r
+Adjust EVs\r
+Back\r
+Choose a stat to adjust.\r
+HP\r
+Attack\r
+Defense\r
+Speed\r
+Sp. Atk\r
+Sp. Def\r
+Reset all\r
+Current value: {STRVAR_1 52, 0, 0}.\nChoose an adjustment.\r
++1\r
++10\r
+Max\r
+-1\r
+-10\r
+Set to zero\r
+Reset all six values?\r
