@@ -40,7 +40,6 @@ u32 LONG_CALL GetBallCaptureBonus(void *bw, struct BattleStruct *sp, u16 item, u
     *heavyBallMod = 0;
 
     switch (item) {
-    case ITEM_SHINY_BALL:
     case ITEM_ULTRA_BALL:
         ballCaptureRatio = 0x2000;
         break;

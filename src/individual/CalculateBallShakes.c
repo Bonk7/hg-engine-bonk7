@@ -53,7 +53,7 @@ u32 __attribute__((section(".init"))) CalculateBallShakesInternal(void *bw, stru
         speciesCatchRate = PokePersonalParaGet(sp->battlemon[sp->defence_client].species, PERSONAL_CATCH_RATE);
     }
 
-    if (sp->item_work == ITEM_MASTER_BALL) {
+    if (sp->item_work == ITEM_MASTER_BALL || sp->item_work == ITEM_SHINY_BALL) {
         if (Battle_CheckIfHasCaughtMon(bw, sp->battlemon[sp->defence_client].species)) {
             return 1 | CRITICAL_CAPTURE_MASK;
         }

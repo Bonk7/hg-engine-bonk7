@@ -18,6 +18,6 @@ Runtimechecks in DeSmuME op de cloudbuild. Cherrygrove toont de gedeelde Center-
 
 De standaard Pokédex-entry toont nu de bediening van de gidsen. SELECT opent evoluties, SELECT+X vindplaatsen, SELECT+Y het soortprofiel en SELECT+X+Y de huidige route. SELECT+L+R toont de oorspronkelijke soortbeschrijving. De hulppagina is in DeSmuME zichtbaar gecontroleerd.
 
-De Shiny Trial staat na de Champion in het verpleegstersmenu. Drie opeenvolgende rematches zonder herstel tussen de rondes leveren één Shiny Ball op. Elke ronde kiest uit twee teams. Er is geen limiet op deelname. De Shiny Ball heeft de vangkans van een Ultra Ball en gebruikt in de worp en de opslag het bestaande Poké Ball-model. De gevechtstas toont een eigen icoon en beschrijving.
+De Shiny Trial staat na de Champion in het verpleegstersmenu. Drie opeenvolgende rematches zonder herstel tussen de rondes leveren één Shiny Ball op. Elke ronde kiest uit twee teams. Er is geen limiet op deelname. De Shiny Ball garandeert een geldige vangst en gebruikt in de worp en de opslag het bestaande Poké Ball-model. De gevechtstas toont een eigen icoon en beschrijving.
 
 De cloudbuild slaagde. In DeSmuME heb ik de uitleg en de eerste rematch van de Shiny Trial gezien met een testsave waarop de Champion-vlag was gezet. Ik heb met een testexemplaar van de Shiny Ball een Caterpie gevangen en de shinywaarde van het opgeslagen exemplaar gecontroleerd. De volledige reeks van drie overwinningen is niet doorgespeeld.
