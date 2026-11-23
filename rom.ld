@@ -118,6 +118,7 @@ GF_CpuCopy8 = 0x0204D450;
 GetEvScriptWorkMemberAdrs = 0x020402F0 |1;
 WORDSET_RegisterAbilityName = 0x0200C060|1;
 EventSet_Script = 0x0203FE74 |1;
+StartScriptFromMenu = 0x0203FF0C | 1;
 FieldSysGetAttrAddrInternal = 0x020401B4 | 1;
 FieldSystem_FlagCheck = 0x020403FC | 1;
 Field_GetBgEvents = 0x0203B6D8 | 1;

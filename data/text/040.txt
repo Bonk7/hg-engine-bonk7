@@ -148,3 +148,7 @@ Set to zero\r
 Reset all six values?\r
 Adjust IVs\r
 Beat the Pokémon League Champion\nbefore adjusting IVs.\r
+Get Box Link\r
+Here is a Pokémon Box Link!\nUse it from the Bag to open your boxes.\r
+You already have a Pokémon Box Link.\r
+Make some room in your Bag first.\r

@@ -8,7 +8,8 @@ VioletTrainingMenu:
     menu_item_add 129, 255, 0
     menu_item_add 130, 255, 1
     menu_item_add 148, 255, 2
-    menu_item_add 131, 255, 3
+    menu_item_add 150, 255, 3
+    menu_item_add 131, 255, 4
     menu_exec
     closemsg
     touchscreen_menu_show
@@ -16,6 +17,28 @@ VioletTrainingMenu:
     case 0, VioletTrainingCatchUp
     case 1, VioletTrainingEV
     case 2, VioletTrainingIV
+    case 3, VioletBoxLink
+    goto VioletTrainingExit
+
+VioletBoxLink:
+    hasitem VIOLET_BOX_LINK_ITEM, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne VioletBoxLinkOwned
+    giveitem VIOLET_BOX_LINK_ITEM, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq VioletBoxLinkNoSpace
+    play_fanfare SEQ_ME_KEYITEM
+    npc_msg 151
+    wait_fanfare
+    goto VioletBoxLinkWait
+VioletBoxLinkNoSpace:
+    npc_msg 153
+    goto VioletBoxLinkWait
+VioletBoxLinkOwned:
+    npc_msg 152
+VioletBoxLinkWait:
+    wait_button
+    closemsg
     goto VioletTrainingExit
 
 VioletTrainingIV:

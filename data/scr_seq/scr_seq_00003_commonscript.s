@@ -100,6 +100,7 @@ scrdef scr_seq_0003_071
 scrdef scr_seq_0003_072_repels
 scrdef scr_seq_0003_073_autobattle_testing
 scrdef VioletTrainingMenu
+scrdef PortableBoxLink
 scrdef_end
 
 scr_seq_0003_002:
@@ -1755,4 +1756,17 @@ scr_seq_0003_073_autobattle_testing:
     releaseall
     end
 
+.equ VIOLET_BOX_LINK_ITEM, ITEM_POKEMON_BOX_LINK
 .include "data/scr_seq/violet_training_menu.inc"
+
+
+PortableBoxLink:
+    lockall
+    fade_screen 6, 1, 0, RGB_BLACK
+    wait_fade
+    scrcmd_158 2
+    restore_overworld
+    fade_screen 6, 1, 1, RGB_BLACK
+    wait_fade
+    releaseall
+    end

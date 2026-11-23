@@ -6,6 +6,7 @@
 #include "../include/constants/moves.h"
 #include "../include/message.h"
 #include "../include/script.h"
+#include "../include/save.h"
 #include "../include/types.h"
 
 #define GFX_ITEM_DUMMY_ID  ((MAX_TOTAL_ITEM_NUM) * 2 + 2)
@@ -27,6 +28,39 @@ void ItemMenuUseFunc_Mint(struct ItemMenuUseData *data, const struct ItemCheckUs
 void ItemMenuUseFunc_Nectar(struct ItemMenuUseData *data, const struct ItemCheckUseData *dat2 UNUSED);
 void ItemMenuUseFunc_RotomCatalog(struct ItemMenuUseData *data, const struct ItemCheckUseData *dat2 UNUSED);
 
+// Script 2075 opens the native Move Pokémon app once the Bag has closed.
+#define PORTABLE_BOX_SCRIPT 2075
+#define START_MENU_STATE_RESTORE_FIELD_FOR_TASK 12
+
+void LONG_CALL StartScriptFromMenu(TaskManager *taskManager, u16 script, void *object);
+void LONG_CALL FieldSystem_LoadFieldOverlay(FieldSystem *fieldSystem);
+
+static u32 ItemCheckUseFunc_BoxLink(const struct ItemCheckUseData *data)
+{
+    if (data->haveFollower) {
+        return 2; // Companion is present.
+    }
+    if (data->haveRocketCostume || CheckScriptFlag(2407) || CheckScriptFlag(2417) || CheckScriptFlag(2451)) {
+        return 3; // Safari, Pal Park, Bug-Catching Contest, or disguise.
+    }
+    return 0;
+}
+
+static BOOL ItemTask_OpenBoxLink(TaskManager *taskManager)
+{
+    StartScriptFromMenu(taskManager, PORTABLE_BOX_SCRIPT, NULL);
+    return FALSE;
+}
+
+static void ItemMenuUseFunc_BoxLink(struct ItemMenuUseData *data, const struct ItemCheckUseData *check UNUSED)
+{
+    struct BagViewAppWork *menu = data->taskManager->env;
+    FieldSystem_LoadFieldOverlay(data->taskManager->fieldSystem);
+    menu->atexit_TaskFunc = ItemTask_OpenBoxLink;
+    menu->atexit_TaskEnv = NULL;
+    menu->state = START_MENU_STATE_RESTORE_FIELD_FOR_TASK;
+}
+
 const struct ItemUseFuncDat sNewItemFieldUseFuncs[] = {
     { ItemMenuUseFunc_RevealGlass, ItemFieldUseFunc_RevealGlass, NULL },
     { ItemMenuUseFunc_DNASplicers, ItemFieldUseFunc_DNASplicers, NULL },
@@ -34,6 +68,7 @@ const struct ItemUseFuncDat sNewItemFieldUseFuncs[] = {
     { ItemMenuUseFunc_Mint, NULL, NULL },
     { ItemMenuUseFunc_Nectar, NULL, NULL },
     { ItemMenuUseFunc_RotomCatalog, NULL, NULL },
+    { ItemMenuUseFunc_BoxLink, NULL, ItemCheckUseFunc_BoxLink },
 };
 
 extern const struct ItemUseFuncDat sItemFieldUseFuncs[NUM_VANILLA_FIELD_USE_FUNCS];
