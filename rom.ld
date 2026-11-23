@@ -951,3 +951,9 @@ CaptureSummary_CreateArgs = 0x0203E76C | 1;
 CaptureSummary_Launch = 0x0203E4EC | 1;
 CaptureParty_Remove = 0x0207456C | 1;
 CaptureParty_ClearSlotModifiers = 0x02074708 | 1;
+
+NamingScreen_CreateArgs = 0x020830D8 | 1;
+NamingScreen_DeleteArgs = 0x0208311C | 1;
+DebugNamingScreenTemplate = 0x02102610;
+FieldSystem_LaunchApplication = 0x0203DFB4 | 1;
+FieldListMenu_AddOption = 0x021EDF9C | 1;

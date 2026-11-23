@@ -62,15 +62,49 @@ DebugGiveBadge:
     goto DebugMenuMessage
 
 DebugGiveItem:
-    setvar VAR_SPECIAL_x8004, 184
-    setvar VAR_SPECIAL_x8005, 4
-    call DebugReadNumber
-    compare VAR_SPECIAL_RESULT, 0
-    goto_if_eq DebugMenu
-    compare VAR_SPECIAL_RESULT, MAX_TOTAL_ITEM_NUM
-    goto_if_gt DebugInvalidNumber
-    copyvar VAR_SPECIAL_x8008, VAR_SPECIAL_RESULT
+    setvar VAR_SPECIAL_x800A, 0
+    goto DebugCatalogStart
 
+DebugGivePokemon:
+    setvar VAR_SPECIAL_x800A, 1
+DebugCatalogStart:
+    RunNewCommand 7, VAR_SPECIAL_x800A
+DebugCatalogPage:
+    touchscreen_menu_hide
+    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    RunNewCommand 8, VAR_SPECIAL_x800B
+    compare VAR_SPECIAL_x800B, 0
+    goto_if_eq DebugCatalogAllNames
+    npc_msg 188
+    goto DebugCatalogShow
+DebugCatalogAllNames:
+    npc_msg 184
+DebugCatalogShow:
+    show_prepared_list
+    touchscreen_menu_show
+    closemsg
+    compare VAR_SPECIAL_RESULT, 240
+    goto_if_eq DebugCatalogSearch
+    compare VAR_SPECIAL_RESULT, 244
+    goto_if_gt DebugMenu
+    RunNewCommand 9, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq DebugCatalogPage
+    copyvar VAR_SPECIAL_x8008, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_x800A, 1
+    goto_if_eq DebugPokemonLevel
+    goto DebugItemQuantity
+
+DebugCatalogSearch:
+    fade_screen 6, 1, 0, RGB_BLACK
+    wait_fade
+    RunNewCommand 10, VAR_SPECIAL_RESULT
+    restore_overworld
+    fade_screen 6, 1, 1, RGB_BLACK
+    wait_fade
+    goto DebugCatalogPage
+
+DebugItemQuantity:
     setvar VAR_SPECIAL_x8004, 185
     setvar VAR_SPECIAL_x8005, 3
     call DebugReadNumber
@@ -90,20 +124,7 @@ DebugGiveItem:
     npc_msg 187
     goto DebugMenuMessage
 
-DebugGivePokemon:
-    setvar VAR_SPECIAL_x8004, 188
-    setvar VAR_SPECIAL_x8005, 4
-    call DebugReadNumber
-    compare VAR_SPECIAL_RESULT, 0
-    goto_if_eq DebugMenu
-    compare VAR_SPECIAL_RESULT, SPECIES_MAX_MON_NUM
-    goto_if_gt DebugInvalidNumber
-    compare VAR_SPECIAL_RESULT, SPECIES_EGG
-    goto_if_eq DebugInvalidNumber
-    compare VAR_SPECIAL_RESULT, SPECIES_BAD_EGG
-    goto_if_eq DebugInvalidNumber
-    copyvar VAR_SPECIAL_x8008, VAR_SPECIAL_RESULT
-
+DebugPokemonLevel:
     setvar VAR_SPECIAL_x8004, 189
     setvar VAR_SPECIAL_x8005, 3
     call DebugReadNumber

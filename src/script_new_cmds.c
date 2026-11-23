@@ -1,5 +1,6 @@
 #include "../include/config.h"
 #include "../include/capture_review.h"
+#include "../include/debug_catalog.h"
 #include "../include/constants/file.h"
 #include "../include/constants/species.h"
 #include "../include/repel.h"
@@ -72,6 +73,21 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
     case 6:
         *GetVarPointer(ctx->fsys, arg0) = CaptureReview_Apply(ctx, VarGet(ctx->fsys, 0x8004));
         break;
+
+    case 7:
+        DebugCatalog_Reset(VarGet(ctx->fsys, arg0));
+        break;
+
+    case 8:
+        *GetVarPointer(ctx->fsys, arg0) = DebugCatalog_FillMenu(ctx);
+        break;
+
+    case 9:
+        *GetVarPointer(ctx->fsys, arg0) = DebugCatalog_GetSelection(VarGet(ctx->fsys, arg0));
+        break;
+
+    case 10:
+        return DebugCatalog_Search(ctx);
 
     default:
         break;

@@ -22,7 +22,7 @@ De Shiny Trial staat na de Champion in het verpleegstersmenu. Drie opeenvolgende
 
 De cloudbuild slaagde. In DeSmuME heb ik de uitleg en de eerste rematch van de Shiny Trial gezien met een testsave waarop de Champion-vlag was gezet. Ik heb met een testexemplaar van de Shiny Ball een Caterpie gevangen en de shinywaarde van het opgeslagen exemplaar gecontroleerd. De volledige reeks van drie overwinningen is niet doorgespeeld.
 
-Bij New Game verschijnt in de slaapkamer eenmaal de keuze Normal game of Debug menu. Op een debugsave open je het spelermenu met X en druk je daarna op SELECT voor het debugmenu. Kies een Johto- of Kanto-badge op naam, een item met ID en hoeveelheid, of een Pokémon met interne soort-ID en level. De badge-optie verandert de badge op de Trainer Card. Verhaalvlaggen blijven intact.
+Bij New Game verschijnt in de slaapkamer eenmaal de keuze Normal game of Debug menu. Op een debugsave open je het spelermenu met X en druk je daarna op SELECT voor het debugmenu. Kies een Johto- of Kanto-badge, een item of een Pokémon op naam. De item- en Pokémonlijsten hebben paginering en een zoekoptie met het touchscreen-toetsenbord. Zoeken werkt ook op een deel van de naam. Na selectie kies je de hoeveelheid of het level. De badge-optie verandert de badge op de Trainer Card. Verhaalvlaggen blijven intact.
 
 Cloudbuild geslaagd. In DeSmuME verschenen beide keuzes bij een echte nieuwe game. De normale en debugkeuze zijn gecontroleerd op de opgeslagen savevlag. Op een testfixture werkte het toevoegen van de Zephyr Badge, een Poké Ball en een Pikachu.
 
@@ -37,3 +37,5 @@ De medewerker staat in de gewone lobby's rechts van de ontvangstmat en heeft een
 Bij reguliere wilde vangsten vervalt de Pokédex-preview. Na de bijnaamvraag en terugkeer naar het veld kun je het overzicht bekijken, de vangst in de box zetten of haar aan je team toevoegen. Bij een vol team kies je wie plaatsmaakt. Een teamlid met Mail of een Seal Capsule kan pas naar de box als je die hebt verwijderd. Speciale vangstmodi zoals Safari en Bug-Catching Contest behouden hun eigen afhandeling.
 
 Cloudbuild geslaagd. In DeSmuME is een wilde Oddish gevangen met een vol team. Alle drie de menuopties zijn gecontroleerd. Bij de wissel op de derde teamplek is gecontroleerd dat Oddish daar stond, het gekozen teamlid in de box stond en de overige vijf teamplekken dezelfde Pokémon behielden.
+
+De cloudbuild met de doorzoekbare debuglijsten slaagde. In DeSmuME is vanuit het spelermenu gezocht op SHINY en PIKA. De zoekresultaten leverden een Shiny Ball in de tas en een Pikachu in het team op.

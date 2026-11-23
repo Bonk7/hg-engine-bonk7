@@ -182,22 +182,22 @@ Item\r
 Pokémon\r
 Choose a badge.\r
 Badge added to your Trainer Card.\r
-Item ID (4 digits).\nUse leading zeroes. B cancels.\r
+Choose a name or search.\r
 Quantity (3 digits).\nUse leading zeroes. B cancels.\r
 Add {STRVAR_1 8, 0, 0}?\r
 Items added to your Bag.\r
-Species ID (4 digits).\nUse leading zeroes. B cancels.\r
+Results for {STRVAR_1 0, 0, 0}\r
 Level (3 digits, 001 to 100).\nUse leading zeroes. B cancels.\r
 Add {STRVAR_1 7, 0, 0} to your party?\r
 Pokémon added to your party.\r
-That ID or level is out of range.\r
+That level is out of range.\r
 The Bag could not hold those items.\r
 Make room in your party first.\r
-\r
-\r
-\r
-\r
-\r
+Search by name\r
+Previous page\r
+Next page\r
+Clear search\r
+No matching names\r
 Zephyr\r
 Hive\r
 Plain\r
@@ -251,3 +251,4 @@ There is no room in your Boxes.\r
 Keep a Pokémon that can battle\nin your team.\r
 Which team member should\ngo to the Box?\r
 Remove the Mail or Seal Capsule\nbefore boxing that Pokémon.\r
+{STRVAR_1 0, 0, 0}\r
