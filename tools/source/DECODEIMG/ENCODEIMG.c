@@ -264,8 +264,8 @@ int main(int argc, char** argv)
                     encoded[k] |= (0x101 << r2);
                     break;
                 default:
-                    printf("invalid pixel detected. %02X\n", image.pixels[(r+r2)*image.width + c]);
-                    break;
+                    FATAL_ERROR("%s: unsupported Pokéwalker pixel 0x%02X at (%d, %d).\n",
+                                argv[2], (unsigned int)image.pixels[(r+r2)*image.width + c], c, r+r2);
                 }
             }
         }

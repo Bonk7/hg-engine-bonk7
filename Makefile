@@ -289,7 +289,7 @@ $(JSONPROC): $(wildcard tools/source/jsonproc/*.cpp) $(wildcard tools/source/jso
 
 TOOLS += $(JSONPROC)
 
-$(ENCODEPWIMG):
+$(ENCODEPWIMG): tools/source/DECODEIMG/ENCODEIMG.c tools/source/DECODEIMG/Makefile
 	cd tools/source/DECODEIMG ; $(MAKE) clean; $(MAKE)
 	mv tools/source/DECODEIMG/ENCODE_IMG $(ENCODEPWIMG)
 
