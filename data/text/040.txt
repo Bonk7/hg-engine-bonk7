@@ -254,3 +254,20 @@ Remove the Mail or Seal Capsule\nbefore boxing that Pokémon.\r
 {STRVAR_1 0, 0, 0}\r
 Warp to town\r
 Choose a destination.
+Pokémon Box Link
+Open boxes
+Save current team
+Load saved team
+Save to which preset?
+Load which preset?
+Story team
+Catching team
+Training team
+Team preset saved.
+Team switched.
+This preset is empty.
+
+A saved Pokémon is missing or\ncould not be uniquely identified.
+Remove Mail or Seal Capsules\nfrom outgoing team members.
+There is no room in your Boxes.
+That team has no Pokémon\nready to battle.

@@ -1798,12 +1798,62 @@ scr_seq_0003_073_autobattle_testing:
 
 PortableBoxLink:
     lockall
+PortableBoxLinkMenu:
+    msgbox_extern 40, 256
+    touchscreen_menu_hide
+    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    RunNewCommand 12, 0
+    show_prepared_list
+    touchscreen_menu_show
+    closemsg
+    switch VAR_SPECIAL_RESULT
+    case 0, PortableBoxLinkOpen
+    case 1, PortableBoxLinkSave
+    case 2, PortableBoxLinkLoad
+    goto PortableBoxLinkExit
+
+PortableBoxLinkSave:
+    setvar VAR_SPECIAL_x8004, 1
+    msgbox_extern 40, 260
+    goto PortableBoxLinkChoosePreset
+PortableBoxLinkLoad:
+    setvar VAR_SPECIAL_x8004, 0
+    msgbox_extern 40, 261
+PortableBoxLinkChoosePreset:
+    touchscreen_menu_hide
+    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    RunNewCommand 12, 1
+    show_prepared_list
+    touchscreen_menu_show
+    closemsg
+    compare VAR_SPECIAL_RESULT, 2
+    goto_if_gt PortableBoxLinkMenu
+    RunNewCommand 13, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 1
+    goto_if_eq PortableBoxLinkSuccess
+    addvar VAR_SPECIAL_RESULT, 267
+    msgbox_extern 40, VAR_SPECIAL_RESULT
+    goto PortableBoxLinkMessage
+PortableBoxLinkSuccess:
+    compare VAR_SPECIAL_x8004, 1
+    goto_if_eq PortableBoxLinkSaved
+    msgbox_extern 40, 266
+    goto PortableBoxLinkMessage
+PortableBoxLinkSaved:
+    msgbox_extern 40, 265
+PortableBoxLinkMessage:
+    wait_button
+    closemsg
+    goto PortableBoxLinkMenu
+
+PortableBoxLinkOpen:
     fade_screen 6, 1, 0, RGB_BLACK
     wait_fade
     scrcmd_158 2
     restore_overworld
     fade_screen 6, 1, 1, RGB_BLACK
     wait_fade
+PortableBoxLinkExit:
     releaseall
     end
 

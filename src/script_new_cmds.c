@@ -24,6 +24,9 @@ BOOL LONG_CALL Pokedex_CheckMonCaughtFlag(const void *pokedex, u16 species);
 u16 LONG_CALL MapToFlySpawn(u16 map);
 void LONG_CALL GetFlyWarpData(u16 spawn, Location *location);
 
+u16 BoxLink_ApplyPreset(SCRIPTCONTEXT *ctx, u16 preset, BOOL saving);
+void BoxLink_AddMenuOptions(SCRIPTCONTEXT *ctx, BOOL presetList);
+
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 {
     u8 sw = ScriptReadByte(ctx);
@@ -104,6 +107,16 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
             VarSet(ctx->fsys, 0x8006, destination.z);
             VarSet(ctx->fsys, 0x8007, destination.direction);
         }
+        break;
+    }
+
+    case 12:
+        BoxLink_AddMenuOptions(ctx, arg0);
+        break;
+
+    case 13: {
+        u16 *result = GetVarPointer(ctx->fsys, arg0);
+        *result = BoxLink_ApplyPreset(ctx, *result, VarGet(ctx->fsys, 0x8004));
         break;
     }
 
