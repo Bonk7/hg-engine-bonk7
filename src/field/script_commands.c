@@ -14,6 +14,7 @@
 
 #include "bag.h"
 #include "battle.h"
+#include "legendary_trials.h"
 #include "message.h"
 #include "pokemon.h"
 #include "rtc.h"
@@ -328,7 +329,7 @@ BOOL ScrCmd_WildBattle(SCRIPTCONTEXT *ctx)
     // Set this var to 1 in DSPRE just prior to starting a forced wild battle to turn it into a Totem battle.
     if (GetScriptVar(0x800B)) {
         SetupAndStartTotemBattle(ctx->taskman, species, level, winFlag, shiny);
-    } else {
+    } else if (!LegendaryTrial_HandleEncounter(ctx, species, level, shiny)) {
         SetupAndStartWildBattle(ctx->taskman, species, level, winFlag, TRUE, shiny);
     }
     return TRUE;

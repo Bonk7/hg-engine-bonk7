@@ -10,6 +10,8 @@
 #define FLAG_ALPH_REGIGIGAS 2608
 #define FLAG_ALPH_ARCEUS 2609
 #define FLAG_HIDE_BATTLE_TYPE_HINTS 2610
+// Persistent flags 2611 through 2627, in legendary profile order.
+#define FLAG_LEGENDARY_TRIAL_FIRST 2611
 #define VAR_DEBUG_SETUP 0x416F
 #define FLAG_CHAMPION_CLEARED 2404
 

@@ -3,6 +3,7 @@
 #include "../include/debug_catalog.h"
 #include "../include/constants/file.h"
 #include "../include/constants/species.h"
+#include "../include/legendary_trials.h"
 #include "../include/repel.h"
 #include "../include/roamer.h"
 #include "../include/script.h"
@@ -129,6 +130,9 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         FieldListMenu_AddOption(menu, 131, 255, 2);
         break;
     }
+
+    case 15:
+        return LegendaryTrial_StartChallenge(ctx);
 
     default:
         break;

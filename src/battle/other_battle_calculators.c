@@ -4562,7 +4562,7 @@ void LONG_CALL HandleTransform(struct BattleStruct *sp)
 
 BOOL LONG_CALL ShouldPreventMonCapture(struct BattleSystem *bsys)
 {
-    return BattleTypeGet(bsys) & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_TOTEM);
+    return BattleTypeGet(bsys) & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_TOTEM | BATTLE_TYPE_LEGENDARY_TRIAL);
 }
 
 BOOL LONG_CALL ov07_02232F60(void *ballData, s32 ballAnim_Unused);

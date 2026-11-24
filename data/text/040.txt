@@ -276,3 +276,5 @@ Battle pace
 Type hints
 Turn type hints off?
 Turn type hints on?
+The legendary Pokémon challenges\nyou at full power!\rDefeat it before you can catch it.
+You won the trial!\rSave now, then approach again\nwhen you are ready to catch it.
