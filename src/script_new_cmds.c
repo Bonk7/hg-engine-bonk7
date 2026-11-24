@@ -21,6 +21,9 @@ u16 Training_EditStats(void *saveData, u16 slot, u16 stat, u16 operation, BOOL e
 
 BOOL LONG_CALL Pokedex_CheckMonCaughtFlag(const void *pokedex, u16 species);
 
+u16 LONG_CALL MapToFlySpawn(u16 map);
+void LONG_CALL GetFlyWarpData(u16 spawn, Location *location);
+
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 {
     u8 sw = ScriptReadByte(ctx);
@@ -88,6 +91,21 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 
     case 10:
         return DebugCatalog_Search(ctx);
+
+    case 11: {
+        u16 *result = GetVarPointer(ctx->fsys, arg0);
+        u16 spawn = MapToFlySpawn(*result);
+        *result = spawn != 0;
+        if (spawn != 0) {
+            Location destination;
+            GetFlyWarpData(spawn, &destination);
+            VarSet(ctx->fsys, 0x8004, destination.mapId);
+            VarSet(ctx->fsys, 0x8005, destination.x);
+            VarSet(ctx->fsys, 0x8006, destination.z);
+            VarSet(ctx->fsys, 0x8007, destination.direction);
+        }
+        break;
+    }
 
     default:
         break;

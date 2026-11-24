@@ -176,7 +176,7 @@ Choose how to start this save.\r
 Normal game\r
 Debug menu\r
 Debug enabled for this save.\nOpen the player menu with X,\fthen press SELECT for debug tools.\r
-What would you like to add?\r
+What would you like to do?\r
 Badge\r
 Item\r
 Pokémon\r
@@ -252,3 +252,5 @@ Keep a Pokémon that can battle\nin your team.\r
 Which team member should\ngo to the Box?\r
 Remove the Mail or Seal Capsule\nbefore boxing that Pokémon.\r
 {STRVAR_1 0, 0, 0}\r
+Warp to town\r
+Choose a destination.

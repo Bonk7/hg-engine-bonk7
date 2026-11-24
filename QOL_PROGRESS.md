@@ -39,3 +39,5 @@ Bij reguliere wilde vangsten vervalt de Pokédex-preview. Na de bijnaamvraag en 
 Cloudbuild geslaagd. In DeSmuME is een wilde Oddish gevangen met een vol team. Alle drie de menuopties zijn gecontroleerd. Bij de wissel op de derde teamplek is gecontroleerd dat Oddish daar stond, het gekozen teamlid in de box stond en de overige vijf teamplekken dezelfde Pokémon behielden.
 
 De cloudbuild met de doorzoekbare debuglijsten slaagde. In DeSmuME is vanuit het spelermenu gezocht op SHINY en PIKA. De zoekresultaten leverden een Shiny Ball in de tas en een Pikachu in het team op.
+
+Op een debugsave opent Warp to town een lijst van alle steden en dorpen in Johto en Kanto, inclusief Cinnabar Island en Indigo Plateau. Je kunt kiezen zonder Fly of een eerder bezoek. De warp gebruikt het bestaande aankomstpunt van Fly. In DeSmuME zijn de aankomstcoördinaten en het geladen veldbeeld voor alle 21 bestemmingen gecontroleerd.

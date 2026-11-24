@@ -31,7 +31,8 @@ DebugMenu:
     menu_item_add 179, 255, 0
     menu_item_add 180, 255, 1
     menu_item_add 181, 255, 2
-    menu_item_add 131, 255, 3
+    menu_item_add 254, 255, 3
+    menu_item_add 131, 255, 4
     menu_exec
     touchscreen_menu_show
     closemsg
@@ -39,8 +40,56 @@ DebugMenu:
     case 0, DebugGiveBadge
     case 1, DebugGiveItem
     case 2, DebugGivePokemon
+    case 3, DebugWarpMenu
 DebugMenuExit:
     releaseall
+    end
+
+// Town names and arrival tiles come from the game's landmark and Fly data.
+.macro debug_warp_destination map
+    buffer_map_sec_name 0, \map
+    add_list_option 253, 255, \map
+.endm
+
+DebugWarpMenu:
+    npc_msg 255
+    touchscreen_menu_hide
+    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    // Johto towns.
+    debug_warp_destination MAP_T20
+    debug_warp_destination MAP_T21
+    debug_warp_destination MAP_T22
+    debug_warp_destination MAP_T23
+    debug_warp_destination MAP_T25
+    debug_warp_destination MAP_T27
+    debug_warp_destination MAP_T26
+    debug_warp_destination MAP_T24
+    debug_warp_destination MAP_T28
+    debug_warp_destination MAP_T30
+    // Kanto towns and Pokémon League.
+    debug_warp_destination MAP_T01
+    debug_warp_destination MAP_T02
+    debug_warp_destination MAP_T03
+    debug_warp_destination MAP_T04
+    debug_warp_destination MAP_T05
+    debug_warp_destination MAP_T06
+    debug_warp_destination MAP_T07
+    debug_warp_destination MAP_T11
+    debug_warp_destination MAP_T08
+    debug_warp_destination MAP_T09
+    debug_warp_destination MAP_T10
+    show_prepared_list
+    touchscreen_menu_show
+    closemsg
+    RunNewCommand 11, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq DebugMenu
+    releaseall
+    fade_screen 6, 1, 0, RGB_BLACK
+    wait_fade
+    warp VAR_SPECIAL_x8004, 0, VAR_SPECIAL_x8005, VAR_SPECIAL_x8006, VAR_SPECIAL_x8007
+    fade_screen 6, 1, 1, RGB_BLACK
+    wait_fade
     end
 
 DebugGiveBadge:
