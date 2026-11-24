@@ -107,6 +107,7 @@ scrdef DebugMenuPlayer
 scrdef AlphResearch
 scrdef CenterServices
 scrdef CaptureReview
+scrdef CenterShinyTrial
 scrdef_end
 
 CenterServices:
@@ -120,11 +121,6 @@ CenterServices:
     menu_item_add 157, 255, 2
     menu_item_add 158, 255, 3
     menu_item_add 164, 255, 4
-    goto_if_set FLAG_GAME_CLEAR, CenterAddShinyTrial
-    goto CenterMenuExec
-CenterAddShinyTrial:
-    menu_item_add 167, 255, 6
-CenterMenuExec:
     menu_item_add 131, 255, 5
     menu_exec
     touchscreen_menu_show
@@ -134,7 +130,6 @@ CenterMenuExec:
     case 2, CenterMoveReminder
     case 3, CenterTeamExp
     case 4, CenterBattleSettings
-    case 6, CenterShinyTrial
     releaseall
     endstd
     end
@@ -1974,6 +1969,15 @@ CenterPaceDone:
     end
 
 CenterShinyTrial:
+    play_se SEQ_SE_DP_SELECT
+    lockall
+    faceplayer
+    goto_if_set FLAG_GAME_CLEAR, CenterShinyTrialOffer
+    npc_msg 167
+    wait_button
+    closemsg
+    goto CenterShinyTrialExit
+CenterShinyTrialOffer:
     npc_msg 168
     yesno VAR_SPECIAL_RESULT
     closemsg
