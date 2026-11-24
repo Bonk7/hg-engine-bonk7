@@ -14,6 +14,10 @@ DexGuide_SelectText_hook:
     tst r3, r2
     beq GuideHelp
 
+    mov r2, #PAD_BUTTON_START
+    tst r3, r2
+    bne TrainingText
+
     ldr r2, =PAD_BUTTON_X
     tst r3, r2
     bne CheckRouteGuide
@@ -52,6 +56,11 @@ EncounterText:
 SpeciesText:
     mov r1, #1
     ldr r4, =856
+    b GuidePage
+
+TrainingText:
+    mov r1, #2
+    ldr r4, =859
 GuidePage:
     mov r0, r5
     bl DexGuide_GetPage

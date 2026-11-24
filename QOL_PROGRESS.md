@@ -43,3 +43,5 @@ De cloudbuild met de doorzoekbare debuglijsten slaagde. In DeSmuME is vanuit het
 Op een debugsave opent Warp to town een lijst van alle steden en dorpen in Johto en Kanto, inclusief Cinnabar Island en Indigo Plateau. Je kunt kiezen zonder Fly of een eerder bezoek. De warp gebruikt het bestaande aankomstpunt van Fly. In DeSmuME zijn de aankomstcoördinaten en het geladen veldbeeld voor alle 21 bestemmingen gecontroleerd.
 
 Op een debugsave geeft L+A tijdens de gevechtskeuze direct een overwinning in reguliere wilde en trainergevechten. Het spel handelt het resultaat af via het gewone overwinningsscript. In DeSmuME gecontroleerd met een wilde Ledyba en Sage Nico in Sprout Tower. In hetzelfde wilde gevecht op een normale save opende de combinatie het normale aanvalsselectiemenu.
+
+Pokédex Training heeft een eigen weergave. Houd SELECT+START ingedrukt wanneer je een soortentry opent. L/R bladert door EV-opbrengst, level-upmoves, beschikbare TM/HM-moves, egg moves en de reguliere tutors in Ilex Forest en de Battle Frontier. De cloudbuild en de gegenereerde tekstbank zijn gevalideerd.

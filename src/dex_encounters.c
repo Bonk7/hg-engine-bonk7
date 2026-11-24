@@ -9,19 +9,19 @@ struct DexGuideEntry {
 #define DEX_AREA_ARCHIVE 133
 #define DEX_ENCOUNTER_INDEX_MEMBER 8603
 
-u16 DexGuide_GetPage(u16 species, BOOL speciesGuide)
+u16 DexGuide_GetPage(u16 species, u16 guide)
 {
     static u16 selectedSpecies;
-    static BOOL selectedGuide;
+    static u16 selectedGuide;
     static u16 page;
     static u32 lastFrame;
     struct DexGuideEntry entry;
-    ReadFromNarcMemberByIdPair(&entry, DEX_AREA_ARCHIVE, DEX_ENCOUNTER_INDEX_MEMBER + speciesGuide,
+    ReadFromNarcMemberByIdPair(&entry, DEX_AREA_ARCHIVE, guide == 2 ? 8606 : DEX_ENCOUNTER_INDEX_MEMBER + guide,
                                (species & 0x7FF) * sizeof(entry), sizeof(entry));
 
-    if (selectedSpecies != species || selectedGuide != speciesGuide) {
+    if (selectedSpecies != species || selectedGuide != guide) {
         selectedSpecies = species;
-        selectedGuide = speciesGuide;
+        selectedGuide = guide;
         page = 0;
         lastFrame = gSystem.frameCounter;
     } else if (lastFrame != gSystem.frameCounter) {

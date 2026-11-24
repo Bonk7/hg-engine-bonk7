@@ -180,7 +180,7 @@ DEXAREA_NARC := $(BUILD_NARC)/dexareas.narc
 DEXAREA_TARGET := $(FILESYS)/a/1/3/3
 DEXAREA_DEPENDENCIES := data/PokedexArea.c include/pokedex_archive_data.h include/constants/pokedex.h $(POKEDEXDATAGEN)
 
-$(DEXAREA_NARC): $(DEXAREA_DEPENDENCIES) $(BUILD)/dex_encounter_index.bin $(BUILD)/dex_species_index.bin $(BUILD)/dex_route_index.bin
+$(DEXAREA_NARC): $(DEXAREA_DEPENDENCIES) $(BUILD)/dex_encounter_index.bin $(BUILD)/dex_species_index.bin $(BUILD)/dex_route_index.bin $(BUILD)/dex_training_index.bin
 	mkdir -p $(BUILD_NARC)
 	rm -rf $(DEXAREA_DIR)
 	mkdir -p $(DEXAREA_DIR)
@@ -188,6 +188,7 @@ $(DEXAREA_NARC): $(DEXAREA_DEPENDENCIES) $(BUILD)/dex_encounter_index.bin $(BUIL
 	cp $(BUILD)/dex_encounter_index.bin $(DEXAREA_DIR)/3_8603
 	cp $(BUILD)/dex_species_index.bin $(DEXAREA_DIR)/3_8604
 	cp $(BUILD)/dex_route_index.bin $(DEXAREA_DIR)/3_8605
+	cp $(BUILD)/dex_training_index.bin $(DEXAREA_DIR)/3_8606
 	$(NARCHIVE) create $@ $(DEXAREA_DIR) -nf
 
 NARC_FILES += $(DEXAREA_NARC)
@@ -927,13 +928,16 @@ MSGDATA_COMPILETIME_DEPENDENCIES += $(DEX_ENCOUNTER_GUIDE_TEXT)
 
 DEX_SPECIES_GUIDE_TEXT := $(BUILD)/rawtext/856.txt
 DEX_SPECIES_GUIDE_INDEX := $(BUILD)/dex_species_index.bin
-$(DEX_SPECIES_GUIDE_TEXT) $(DEX_SPECIES_GUIDE_INDEX) &: scripts/build_dex_species_guide.py scripts/build_dex_evolution_guide.py \
-        data/learnsets/learnsets.json data/text/720.txt data/text/222.txt include/constants/species.h include/constants/moves.h \
+DEX_TRAINING_GUIDE_TEXT := $(BUILD)/rawtext/859.txt
+DEX_TRAINING_GUIDE_INDEX := $(BUILD)/dex_training_index.bin
+$(DEX_SPECIES_GUIDE_TEXT) $(DEX_SPECIES_GUIDE_INDEX) $(DEX_TRAINING_GUIDE_TEXT) $(DEX_TRAINING_GUIDE_INDEX) &: scripts/build_dex_species_guide.py scripts/build_dex_evolution_guide.py \
+        data/learnsets/learnsets.json data/MachineMoves.c src/field/move_tutor.c data/text/720.txt data/text/222.txt include/constants/species.h include/constants/moves.h \
         $(BUILD_NARC)/personal.narc $(BUILD_NARC)/a011.narc $(BUILD)/HiddenAbilityTable.bin
-	$(PYTHON) scripts/build_dex_species_guide.py $(BUILD) $(DEX_SPECIES_GUIDE_TEXT) $(DEX_SPECIES_GUIDE_INDEX)
+	$(PYTHON) scripts/build_dex_species_guide.py $(BUILD) $(DEX_SPECIES_GUIDE_TEXT) $(DEX_SPECIES_GUIDE_INDEX) $(DEX_TRAINING_GUIDE_TEXT) $(DEX_TRAINING_GUIDE_INDEX)
 	$(PYTHON) tools/source/dumptools/validate_text_archive.py $(CHARMAP) $(DEX_SPECIES_GUIDE_TEXT)
+	$(PYTHON) tools/source/dumptools/validate_text_archive.py $(CHARMAP) $(DEX_TRAINING_GUIDE_TEXT)
 
-MSGDATA_COMPILETIME_DEPENDENCIES += $(DEX_SPECIES_GUIDE_TEXT)
+MSGDATA_COMPILETIME_DEPENDENCIES += $(DEX_SPECIES_GUIDE_TEXT) $(DEX_TRAINING_GUIDE_TEXT)
 
 DEX_ROUTE_GUIDE_TEXT := $(BUILD)/rawtext/857.txt
 DEX_ROUTE_GUIDE_INDEX := $(BUILD)/dex_route_index.bin

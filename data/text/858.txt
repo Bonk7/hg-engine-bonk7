@@ -1,1 +1,1 @@
-SELECT: Evo  +X: Wild  +Y: Stats\n+X+Y: Here  L/R: Page\nSELECT+L+R: Bio
+SELECT: Evo  +X: Wild  +Y: Stats\n+START: Training  +X+Y: Here\nL/R: Page  SELECT+L+R: Bio
