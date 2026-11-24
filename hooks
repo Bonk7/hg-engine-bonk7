@@ -699,3 +699,6 @@ arm9 DebugSave_PlayerMenuHook 0203C4A2 3
 0012 CaptureReview_PartyHook 02246F18 3
 0012 CaptureReview_BoxHook 02246FC0 3
 arm9 CaptureReview_FieldHook 02040764 3
+
+# Use the fight menu's PP label object for the effectiveness hint when relevant.
+0012 BattleTypeHint_TextHook 02267602 3

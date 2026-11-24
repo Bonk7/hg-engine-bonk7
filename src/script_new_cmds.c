@@ -27,6 +27,8 @@ void LONG_CALL GetFlyWarpData(u16 spawn, Location *location);
 u16 BoxLink_ApplyPreset(SCRIPTCONTEXT *ctx, u16 preset, BOOL saving);
 void BoxLink_AddMenuOptions(SCRIPTCONTEXT *ctx, BOOL presetList);
 
+void LONG_CALL FieldListMenu_AddOption(void *menu, u16 message, u16 description, u8 value);
+
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 {
     u8 sw = ScriptReadByte(ctx);
@@ -117,6 +119,14 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
     case 13: {
         u16 *result = GetVarPointer(ctx->fsys, arg0);
         *result = BoxLink_ApplyPreset(ctx, *result, VarGet(ctx->fsys, 0x8004));
+        break;
+    }
+
+    case 14: {
+        void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
+        FieldListMenu_AddOption(menu, 274, 255, 0);
+        FieldListMenu_AddOption(menu, 275, 255, 1);
+        FieldListMenu_AddOption(menu, 131, 255, 2);
         break;
     }
 

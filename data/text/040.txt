@@ -162,7 +162,7 @@ You received the Day Care Egg!\r
 There is no Egg waiting at the Day Care.\r
 Make room in your party for the Egg.\r
 Collect your first Egg from\nthe Day Care family on Route 34.\r
-Battle pace\r
+Battle settings\r
 Shorten battle pauses and skip\nroutine animations?\r
 Restore the standard battle pace?\r
 Shiny Trial\r
@@ -271,3 +271,8 @@ A saved Pokémon is missing or\ncould not be uniquely identified.
 Remove Mail or Seal Capsules\nfrom outgoing team members.
 There is no room in your Boxes.
 That team has no Pokémon\nready to battle.
+Battle settings
+Battle pace
+Type hints
+Turn type hints off?
+Turn type hints on?

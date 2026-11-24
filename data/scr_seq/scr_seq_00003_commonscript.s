@@ -133,7 +133,7 @@ CenterMenuExec:
     case 1, VioletTrainingMenu
     case 2, CenterMoveReminder
     case 3, CenterTeamExp
-    case 4, CenterBattlePace
+    case 4, CenterBattleSettings
     case 6, CenterShinyTrial
     releaseall
     endstd
@@ -1923,6 +1923,35 @@ CenterTeamExpDone:
     releaseall
     endstd
     end
+
+CenterBattleSettings:
+    msgbox_extern 40, 273
+    touchscreen_menu_hide
+    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    RunNewCommand 14, 0
+    show_prepared_list
+    touchscreen_menu_show
+    closemsg
+    switch VAR_SPECIAL_RESULT
+    case 0, CenterBattlePace
+    case 1, CenterTypeHints
+    goto CenterPaceDone
+
+CenterTypeHints:
+    goto_if_set FLAG_HIDE_BATTLE_TYPE_HINTS, CenterEnableHints
+    msgbox_extern 40, 276
+    yesno VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterPaceDone
+    setflag FLAG_HIDE_BATTLE_TYPE_HINTS
+    goto CenterPaceDone
+CenterEnableHints:
+    msgbox_extern 40, 277
+    yesno VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterPaceDone
+    clearflag FLAG_HIDE_BATTLE_TYPE_HINTS
+    goto CenterPaceDone
 
 CenterBattlePace:
     goto_if_set FLAG_SHORT_BATTLE_PAUSES, CenterNormalPace
