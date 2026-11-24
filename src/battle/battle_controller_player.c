@@ -4,6 +4,7 @@
 
 #include "constants/battle_message_constants.h"
 #include "constants/battle_script_constants.h"
+#include "constants/buttons.h"
 #include "constants/file.h"
 #include "constants/hold_item_effects.h"
 #include "constants/item.h"
@@ -11,6 +12,8 @@
 
 #include "battle.h"
 #include "overlay.h"
+#include "save.h"
+#include "system.h"
 
 #ifdef DEBUG_BATTLE_SCENARIOS
 #include "test_battle.h"
@@ -107,6 +110,17 @@ BOOL LONG_CALL BattleContext_Main(struct BattleSystem *bsys, struct BattleStruct
         ctx->server_seq_no = CONTROLLER_COMMAND_44;
     }
 #endif
+
+    if (ctx->server_seq_no == CONTROLLER_COMMAND_SELECTION_SCREEN_INPUT && !ctx->fight_end_flag) {
+        const int shortcut = PAD_BUTTON_L | PAD_BUTTON_A;
+        if ((gSystem.heldKeysRaw & shortcut) == shortcut && (gSystem.newKeysRaw & shortcut)
+            && !BattleSystem_GetBattleOutcomeFlags(bsys)
+            && !(BattleTypeGet(bsys) & (BATTLE_TYPE_LINK | BATTLE_TYPE_TUTORIAL | BATTLE_TYPE_SAFARI
+                | BATTLE_TYPE_BUG_CONTEST | BATTLE_TYPE_PAL_PARK))
+            && CheckScriptFlag(FLAG_DEBUG_MENU_ENABLED)) {
+            BattleSystem_SetBattleOutcomeFlags(bsys, BATTLE_OUTCOME_WIN);
+        }
+    }
 
     if (!ctx->fight_end_flag) {
         if (BattleSystem_GetBattleOutcomeFlags(bsys) && !(BattleSystem_GetBattleOutcomeFlags(bsys) & 0x40)) {
