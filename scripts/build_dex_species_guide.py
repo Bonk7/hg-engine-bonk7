@@ -40,7 +40,7 @@ def profile_pages(entry, hidden, abilities, items):
     return pages
 
 
-def training_pages(entry, learnset, moves, move_ids, machines, tutors):
+def training_pages(species, entry, learnset, moves, move_ids, machines, tutors):
     evs = struct.unpack_from("<H", entry, 10)[0]
     yields = [f"{name} {(evs >> (i * 2)) & 3}" for i, name in enumerate(("HP", "Atk", "Def", "Spe", "SpA", "SpD")) if (evs >> (i * 2)) & 3]
     pages = [["Training", "EV yield: " + (", ".join(yields) or "None")]]
@@ -59,6 +59,18 @@ def training_pages(entry, learnset, moves, move_ids, machines, tutors):
     tutor_moves = set(learnset.get("TutorMoves", ()))
     tutor_pages = [["Tutor: " + moves[move_ids[move]], location, detail]
                    for move, (location, detail) in tutors.items() if move in tutor_moves]
+    # Blackthorn's separate tutors use the species and type checks in the map script.
+    blackthorn_moves = {
+        "MOVE_BLAST_BURN": {6, 157, 257, 392},
+        "MOVE_HYDRO_CANNON": {9, 160, 260, 395},
+        "MOVE_FRENZY_PLANT": {3, 154, 254, 389},
+    }
+    for move, eligible in blackthorn_moves.items():
+        if species in eligible:
+            tutor_pages.append(["Tutor: " + moves[move_ids[move]], "Blackthorn Move Tutor House", "Max friendship required"])
+    if TYPES.index("Dragon") in entry[6:8]:
+        tutor_pages.append(["Tutor: " + moves[move_ids["MOVE_DRACO_METEOR"]],
+                            "Blackthorn Move Tutor House", "Max friendship required"])
     pages.extend(tutor_pages or [["Tutor moves", "None"]])
     return pages
 
@@ -108,7 +120,7 @@ def main():
         if 0 < species < len(pokemon):
             profiles.append(profile_pages(pokemon[species], hidden[species] if species < len(hidden) else 0,
                                           abilities, items))
-            training.append(training_pages(pokemon[species], learnsets_by_id.get(species, {}),
+            training.append(training_pages(species, pokemon[species], learnsets_by_id.get(species, {}),
                                            moves, move_ids, machines, tutors))
         else:
             profiles.append([["No species data."]])
