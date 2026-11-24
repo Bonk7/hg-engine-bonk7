@@ -2,8 +2,10 @@
 #include "../include/capture_review.h"
 #include "../include/debug_catalog.h"
 #include "../include/constants/file.h"
+#include "../include/constants/item.h"
 #include "../include/constants/species.h"
 #include "../include/legendary_trials.h"
+#include "../include/message.h"
 #include "../include/repel.h"
 #include "../include/roamer.h"
 #include "../include/script.h"
@@ -15,6 +17,30 @@
 #define SCRIPT_NEW_CMD_TRAIN_PARTY_MEMBER 2
 #define SCRIPT_NEW_CMD_EDIT_STATS 3
 #define SCRIPT_NEW_CMD_COUNT_MISSING_DEX 4
+
+enum {
+    MEGA_STONES_PER_PAGE = 16,
+    MEGA_STONE_PREVIOUS_PAGE = 240,
+    MEGA_STONE_NEXT_PAGE = 241,
+    MEGA_STONE_BACK = 242,
+};
+
+static u16 MegaStone_GetByIndex(u16 index)
+{
+#ifdef MEGA_EVOLUTIONS
+    static const u16 stones[] = {
+#define MEGA_STONE(species, item, megaForm, base) item,
+#define MEGA_STONE_FORM(species, item, megaForm, base)
+#include "mega_stones.inc"
+#undef MEGA_STONE_FORM
+#undef MEGA_STONE
+    };
+    if (index < NELEMS(stones)) {
+        return stones[index];
+    }
+#endif
+    return ITEM_NONE;
+}
 
 u16 Training_GetTargetLevel(void *saveData);
 BOOL Training_TrainPartyMember(void *saveData, u16 slot);
@@ -133,6 +159,40 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 
     case 15:
         return LegendaryTrial_StartChallenge(ctx);
+
+    case 16: {
+        void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
+        MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
+        u16 firstStone = VarGet(ctx->fsys, arg0) * MEGA_STONES_PER_PAGE;
+        MsgData *names = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, 222, HEAPID_FIELD1);
+        for (u16 index = 0; names != NULL && index < MEGA_STONES_PER_PAGE; index++) {
+            u16 item = MegaStone_GetByIndex(firstStone + index);
+            if (item == ITEM_NONE) {
+                break;
+            }
+            ReadMsgDataIntoString(names, item, format->buffer);
+            SetStringAsPlaceholder(format, 0, format->buffer, NULL);
+            FieldListMenu_AddOption(menu, 253, 255, index);
+        }
+        if (names != NULL) {
+            DestroyMsgData(names);
+        }
+        if (firstStone != 0) {
+            FieldListMenu_AddOption(menu, 196, 255, MEGA_STONE_PREVIOUS_PAGE);
+        }
+        if (MegaStone_GetByIndex(firstStone + MEGA_STONES_PER_PAGE) != ITEM_NONE) {
+            FieldListMenu_AddOption(menu, 197, 255, MEGA_STONE_NEXT_PAGE);
+        }
+        FieldListMenu_AddOption(menu, 131, 255, MEGA_STONE_BACK);
+        break;
+    }
+
+    case 17: {
+        u16 *selection = GetVarPointer(ctx->fsys, arg0);
+        u16 firstStone = VarGet(ctx->fsys, 0x8004) * MEGA_STONES_PER_PAGE;
+        *selection = *selection < MEGA_STONES_PER_PAGE ? MegaStone_GetByIndex(firstStone + *selection) : ITEM_NONE;
+        break;
+    }
 
     default:
         break;

@@ -278,3 +278,12 @@ Turn type hints off?
 Turn type hints on?
 The legendary Pokémon challenges\nyou at full power!\rDefeat it before you can catch it.
 You won the trial!\rSave now, then approach again\nwhen you are ready to catch it.
+Mega Evolution
+You received a Mega Ring!\rGive a Pokémon its own Mega Stone.\rThen tap Mega Evolution before\nchoosing an attack.\rYou can Mega Evolve one Pokémon per\nbattle.
+Choose a Mega Stone. Each one\ncosts ¥3,000.
+Buy {STRVAR_1 0, 0, 0} for ¥3,000?
+You received {STRVAR_1 0, 0, 0}.
+You need ¥3,000 for a Mega Stone.
+The Pokémon must hold its own Mega\nStone. Tap Mega Evolution in battle.\rRayquaza needs to know Dragon\nAscent instead of holding a stone.
+How to Mega Evolve
+Browse Mega Stones

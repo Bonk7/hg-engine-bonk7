@@ -121,7 +121,8 @@ CenterServices:
     menu_item_add 157, 255, 2
     menu_item_add 158, 255, 3
     menu_item_add 164, 255, 4
-    menu_item_add 131, 255, 5
+    menu_item_add 280, 255, 5
+    menu_item_add 131, 255, 6
     menu_exec
     touchscreen_menu_show
     closemsg
@@ -130,6 +131,7 @@ CenterServices:
     case 2, CenterMoveReminder
     case 3, CenterTeamExp
     case 4, CenterBattleSettings
+    case 5, CenterMegaEvolution
     releaseall
     endstd
     end
@@ -2057,3 +2059,84 @@ CenterShinyTrialExit:
 #include "alph_research.inc"
 
 .include "data/scr_seq/capture_review.inc"
+
+CenterMegaEvolution:
+    hasitem ITEM_MEGA_RING, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterMegaRingOwned
+    giveitem ITEM_MEGA_RING, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq VioletBoxLinkNoSpace
+    setflag FLAG_MEGA_EVOLUTION_ENABLED
+    play_fanfare SEQ_ME_KEYITEM
+    msgbox_extern 40, 281
+    wait_fanfare
+    wait_button
+    closemsg
+CenterMegaRingOwned:
+    setflag FLAG_MEGA_EVOLUTION_ENABLED
+    touchscreen_menu_hide
+    menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    menu_item_add 288, 255, 0
+    menu_item_add 287, 255, 1
+    menu_item_add 131, 255, 2
+    menu_exec
+    touchscreen_menu_show
+    switch VAR_SPECIAL_RESULT
+    case 0, CenterMegaStones
+    case 1, CenterMegaHelp
+    goto VioletTrainingExit
+
+CenterMegaHelp:
+    msgbox_extern 40, 286
+    wait_button
+    closemsg
+    goto CenterMegaRingOwned
+
+CenterMegaStones:
+    setvar VAR_SPECIAL_x8004, 0
+CenterMegaStonePage:
+    msgbox_extern 40, 282
+    touchscreen_menu_hide
+    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    RunNewCommand 16, VAR_SPECIAL_x8004
+    show_prepared_list
+    touchscreen_menu_show
+    closemsg
+    switch VAR_SPECIAL_RESULT
+    case 240, CenterMegaPreviousPage
+    case 241, CenterMegaNextPage
+    case 242, CenterMegaRingOwned
+    case 65534, CenterMegaRingOwned
+    RunNewCommand 17, VAR_SPECIAL_RESULT
+    copyvar VAR_SPECIAL_x8005, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_x8005, 0
+    goto_if_eq CenterMegaRingOwned
+    buffer_item_name 0, VAR_SPECIAL_x8005
+    msgbox_extern 40, 283
+    yesno VAR_SPECIAL_RESULT
+    closemsg
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterMegaStonePage
+    hasenoughmoneyimmediate VAR_SPECIAL_RESULT, 3000
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterMegaNoMoney
+    giveitem VAR_SPECIAL_x8005, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq VioletBoxLinkNoSpace
+    submoneyimmediate 3000
+    buffer_item_name 0, VAR_SPECIAL_x8005
+    msgbox_extern 40, 284
+    goto CenterMegaStoneDone
+CenterMegaNoMoney:
+    msgbox_extern 40, 285
+CenterMegaStoneDone:
+    wait_button
+    closemsg
+    goto CenterMegaStonePage
+CenterMegaPreviousPage:
+    subvar VAR_SPECIAL_x8004, 1
+    goto CenterMegaStonePage
+CenterMegaNextPage:
+    addvar VAR_SPECIAL_x8004, 1
+    goto CenterMegaStonePage
