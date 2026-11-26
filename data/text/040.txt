@@ -292,3 +292,32 @@ You have come a long way since you\nleft New Bark Town!\rI found a stone that re
 Climb to the top of Sprout Tower\nand win Sage Li’s battle.\rThen come back and tell me\nwhat you saw!
 Now you have seen what a strong bond\ncan do. Take these for your journey!\rYou received the Mega Ring\nand Beedrillite!
 Before we battle, see Professor Elm\nat the entrance to Sprout Tower.\rHe is studying a power that\nyou will see in this Gym.
+Take this Mega Quest Log.\nYou can check it from your Bag.
+Active & undiscovered\nR: Sort by {STRVAR_1 0, 0, 0}
+Completed\nR: Sort by {STRVAR_1 0, 0, 0}
+Quest name
+Area
+Reward
+Show completed
+Show active quests
+Sort quests by…
+No quests on this tab.
+Elm’s discovery
+Grove supplies
+To be discovered · Violet City
+To be discovered · Azalea Town
+{COLOR 3}Elm’s discovery · In progress{COLOR 0}
+{COLOR 3}Grove supplies · In progress{COLOR 0}
+{COLOR 2}Elm’s discovery · Completed{COLOR 0}
+{COLOR 2}Grove supplies · Completed{COLOR 0}
+Violet City. Visit the entrance\nto Sprout Tower.
+Azalea Town. Ask about the grove\nat the Pokémon Center.
+Violet City · Beedrillite\nDefeat Sage Li and report to Elm.
+Azalea Town · Heracronite\nBring an Oran Berry for the grove.
+I tend the Heracross grove nearby.\nOne of them could use an Oran Berry.\rBring me one and you can keep\nthe stone I found in the grove.
+Give me one Oran Berry for Heracross?
+Thanks for helping our Heracross!\nHere is the Heracronite I promised.
+Heracross has perked up.\nThanks for helping the grove!
+Violet City · Beedrillite\nYou completed Elm’s trial.
+Azalea Town · Heracronite\nYou helped the Heracross grove.
+You found {STRVAR_1 0, 0, 0}!

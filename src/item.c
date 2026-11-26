@@ -30,6 +30,8 @@ void ItemMenuUseFunc_RotomCatalog(struct ItemMenuUseData *data, const struct Ite
 
 // Script 2075 opens the native Move Pokémon app once the Bag has closed.
 #define PORTABLE_BOX_SCRIPT 2075
+#define MEGA_QUEST_LOG_SCRIPT 2084
+u32 gMegaQuestLogList __attribute__((section(".data"))) = FALSE;
 #define START_MENU_STATE_RESTORE_FIELD_FOR_TASK 12
 
 void LONG_CALL StartScriptFromMenu(TaskManager *taskManager, u16 script, void *object);
@@ -61,6 +63,21 @@ static void ItemMenuUseFunc_BoxLink(struct ItemMenuUseData *data, const struct I
     menu->state = START_MENU_STATE_RESTORE_FIELD_FOR_TASK;
 }
 
+static BOOL ItemTask_OpenMegaQuestLog(TaskManager *taskManager)
+{
+    StartScriptFromMenu(taskManager, MEGA_QUEST_LOG_SCRIPT, NULL);
+    return FALSE;
+}
+
+static void ItemMenuUseFunc_MegaQuestLog(struct ItemMenuUseData *data, const struct ItemCheckUseData *check UNUSED)
+{
+    struct BagViewAppWork *menu = data->taskManager->env;
+    FieldSystem_LoadFieldOverlay(data->taskManager->fieldSystem);
+    menu->atexit_TaskFunc = ItemTask_OpenMegaQuestLog;
+    menu->atexit_TaskEnv = NULL;
+    menu->state = START_MENU_STATE_RESTORE_FIELD_FOR_TASK;
+}
+
 const struct ItemUseFuncDat sNewItemFieldUseFuncs[] = {
     { ItemMenuUseFunc_RevealGlass, ItemFieldUseFunc_RevealGlass, NULL },
     { ItemMenuUseFunc_DNASplicers, ItemFieldUseFunc_DNASplicers, NULL },
@@ -69,6 +86,7 @@ const struct ItemUseFuncDat sNewItemFieldUseFuncs[] = {
     { ItemMenuUseFunc_Nectar, NULL, NULL },
     { ItemMenuUseFunc_RotomCatalog, NULL, NULL },
     { ItemMenuUseFunc_BoxLink, NULL, ItemCheckUseFunc_BoxLink },
+    { ItemMenuUseFunc_MegaQuestLog, NULL, NULL },
 };
 
 extern const struct ItemUseFuncDat sItemFieldUseFuncs[NUM_VANILLA_FIELD_USE_FUNCS];

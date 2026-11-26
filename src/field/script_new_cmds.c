@@ -1,15 +1,16 @@
-#include "../include/config.h"
-#include "../include/capture_review.h"
-#include "../include/debug_catalog.h"
-#include "../include/constants/file.h"
-#include "../include/constants/item.h"
-#include "../include/constants/species.h"
-#include "../include/legendary_trials.h"
-#include "../include/message.h"
-#include "../include/repel.h"
-#include "../include/roamer.h"
-#include "../include/script.h"
-#include "../include/types.h"
+#include "config.h"
+#include "capture_review.h"
+#include "debug_catalog.h"
+#include "constants/file.h"
+#include "constants/item.h"
+#include "constants/species.h"
+#include "legendary_trials.h"
+#include "constants/save.h"
+#include "message.h"
+#include "repel.h"
+#include "roamer.h"
+#include "script.h"
+#include "types.h"
 
 #define SCRIPT_NEW_CMD_REPEL_USE 0
 
@@ -25,7 +26,7 @@ enum {
     MEGA_STONE_BACK = 242,
 };
 
-static u16 MegaStone_GetByIndex(u16 index)
+static u16 MegaShop_GetStoneByIndex(u16 index)
 {
 #ifdef MEGA_EVOLUTIONS
     static const u16 stones[] = {
@@ -35,8 +36,21 @@ static u16 MegaStone_GetByIndex(u16 index)
 #undef MEGA_STONE_FORM
 #undef MEGA_STONE
     };
-    if (index < NELEMS(stones)) {
-        return stones[index];
+    for (int i = 0; i < NELEMS(stones); i++) {
+        switch (stones[i]) {
+        case ITEM_BEEDRILLITE:
+        case ITEM_HERACRONITE:
+        case ITEM_STEELIXITE:
+        case ITEM_PIDGEOTITE:
+        case ITEM_AMPHAROSITE:
+            continue;
+        default:
+            if (index == 0) {
+                return stones[i];
+            }
+            index--;
+            break;
+        }
     }
 #endif
     return ITEM_NONE;
@@ -55,6 +69,56 @@ u16 BoxLink_ApplyPreset(SCRIPTCONTEXT *ctx, u16 preset, BOOL saving);
 void BoxLink_AddMenuOptions(SCRIPTCONTEXT *ctx, BOOL presetList);
 
 void LONG_CALL FieldListMenu_AddOption(void *menu, u16 message, u16 description, u8 value);
+
+extern u32 gMegaQuestLogList;
+
+static const struct MegaQuestEntry {
+    u16 started;
+    u16 completed;
+    u16 title[3];
+    u16 details[3];
+} sMegaQuests[] = {
+    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}},
+    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}},
+};
+
+static int MegaQuestStatus(const struct MegaQuestEntry *entry)
+{
+    if (CheckScriptFlag(entry->completed)) {
+        return 2;
+    }
+    return CheckScriptFlag(entry->started) != 0;
+}
+
+static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
+{
+    void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
+    MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
+    u16 sort = VarGet(ctx->fsys, 0x8005);
+    MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, 40, HEAPID_FIELD1);
+    if (texts != NULL) {
+        ReadMsgDataIntoString(texts, 297 + sort, format->buffer);
+        SetStringAsPlaceholder(format, 0, format->buffer, NULL);
+        DestroyMsgData(texts);
+    }
+    FieldListMenu_AddOption(menu, completed ? 301 : 300, 255, 241);
+    BOOL found = FALSE;
+    // Area order is Azalea then Violet. Name and reward put Elm first.
+    for (int i = 0; i < NELEMS(sMegaQuests); i++) {
+        int index = sort == 1 ? NELEMS(sMegaQuests) - i - 1 : i;
+        const struct MegaQuestEntry *entry = &sMegaQuests[index];
+        int state = MegaQuestStatus(entry);
+        if ((state == 2) == completed) {
+            FieldListMenu_AddOption(menu, entry->title[state], 255, index);
+            found = TRUE;
+        }
+    }
+    if (!found) {
+        FieldListMenu_AddOption(menu, 303, 255, 242);
+    }
+    FieldListMenu_AddOption(menu, 131, 255, 243);
+    gMegaQuestLogList = TRUE;
+}
 
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 {
@@ -166,7 +230,7 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         u16 firstStone = VarGet(ctx->fsys, arg0) * MEGA_STONES_PER_PAGE;
         MsgData *names = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, 222, HEAPID_FIELD1);
         for (u16 index = 0; names != NULL && index < MEGA_STONES_PER_PAGE; index++) {
-            u16 item = MegaStone_GetByIndex(firstStone + index);
+            u16 item = MegaShop_GetStoneByIndex(firstStone + index);
             if (item == ITEM_NONE) {
                 break;
             }
@@ -180,7 +244,7 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         if (firstStone != 0) {
             FieldListMenu_AddOption(menu, 196, 255, MEGA_STONE_PREVIOUS_PAGE);
         }
-        if (MegaStone_GetByIndex(firstStone + MEGA_STONES_PER_PAGE) != ITEM_NONE) {
+        if (MegaShop_GetStoneByIndex(firstStone + MEGA_STONES_PER_PAGE) != ITEM_NONE) {
             FieldListMenu_AddOption(menu, 197, 255, MEGA_STONE_NEXT_PAGE);
         }
         FieldListMenu_AddOption(menu, 131, 255, MEGA_STONE_BACK);
@@ -190,7 +254,24 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
     case 17: {
         u16 *selection = GetVarPointer(ctx->fsys, arg0);
         u16 firstStone = VarGet(ctx->fsys, 0x8004) * MEGA_STONES_PER_PAGE;
-        *selection = *selection < MEGA_STONES_PER_PAGE ? MegaStone_GetByIndex(firstStone + *selection) : ITEM_NONE;
+        *selection = *selection < MEGA_STONES_PER_PAGE ? MegaShop_GetStoneByIndex(firstStone + *selection) : ITEM_NONE;
+        break;
+    }
+
+    case 18:
+        MegaQuestLog_Fill(ctx, VarGet(ctx->fsys, arg0));
+        break;
+
+    case 19:
+        gMegaQuestLogList = FALSE;
+        break;
+
+    case 20: {
+        u16 *selection = GetVarPointer(ctx->fsys, arg0);
+        if (*selection < NELEMS(sMegaQuests)) {
+            const struct MegaQuestEntry *entry = &sMegaQuests[*selection];
+            *selection = entry->details[MegaQuestStatus(entry)];
+        }
         break;
     }
 

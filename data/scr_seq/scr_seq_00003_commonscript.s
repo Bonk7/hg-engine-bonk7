@@ -110,6 +110,11 @@ scrdef CaptureReview
 scrdef CenterShinyTrial
 scrdef ElmMegaResearch
 scrdef FalknerMegaGate
+scrdef MegaQuestLog
+scrdef MegaGroveResearch
+scrdef MegaPickupSteelixite
+scrdef MegaPickupPidgeotite
+scrdef MegaPickupAmpharosite
 scrdef_end
 
 CenterServices:
@@ -2139,6 +2144,16 @@ CenterMegaNextPage:
 ElmMegaResearch:
     lockall
     faceplayer
+    hasitem ITEM_MEGA_QUEST_LOG, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne ElmMegaHasLog
+    giveitem ITEM_MEGA_QUEST_LOG, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq VioletBoxLinkNoSpace
+    msgbox_extern 40, 294
+    wait_button
+    closemsg
+ElmMegaHasLog:
     goto_if_set FLAG_ELM_MEGA_COMPLETE, ElmMegaAlreadyDone
     goto_if_set FLAG_ELM_MEGA_STARTED, ElmMegaCheckTrial
     setflag FLAG_ELM_MEGA_STARTED
@@ -2182,3 +2197,5 @@ FalknerMegaGate:
     releaseall
     endstd
     end
+
+#include "mega_quest_log.inc"

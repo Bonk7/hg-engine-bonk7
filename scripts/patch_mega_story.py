@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 
-def add_elm(path):
+def add_quest_object(path, x, z, sprite, script, flag=0, local_id=None):
     events = path.read_bytes()
     count_offset = 4 + 20 * struct.unpack_from("<I", events)[0]
     count = struct.unpack_from("<I", events, count_offset)[0]
@@ -13,15 +13,18 @@ def add_elm(path):
     layout = struct.Struct("<14HI")
     end = start + count * layout.size
     objects = list(layout.iter_unpack(events[start:end]))
-    if any(obj[5] == 2082 for obj in objects):
+    if any(obj[5] == script for obj in objects):
         return
-    x, z = 14, 25
     if any(obj[12:14] == (x, z) for obj in objects):
-        raise ValueError("Elm's position in Sprout Tower is occupied")
-    elm = layout.pack(max(obj[0] for obj in objects) + 1, 99, 15, 0, 0, 2082,
+        raise ValueError(f"{path}: quest NPC position ({x}, {z}) is occupied")
+    if local_id is None:
+        local_id = max(obj[0] for obj in objects) + 1
+    if any(obj[0] == local_id for obj in objects):
+        raise ValueError(f"{path}: quest object ID {local_id} is occupied")
+    new_object = layout.pack(local_id, sprite, 15, 0, flag, script,
                       1, 0, 0, 0, 0, 0, x, z, 0)
     path.write_bytes(events[:count_offset] + struct.pack("<I", count + 1)
-                     + events[start:end] + elm + events[end:])
+                     + events[start:end] + new_object + events[end:])
 
 
 def require_research(path, wrapper_path):
@@ -42,7 +45,14 @@ if __name__ == "__main__":
     operation, *arguments = sys.argv[1:]
     paths = list(map(Path, arguments))
     if operation == "elm":
-        add_elm(*paths)
+        add_quest_object(*paths, 14, 25, 99, 2082)
+    elif operation == "grove":
+        add_quest_object(*paths, 12, 14, 325, 2085)
+    elif operation == "early-stones":
+        union_cave, tower, route_center = paths
+        add_quest_object(union_cave, 27, 31, 87, 2086, 2632, 30)
+        add_quest_object(tower, 18, 8, 87, 2087, 2633, 30)
+        add_quest_object(route_center, 12, 14, 87, 2088, 2634, 30)
     elif operation == "gym":
         require_research(*paths)
     else:

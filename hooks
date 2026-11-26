@@ -702,3 +702,6 @@ arm9 CaptureReview_FieldHook 02040764 3
 
 # Use the fight menu's PP label object for the effectiveness hint when relevant.
 0012 BattleTypeHint_TextHook 02267602 3
+
+# R opens the sort menu while the Mega Quest Log is displaying its list.
+arm9 MegaQuestLog_ListInputHook 02001338 3
