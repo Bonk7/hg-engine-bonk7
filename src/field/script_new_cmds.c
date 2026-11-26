@@ -123,34 +123,29 @@ static void MegaQuestLog_DrawProgress(SCRIPTCONTEXT *ctx)
     if (texts == NULL) {
         return;
     }
-    int count = MegaQuestCompletedCount();
-    int progress = count - MEGA_QUEST_MILESTONE_INTERVAL * VarGet(ctx->fsys, VAR_MEGA_QUEST_MILESTONES_CLAIMED);
-    if (progress < 0) {
-        progress = 0;
-    } else if (progress > MEGA_QUEST_MILESTONE_INTERVAL) {
-        progress = MEGA_QUEST_MILESTONE_INTERVAL;
-    }
+    int fillWidth = 118 * MegaQuestCompletedCount() / NELEMS(sMegaQuests);
 
     ReadMsgDataIntoString(texts, 297 + VarGet(ctx->fsys, 0x8005), format->buffer);
     SetStringAsPlaceholder(format, 0, format->buffer, NULL);
     AddWindowParameterized(ctx->fsys->bg_config, &sMegaQuestProgress, 3, 1, 18, 29, 5, 13, 640);
     FillWindowPixelBuffer(&sMegaQuestProgress, 15);
-    for (int i = 0; i < MEGA_QUEST_MILESTONE_INTERVAL; i++) {
-        int x = 8 + i * 24;
-        FillWindowPixelRect(&sMegaQuestProgress, 2, x, 28, 22, 8);
-        FillWindowPixelRect(&sMegaQuestProgress, i < progress ? 7 : 15, x + 1, 29, 20, 6);
+    FillWindowPixelRect(&sMegaQuestProgress, 2, 8, 22, 120, 11);
+    FillWindowPixelRect(&sMegaQuestProgress, 15, 9, 23, 118, 9);
+    if (fillWidth != 0) {
+        FillWindowPixelRect(&sMegaQuestProgress, 7, 9, 23, fillWidth, 9);
+        FillWindowPixelRect(&sMegaQuestProgress, 8, 9, 23, fillWidth, 2);
     }
     FillWindowPixelRect(&sMegaQuestProgress, 2, 137, 4, 1, 32);
 
     String *line = String_New(64, HEAPID_FIELD1);
     String *expanded = String_New(64, HEAPID_FIELD1);
-    const u16 messages[] = {295, 340, 341, 342};
+    const u16 messages[] = {295, 341, 342};
     for (u32 i = 0; i < NELEMS(messages); i++) {
         ReadMsgDataIntoString(texts, messages[i], line);
         StringExpandPlaceholders(format, expanded, line);
         AddTextPrinterParameterizedWithColor(&sMegaQuestProgress, 1, expanded,
-                                             i < 2 ? 8 : 146, (i & 1) ? 14 : 2,
-                                             0xFF, i == 2 ? 0x07080F : 0x01020F, NULL);
+                                             i == 0 ? 8 : 146, i == 2 ? 17 : 4,
+                                             0xFF, i == 1 ? 0x07080F : 0x01020F, NULL);
     }
     String_Delete(expanded);
     String_Delete(line);
@@ -163,7 +158,9 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
 {
     void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
     u16 sort = VarGet(ctx->fsys, 0x8005);
-    VarSet(ctx->fsys, 0x8006, MegaQuestCompletedCount());
+    int count = MegaQuestCompletedCount();
+    VarSet(ctx->fsys, 0x8006, count);
+    VarSet(ctx->fsys, 0x8008, 100 * count / NELEMS(sMegaQuests));
     VarSet(ctx->fsys, 0x8007, NELEMS(sMegaQuests));
     FieldListMenu_AddOption(menu, completed ? 301 : 300, 255, 241);
     u8 order[NELEMS(sMegaQuests)];
@@ -371,7 +368,7 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         u16 selection = VarGet(ctx->fsys, arg0);
         if (selection < NELEMS(sMegaQuests)) {
             const struct MegaQuestEntry *entry = &sMegaQuests[selection];
-            MegaQuestShowMessage(ctx, selection < 2 ? 40 : 860, entry->details[MegaQuestStatus(entry)]);
+            MegaQuestShowMessage(ctx, selection < 2 ? 40 : 860, entry->details[MegaQuestStatus(entry) ? 2 : 0]);
         }
         break;
     }

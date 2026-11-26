@@ -9,7 +9,8 @@ MegaQuestLogRefresh:
     RunNewCommand 18, VAR_SPECIAL_x8004
     buffer_int 1, VAR_SPECIAL_x8006
     buffer_int 2, VAR_SPECIAL_x8007
-    RunNewCommand 26, VAR_SPECIAL_x8004
+    buffer_int 3, VAR_SPECIAL_x8008
+    RunNewCommand 26, 0
     show_prepared_list
     RunNewCommand 19, 0
     touchscreen_menu_show

@@ -293,7 +293,7 @@ Climb to the top of Sprout Tower\nand win Sage Li’s battle.\rThen come back an
 Now you have seen what a strong bond\ncan do. Take these for your journey!\rYou received the Mega Ring\nand Beedrillite!
 Before we battle, see Professor Elm\nat the entrance to Sprout Tower.\rHe is studying a power that\nyou will see in this Gym.
 Take this Mega Quest Log.\nYou can check it from your Bag.
-Quests done   {STRVAR_1 52, 1, 0}/{STRVAR_1 52, 2, 0}
+Done {STRVAR_1 52, 1, 0}/{STRVAR_1 52, 2, 0}  {STRVAR_1 52, 3, 0}%
 Quests done   {STRVAR_1 52, 1, 0}/{STRVAR_1 52, 2, 0}
 Quest name
 Area
@@ -318,8 +318,8 @@ I tend the Heracross grove nearby.\nOne of them could use an Oran Berry.\rBring 
 Give me one Oran Berry for Heracross?
 Thanks for helping our Heracross!\nHere is the Heracronite I promised.
 Heracross has perked up.\nThanks for helping the grove!
-Violet City · Beedrillite\nYou completed Elm’s trial.
-Azalea Town · Heracronite\nYou helped the Heracross grove.
+Reward: Beedrillite\nDefeat Sage Li and report to Elm.
+Reward: Heracronite\nBring an Oran Berry for the grove.
 You found {STRVAR_1 0, 0, 0}!
 Milestone rewards
 □□□□□
@@ -328,7 +328,7 @@ Milestone rewards
 {COLOR 2}■■■{COLOR 0}□□
 {COLOR 2}■■■■{COLOR 0}□
 {COLOR 2}■■■■■{COLOR 0}
-{STRVAR_1 52, 0, 0} quests completed.\nNext reward at {STRVAR_1 52, 1, 0} completed quests.
+{STRVAR_1 52, 0, 0} quests completed.\nNext reward at {STRVAR_1 52, 1, 0} completed quests.\rEarn items every 5 quests.\nEvery 10 adds a Shiny Ball.
 {STRVAR_1 52, 2, 0} quests milestone reached!\nReceived {STRVAR_1 52, 1, 0} × {STRVAR_1 0, 0, 0}!
 {STRVAR_1 52, 2, 0} quests milestone reached!\nReceived {STRVAR_1 52, 1, 0} × {STRVAR_1 0, 0, 0}!\rBonus reward: 1 Shiny Ball!
 {STRVAR_1 0, 0, 0}

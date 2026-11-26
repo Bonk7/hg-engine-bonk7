@@ -17,8 +17,10 @@ def define_values(path, prefix):
     )}
 
 
-def wrap(text):
+def wrap(text, heading=None):
     lines = textwrap.wrap(text, width=36, break_long_words=False, break_on_hyphens=False)
+    if heading is not None:
+        lines.insert(0, heading)
     return "".join(line + (r"\r" if index % 2 else r"\n")
                    for index, line in enumerate(lines))[:-2]
 
