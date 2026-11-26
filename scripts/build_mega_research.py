@@ -71,13 +71,21 @@ def main(output):
         elif kind == "show":
             arg = "SPECIES_" + arg
         elif kind == "battle":
-            if trainer_id in occupied:
-                raise ValueError(f"Trainer slot {trainer_id} is already occupied")
             level, *partners = arg.split(",")
+            level, separator, assigned_id = level.partition(":")
+            # Keep the original trainer IDs stable when other quests become battles.
+            if separator:
+                battle_id = int(assigned_id)
+            else:
+                battle_id = trainer_id
+                trainer_id += 1
+            if battle_id in occupied:
+                raise ValueError(f"Trainer slot {battle_id} is already occupied")
+            occupied.add(battle_id)
             members = [(sp, "NONE", int(level) - 2) for sp in partners] + [(stones[stone], stone, int(level))]
             party = "\n".join(f"            {{.ivs = 90, .level = {lv}, .species = SPECIES_{sp}, .item = ITEM_{item}}},"
                               for sp, item, lv in members)
-            trainers.append(f"""    [{trainer_id}] = {{
+            trainers.append(f"""    [{battle_id}] = {{
         .name = "Researcher",
         .data = {{.trainerType = TRAINER_DATA_TYPE_ITEMS, .trainerClass = TRAINERCLASS_ACE_TRAINER_M,
                  .aiFlags = F_PRIORITIZE_SUPER_EFFECTIVE | F_EVALUATE_ATTACKS, .battleType = SINGLE_BATTLE}},
@@ -85,8 +93,7 @@ def main(output):
 {party}
         }},
     }},""")
-            arg = str(trainer_id)
-            trainer_id += 1
+            arg = str(battle_id)
         table.append(
             f'    {{{start_flag}, {start_flag + 1}, {{{msg}, {msg+1}, {msg+2}}}, '
             f'{{{msg+3}, {msg+4}, {msg+5}}}, '
