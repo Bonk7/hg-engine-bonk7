@@ -1,5 +1,6 @@
 """Add Elm in Sprout Tower and require his research before Falkner."""
 
+import csv
 import struct
 import sys
 from pathlib import Path
@@ -25,6 +26,20 @@ def add_quest_object(path, x, z, sprite, script, flag=0, local_id=None):
                       1, 0, 0, 0, 0, 0, x, z, 0)
     path.write_bytes(events[:count_offset] + struct.pack("<I", count + 1)
                      + events[start:end] + new_object + events[end:])
+
+
+def remove_generated_pickups(path, script_to_flag):
+    events = path.read_bytes()
+    count_offset = 4 + 20 * struct.unpack_from("<I", events)[0]
+    count = struct.unpack_from("<I", events, count_offset)[0]
+    start = count_offset + 4
+    layout = struct.Struct("<14HI")
+    end = start + count * layout.size
+    objects = list(layout.iter_unpack(events[start:end]))
+    kept = [obj for obj in objects if not (obj[1] == 87 and script_to_flag.get(obj[5]) == obj[4])]
+    if len(kept) != count:
+        path.write_bytes(events[:count_offset] + struct.pack("<I", len(kept))
+                         + b"".join(layout.pack(*obj) for obj in kept) + events[end:])
 
 
 def require_research(path, wrapper_path):
@@ -53,6 +68,15 @@ if __name__ == "__main__":
         add_quest_object(union_cave, 27, 31, 87, 2086, 2632, 30)
         add_quest_object(tower, 18, 8, 87, 2087, 2633, 30)
         add_quest_object(route_center, 12, 14, 87, 2088, 2634, 30)
+    elif operation == "research":
+        directory, placements = paths
+        with placements.open() as file:
+            rows = [tuple(map(int, row)) for row in csv.reader(file)]
+        script_to_flag = {script: flag for _, _, _, script, flag, _ in rows}
+        for path in directory.glob("2_*"):
+            remove_generated_pickups(path, script_to_flag)
+        for bank, x, z, script, flag, local in rows:
+            add_quest_object(directory / f"2_{bank:03d}", x, z, 87, script, flag, local)
     elif operation == "gym":
         require_research(*paths)
     else:

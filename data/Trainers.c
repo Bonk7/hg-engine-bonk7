@@ -31466,6 +31466,7 @@ const TrainerData sTrainerData[] = {
         },
     },
 
+#include "../build/mega_research_trainers.inc"
 };
 
 const u16 sTrainerTextOrder[] = {

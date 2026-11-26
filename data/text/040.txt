@@ -286,7 +286,7 @@ You received {STRVAR_1 0, 0, 0}.
 You need ¥3,000 for a Mega Stone.
 The Pokémon must hold its own Mega\nStone. Tap Mega Evolution in battle.\rRayquaza needs to know Dragon\nAscent instead of holding a stone.
 How to Mega Evolve
-Browse Mega Stones
+Local Mega research
 Professor Elm is at Sprout Tower\nin Violet City. Ask him about his\fMega Evolution research.
 You have come a long way since you\nleft New Bark Town!\rI found a stone that responds to the\nbond between a Beedrill and its Trainer.\rSage Li is testing it upstairs.\nI would like you to help with his trial.
 Climb to the top of Sprout Tower\nand win Sage Li’s battle.\rThen come back and tell me\nwhat you saw!
@@ -331,3 +331,10 @@ Milestone rewards
 {STRVAR_1 52, 0, 0} quests completed.\nNext reward at {STRVAR_1 52, 1, 0} completed quests.
 {STRVAR_1 52, 2, 0} quests milestone reached!\nReceived {STRVAR_1 52, 1, 0} × {STRVAR_1 0, 0, 0}!
 {STRVAR_1 52, 2, 0} quests milestone reached!\nReceived {STRVAR_1 52, 1, 0} × {STRVAR_1 0, 0, 0}!\rBonus reward: 1 Shiny Ball!
+{STRVAR_1 0, 0, 0}
+Local Mega research.\nWhich request interests you?
+Hand over the supply item?
+Ready to battle the researcher?
+That does not fit the clues. Try again!
+You can return when you have what\nthe researcher needs.
+{STRVAR_1 0, 4, 0}

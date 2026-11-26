@@ -115,6 +115,7 @@ scrdef MegaGroveResearch
 scrdef MegaPickupSteelixite
 scrdef MegaPickupPidgeotite
 scrdef MegaPickupAmpharosite
+.include "build/mega_research_definitions.inc"
 scrdef_end
 
 CenterServices:
@@ -2094,52 +2095,90 @@ CenterMegaHelp:
     goto CenterMegaRingOwned
 
 CenterMegaStones:
-    setvar VAR_SPECIAL_x8004, 0
-CenterMegaStonePage:
-    msgbox_extern 40, 282
+    msgbox_extern 40, 334
     touchscreen_menu_hide
     prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
-    RunNewCommand 16, VAR_SPECIAL_x8004
+    RunNewCommand 16, 0
     show_prepared_list
     touchscreen_menu_show
     closemsg
-    switch VAR_SPECIAL_RESULT
-    case 240, CenterMegaPreviousPage
-    case 241, CenterMegaNextPage
-    case 242, CenterMegaRingOwned
-    case 65534, CenterMegaRingOwned
-    RunNewCommand 17, VAR_SPECIAL_RESULT
-    copyvar VAR_SPECIAL_x8005, VAR_SPECIAL_RESULT
+    copyvar VAR_SPECIAL_x8004, VAR_SPECIAL_RESULT
+    RunNewCommand 17, VAR_SPECIAL_x8004
     compare VAR_SPECIAL_x8005, 0
     goto_if_eq CenterMegaRingOwned
-    buffer_item_name 0, VAR_SPECIAL_x8005
-    msgbox_extern 40, 283
+    compare VAR_SPECIAL_x8006, 0
+    goto_if_eq CenterMegaResearchAward
+    RunNewCommand 25, 0
+    wait_button
+    closemsg
+    switch VAR_SPECIAL_x8006
+    case 1, CenterMegaResearchTrade
+    case 2, CenterMegaResearchShow
+    case 3, CenterMegaResearchQuiz
+    case 4, CenterMegaResearchBattle
+    goto CenterMegaRingOwned
+
+CenterMegaResearchTrade:
+    hasitem VAR_SPECIAL_x8007, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterMegaResearchMissing
+    msgbox_extern 40, 335
     yesno VAR_SPECIAL_RESULT
     closemsg
     compare VAR_SPECIAL_RESULT, 0
-    goto_if_ne CenterMegaStonePage
-    hasenoughmoneyimmediate VAR_SPECIAL_RESULT, 3000
+    goto_if_ne CenterMegaStones
+    goto CenterMegaResearchAward
+CenterMegaResearchShow:
+    RunNewCommand 24, VAR_SPECIAL_RESULT
     compare VAR_SPECIAL_RESULT, 0
-    goto_if_eq CenterMegaNoMoney
+    goto_if_eq CenterMegaResearchMissing
+    goto CenterMegaResearchSolved
+CenterMegaResearchQuiz:
+    touchscreen_menu_hide
+    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    RunNewCommand 22, VAR_SPECIAL_x8004
+    show_prepared_list
+    touchscreen_menu_show
+    compare VAR_SPECIAL_RESULT, 3
+    goto_if_ge CenterMegaStones
+    compare VAR_SPECIAL_RESULT, VAR_SPECIAL_x8007
+    goto_if_ne CenterMegaResearchWrong
+    goto CenterMegaResearchSolved
+CenterMegaResearchBattle:
+    msgbox_extern 40, 336
+    yesno VAR_SPECIAL_RESULT
+    closemsg
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterMegaStones
+    trainer_battle VAR_SPECIAL_x8007, 0, 0, 0
+    check_battle_won VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterShinyTrialLost
+CenterMegaResearchSolved:
+    RunNewCommand 23, 0
+CenterMegaResearchAward:
     giveitem VAR_SPECIAL_x8005, 1, VAR_SPECIAL_RESULT
     compare VAR_SPECIAL_RESULT, 0
     goto_if_eq VioletBoxLinkNoSpace
-    submoneyimmediate 3000
+    compare VAR_SPECIAL_x8006, 1
+    goto_if_ne CenterMegaResearchFinish
+    takeitem VAR_SPECIAL_x8007, 1, VAR_SPECIAL_RESULT
+CenterMegaResearchFinish:
+    RunNewCommand 23, 1
     buffer_item_name 0, VAR_SPECIAL_x8005
-    msgbox_extern 40, 284
-    goto CenterMegaStoneDone
-CenterMegaNoMoney:
-    msgbox_extern 40, 285
-CenterMegaStoneDone:
+    play_fanfare SEQ_ME_ITEM
+    msgbox_extern 40, 322
+    wait_fanfare
+    goto CenterMegaResearchMessage
+CenterMegaResearchWrong:
+    msgbox_extern 40, 337
+    goto CenterMegaResearchMessage
+CenterMegaResearchMissing:
+    msgbox_extern 40, 338
+CenterMegaResearchMessage:
     wait_button
     closemsg
-    goto CenterMegaStonePage
-CenterMegaPreviousPage:
-    subvar VAR_SPECIAL_x8004, 1
-    goto CenterMegaStonePage
-CenterMegaNextPage:
-    addvar VAR_SPECIAL_x8004, 1
-    goto CenterMegaStonePage
+    goto CenterMegaStones
 
 ElmMegaResearch:
     lockall

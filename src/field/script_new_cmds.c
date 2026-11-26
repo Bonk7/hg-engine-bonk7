@@ -19,43 +19,6 @@
 #define SCRIPT_NEW_CMD_EDIT_STATS 3
 #define SCRIPT_NEW_CMD_COUNT_MISSING_DEX 4
 
-enum {
-    MEGA_STONES_PER_PAGE = 16,
-    MEGA_STONE_PREVIOUS_PAGE = 240,
-    MEGA_STONE_NEXT_PAGE = 241,
-    MEGA_STONE_BACK = 242,
-};
-
-static u16 MegaShop_GetStoneByIndex(u16 index)
-{
-#ifdef MEGA_EVOLUTIONS
-    static const u16 stones[] = {
-#define MEGA_STONE(species, item, megaForm, base) item,
-#define MEGA_STONE_FORM(species, item, megaForm, base)
-#include "mega_stones.inc"
-#undef MEGA_STONE_FORM
-#undef MEGA_STONE
-    };
-    for (int i = 0; i < NELEMS(stones); i++) {
-        switch (stones[i]) {
-        case ITEM_BEEDRILLITE:
-        case ITEM_HERACRONITE:
-        case ITEM_STEELIXITE:
-        case ITEM_PIDGEOTITE:
-        case ITEM_AMPHAROSITE:
-            continue;
-        default:
-            if (index == 0) {
-                return stones[i];
-            }
-            index--;
-            break;
-        }
-    }
-#endif
-    return ITEM_NONE;
-}
-
 u16 Training_GetTargetLevel(void *saveData);
 BOOL Training_TrainPartyMember(void *saveData, u16 slot);
 u16 Training_EditStats(void *saveData, u16 slot, u16 stat, u16 operation, BOOL editIVs);
@@ -78,9 +41,11 @@ static const struct MegaQuestEntry {
     u16 title[3];
     u16 details[3];
     const char *sortKey[3];
+    u16 map, item, kind, argument, officeTitle;
 } sMegaQuests[] = {
-    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}, {"elms discovery", "violet city", "beedrillite"}},
-    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "azalea town", "heracronite"}},
+    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}, {"elms discovery", "violet city", "beedrillite"}, 0, 0, 0, 0, 0},
+    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "azalea town", "heracronite"}, 0, 0, 0, 0, 0},
+#include "../../build/mega_research_table.inc"
 };
 
 static int MegaQuestStatus(const struct MegaQuestEntry *entry)
@@ -108,12 +73,39 @@ static BOOL MegaQuestSortsBefore(int left, int right, u16 sort)
     return sort == 0 && MegaQuestSortsBefore(left, right, 1);
 }
 
-enum { MEGA_QUEST_MILESTONE_INTERVAL = 5 };
+enum { MEGA_QUEST_MILESTONE_INTERVAL = 5, MEGA_QUESTS_PER_PAGE = 12 };
+
+static void MegaQuestBufferText(SCRIPTCONTEXT *ctx, u16 bank, u16 message, u8 slot)
+{
+    MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
+    MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, bank, HEAPID_FIELD1);
+    if (texts != NULL) {
+        ReadMsgDataIntoString(texts, message, format->buffer);
+        SetStringAsPlaceholder(format, slot, format->buffer, NULL);
+        DestroyMsgData(texts);
+    }
+}
+
+// The field message command takes a literal bank and index. Build that
+// command followed by a jump back to the calling script.
+static void MegaQuestShowMessage(SCRIPTCONTEXT *ctx, u16 bank, u16 message)
+{
+    enum { MSGBOX_EXTERN = 440, SCRIPT_GOTO = 22 };
+    static u16 script[6];
+    u32 offset = (u32)ctx->script_ptr - (u32)(script + NELEMS(script));
+    script[0] = MSGBOX_EXTERN;
+    script[1] = bank;
+    script[2] = message;
+    script[3] = SCRIPT_GOTO;
+    script[4] = offset;
+    script[5] = offset >> 16;
+    ScriptJump(ctx, (const u8 *)script);
+}
 
 static int MegaQuestCompletedCount(void)
 {
     int count = 0;
-    for (int i = 0; i < NELEMS(sMegaQuests); i++) {
+    for (int i = 0; i < (int)NELEMS(sMegaQuests); i++) {
         count += CheckScriptFlag(sMegaQuests[i].completed) != 0;
     }
     return count;
@@ -143,7 +135,7 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
     }
     FieldListMenu_AddOption(menu, completed ? 301 : 300, 255, 241);
     u8 order[NELEMS(sMegaQuests)];
-    for (int i = 0; i < NELEMS(sMegaQuests); i++) {
+    for (int i = 0; i < (int)NELEMS(sMegaQuests); i++) {
         int position = i;
         while (position > 0 && MegaQuestSortsBefore(i, order[position - 1], sort)) {
             order[position] = order[position - 1];
@@ -152,17 +144,39 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
         order[position] = i;
     }
 
-    BOOL found = FALSE;
-    for (int i = 0; i < NELEMS(sMegaQuests); i++) {
+    int page = VarGet(ctx->fsys, 0x8003);
+    int skip = page * MEGA_QUESTS_PER_PAGE;
+    int shown = 0;
+    BOOL more = FALSE;
+    for (int i = 0; i < (int)NELEMS(sMegaQuests); i++) {
         int index = order[i];
         const struct MegaQuestEntry *entry = &sMegaQuests[index];
         int state = MegaQuestStatus(entry);
         if ((state == 2) == completed) {
-            FieldListMenu_AddOption(menu, entry->title[state], 255, index);
-            found = TRUE;
+            if (skip > 0) {
+                skip--;
+                continue;
+            }
+            if (shown == MEGA_QUESTS_PER_PAGE) {
+                more = TRUE;
+                break;
+            }
+            if (index < 2) {
+                FieldListMenu_AddOption(menu, entry->title[state], 255, index);
+            } else {
+                MegaQuestBufferText(ctx, 860, entry->title[state], 4);
+                FieldListMenu_AddOption(menu, 339, 255, index);
+            }
+            shown++;
         }
     }
-    if (!found) {
+    if (page != 0) {
+        FieldListMenu_AddOption(menu, 196, 255, 245);
+    }
+    if (more) {
+        FieldListMenu_AddOption(menu, 197, 255, 246);
+    }
+    if (shown == 0) {
         FieldListMenu_AddOption(menu, 303, 255, 242);
     }
     FieldListMenu_AddOption(menu, 323, 255, 244);
@@ -276,35 +290,32 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 
     case 16: {
         void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
-        MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
-        u16 firstStone = VarGet(ctx->fsys, arg0) * MEGA_STONES_PER_PAGE;
-        MsgData *names = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, 222, HEAPID_FIELD1);
-        for (u16 index = 0; names != NULL && index < MEGA_STONES_PER_PAGE; index++) {
-            u16 item = MegaShop_GetStoneByIndex(firstStone + index);
-            if (item == ITEM_NONE) {
-                break;
+        int map = ctx->fsys->location->mapId;
+        for (int i = 2; i < (int)NELEMS(sMegaQuests); i++) {
+            const struct MegaQuestEntry *entry = &sMegaQuests[i];
+            if (entry->map == map && MegaQuestStatus(entry) != 2) {
+                MegaQuestBufferText(ctx, 860, entry->officeTitle, 4);
+                FieldListMenu_AddOption(menu, 339, 255, i);
             }
-            ReadMsgDataIntoString(names, item, format->buffer);
-            SetStringAsPlaceholder(format, 0, format->buffer, NULL);
-            FieldListMenu_AddOption(menu, 253, 255, index);
         }
-        if (names != NULL) {
-            DestroyMsgData(names);
-        }
-        if (firstStone != 0) {
-            FieldListMenu_AddOption(menu, 196, 255, MEGA_STONE_PREVIOUS_PAGE);
-        }
-        if (MegaShop_GetStoneByIndex(firstStone + MEGA_STONES_PER_PAGE) != ITEM_NONE) {
-            FieldListMenu_AddOption(menu, 197, 255, MEGA_STONE_NEXT_PAGE);
-        }
-        FieldListMenu_AddOption(menu, 131, 255, MEGA_STONE_BACK);
+        FieldListMenu_AddOption(menu, 131, 255, 243);
         break;
     }
 
     case 17: {
-        u16 *selection = GetVarPointer(ctx->fsys, arg0);
-        u16 firstStone = VarGet(ctx->fsys, 0x8004) * MEGA_STONES_PER_PAGE;
-        *selection = *selection < MEGA_STONES_PER_PAGE ? MegaShop_GetStoneByIndex(firstStone + *selection) : ITEM_NONE;
+        u16 index = VarGet(ctx->fsys, arg0);
+        VarSet(ctx->fsys, 0x8005, ITEM_NONE);
+        if (index < 2 || index >= NELEMS(sMegaQuests)) {
+            break;
+        }
+        const struct MegaQuestEntry *entry = &sMegaQuests[index];
+        if (entry->map != ctx->fsys->location->mapId || CheckScriptFlag(entry->completed)) {
+            break;
+        }
+        SetScriptFlag(entry->started);
+        VarSet(ctx->fsys, 0x8005, entry->item);
+        VarSet(ctx->fsys, 0x8006, CheckScriptFlag(entry->started + 2) ? 0 : entry->kind);
+        VarSet(ctx->fsys, 0x8007, entry->argument);
         break;
     }
 
@@ -317,10 +328,10 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         break;
 
     case 20: {
-        u16 *selection = GetVarPointer(ctx->fsys, arg0);
-        if (*selection < NELEMS(sMegaQuests)) {
-            const struct MegaQuestEntry *entry = &sMegaQuests[*selection];
-            *selection = entry->details[MegaQuestStatus(entry)];
+        u16 selection = VarGet(ctx->fsys, arg0);
+        if (selection < NELEMS(sMegaQuests)) {
+            const struct MegaQuestEntry *entry = &sMegaQuests[selection];
+            MegaQuestShowMessage(ctx, selection < 2 ? 40 : 860, entry->details[MegaQuestStatus(entry)]);
         }
         break;
     }
@@ -334,6 +345,50 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         VarSet(ctx->fsys, 0x8009, 3);
         VarSet(ctx->fsys, 0x800A, next);
         VarSet(ctx->fsys, 0x800B, next % 10 == 0);
+        break;
+    }
+
+    case 22: {
+        u16 index = VarGet(ctx->fsys, arg0);
+        if (index < 2 || index >= NELEMS(sMegaQuests)) {
+            break;
+        }
+        const struct MegaQuestEntry *entry = &sMegaQuests[index];
+        void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
+        for (int i = 0; i < 3; i++) {
+            MegaQuestBufferText(ctx, 860, entry->officeTitle + 1 + i, 4);
+            FieldListMenu_AddOption(menu, 339, 255, i);
+        }
+        FieldListMenu_AddOption(menu, 131, 255, 3);
+        break;
+    }
+
+    case 23: {
+        u16 index = VarGet(ctx->fsys, 0x8004);
+        if (index < 2 || index >= NELEMS(sMegaQuests)) {
+            break;
+        }
+        const struct MegaQuestEntry *entry = &sMegaQuests[index];
+        if (arg0 == 0) {
+            SetScriptFlag(entry->started + 2);
+        } else {
+            SetScriptFlag(entry->completed);
+        }
+        break;
+    }
+
+    case 24: {
+        u16 species = VarGet(ctx->fsys, 0x8007);
+        const void *dex = SaveData_GetDexPtr(ctx->fsys->savedata);
+        VarSet(ctx->fsys, arg0, Pokedex_CheckMonCaughtFlag(dex, species));
+        break;
+    }
+
+    case 25: {
+        u16 selection = VarGet(ctx->fsys, 0x8004);
+        if (selection >= 2 && selection < NELEMS(sMegaQuests)) {
+            MegaQuestShowMessage(ctx, 860, sMegaQuests[selection].details[1]);
+        }
         break;
     }
 

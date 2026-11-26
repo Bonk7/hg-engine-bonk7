@@ -272,7 +272,7 @@ $(SPECIESDATAGEN): $(wildcard tools/source/speciesdatagen/*.c) data/Species.c in
 
 TOOLS += $(SPECIESDATAGEN)
 
-$(TRAINERDATAGEN): $(wildcard tools/source/trainerdatagen/*.c) data/Trainers.c include/trainer_data.h include/constants/trainerclass.h include/constants/pokemon.h
+$(TRAINERDATAGEN): $(BUILD)/mega_research_trainers.inc $(wildcard tools/source/trainerdatagen/*.c) data/Trainers.c include/trainer_data.h include/constants/trainerclass.h include/constants/pokemon.h
 	cd tools/source/trainerdatagen ; $(MAKE) clean; $(MAKE)
 
 TOOLS += $(TRAINERDATAGEN)
@@ -323,6 +323,8 @@ endef
 ifneq (1,$(NOSCAN))
 $(foreach src, $(ALL_C_SRCS), $(eval $(call SRC_OBJ_INC_DEFINE,$(patsubst $(C_SUBDIR)/%.c,$(BUILD)/%.o, $(src)),$(src))))
 endif
+
+$(BUILD)/field/script_new_cmds.o: $(BUILD)/mega_research_table.inc
 
 define ASM_OBJ_INC_DEFINE
 # these should have similar dependency scanning, but we do not currently use them in a way conducive to it

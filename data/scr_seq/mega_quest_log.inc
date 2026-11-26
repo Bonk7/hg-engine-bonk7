@@ -2,6 +2,7 @@ MegaQuestLog:
     lockall
     setvar VAR_SPECIAL_x8004, 0
     setvar VAR_SPECIAL_x8005, 0
+    setvar VAR_SPECIAL_x8003, 0
 MegaQuestLogRefresh:
     touchscreen_menu_hide
     prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
@@ -24,8 +25,10 @@ MegaQuestLogShow:
     case 241, MegaQuestLogSwitchTab
     case 242, MegaQuestLogRefresh
     case 244, MegaQuestLogMilestones
-    case 0, MegaQuestLogDetail
-    case 1, MegaQuestLogDetail
+    case 245, MegaQuestLogPreviousPage
+    case 246, MegaQuestLogNextPage
+    compare VAR_SPECIAL_RESULT, 240
+    goto_if_lt MegaQuestLogDetail
     goto VioletTrainingExit
 MegaQuestLogMilestones:
     RunNewCommand 21, 0
@@ -70,7 +73,14 @@ MegaQuestLogNextMilestone:
     buffer_int 1, VAR_SPECIAL_x800A
     msgbox_extern 40, 330
     goto MegaQuestLogEndDetail
+MegaQuestLogPreviousPage:
+    subvar VAR_SPECIAL_x8003, 1
+    goto MegaQuestLogRefresh
+MegaQuestLogNextPage:
+    addvar VAR_SPECIAL_x8003, 1
+    goto MegaQuestLogRefresh
 MegaQuestLogSwitchTab:
+    setvar VAR_SPECIAL_x8003, 0
     compare VAR_SPECIAL_x8004, 0
     goto_if_eq MegaQuestLogCompleted
     setvar VAR_SPECIAL_x8004, 0
@@ -92,34 +102,10 @@ MegaQuestLogSort:
     compare VAR_SPECIAL_RESULT, 3
     goto_if_ge MegaQuestLogRefresh
     copyvar VAR_SPECIAL_x8005, VAR_SPECIAL_RESULT
+    setvar VAR_SPECIAL_x8003, 0
     goto MegaQuestLogRefresh
 MegaQuestLogDetail:
     RunNewCommand 20, VAR_SPECIAL_RESULT
-    switch VAR_SPECIAL_RESULT
-    case 312, MegaQuestLogElmHint
-    case 313, MegaQuestLogGroveHint
-    case 314, MegaQuestLogElmDetails
-    case 315, MegaQuestLogGroveDetails
-    case 320, MegaQuestLogElmCompleted
-    case 321, MegaQuestLogGroveCompleted
-    goto MegaQuestLogRefresh
-MegaQuestLogElmHint:
-    msgbox_extern 40, 312
-    goto MegaQuestLogEndDetail
-MegaQuestLogGroveHint:
-    msgbox_extern 40, 313
-    goto MegaQuestLogEndDetail
-MegaQuestLogElmDetails:
-    msgbox_extern 40, 314
-    goto MegaQuestLogEndDetail
-MegaQuestLogGroveDetails:
-    msgbox_extern 40, 315
-    goto MegaQuestLogEndDetail
-MegaQuestLogElmCompleted:
-    msgbox_extern 40, 320
-    goto MegaQuestLogEndDetail
-MegaQuestLogGroveCompleted:
-    msgbox_extern 40, 321
 MegaQuestLogEndDetail:
     wait_button
     closemsg
@@ -155,7 +141,7 @@ MegaGroveExit:
     closemsg
     goto VioletTrainingExit
 
-.macro mega_pickup label, item, flag
+.macro mega_pickup label, item, flag, local_id
 \label:
     lockall
     hasspaceforitem \item, 1, VAR_SPECIAL_RESULT
@@ -165,7 +151,7 @@ MegaGroveExit:
     compare VAR_SPECIAL_RESULT, 0
     goto_if_eq VioletBoxLinkNoSpace
     setflag \flag
-    hide_person 30
+    hide_person \local_id
     play_fanfare SEQ_ME_ITEM
     buffer_item_name 0, \item
     msgbox_extern 40, 322
@@ -175,6 +161,8 @@ MegaGroveExit:
     goto VioletTrainingExit
 .endm
 
-mega_pickup MegaPickupSteelixite, ITEM_STEELIXITE, FLAG_MEGA_PICKUP_STEELIXITE
-mega_pickup MegaPickupPidgeotite, ITEM_PIDGEOTITE, FLAG_MEGA_PICKUP_PIDGEOTITE
-mega_pickup MegaPickupAmpharosite, ITEM_AMPHAROSITE, FLAG_MEGA_PICKUP_AMPHAROSITE
+mega_pickup MegaPickupSteelixite, ITEM_STEELIXITE, FLAG_MEGA_PICKUP_STEELIXITE, 30
+mega_pickup MegaPickupPidgeotite, ITEM_PIDGEOTITE, FLAG_MEGA_PICKUP_PIDGEOTITE, 30
+mega_pickup MegaPickupAmpharosite, ITEM_AMPHAROSITE, FLAG_MEGA_PICKUP_AMPHAROSITE, 30
+
+.include "build/mega_research_pickups.inc"
