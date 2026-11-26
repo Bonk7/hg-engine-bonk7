@@ -108,15 +108,37 @@ static BOOL MegaQuestSortsBefore(int left, int right, u16 sort)
     return sort == 0 && MegaQuestSortsBefore(left, right, 1);
 }
 
+enum { MEGA_QUEST_MILESTONE_INTERVAL = 5 };
+
+static int MegaQuestCompletedCount(void)
+{
+    int count = 0;
+    for (int i = 0; i < NELEMS(sMegaQuests); i++) {
+        count += CheckScriptFlag(sMegaQuests[i].completed) != 0;
+    }
+    return count;
+}
+
 static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
 {
     void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
     MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
     u16 sort = VarGet(ctx->fsys, 0x8005);
+    int count = MegaQuestCompletedCount();
+    int towardReward = count - MEGA_QUEST_MILESTONE_INTERVAL * VarGet(ctx->fsys, VAR_MEGA_QUEST_MILESTONES_CLAIMED);
+    if (towardReward < 0) {
+        towardReward = 0;
+    } else if (towardReward > MEGA_QUEST_MILESTONE_INTERVAL) {
+        towardReward = MEGA_QUEST_MILESTONE_INTERVAL;
+    }
+    VarSet(ctx->fsys, 0x8006, count);
+    VarSet(ctx->fsys, 0x8007, NELEMS(sMegaQuests));
     MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, 40, HEAPID_FIELD1);
     if (texts != NULL) {
         ReadMsgDataIntoString(texts, 297 + sort, format->buffer);
         SetStringAsPlaceholder(format, 0, format->buffer, NULL);
+        ReadMsgDataIntoString(texts, 324 + towardReward, format->buffer);
+        SetStringAsPlaceholder(format, 3, format->buffer, NULL);
         DestroyMsgData(texts);
     }
     FieldListMenu_AddOption(menu, completed ? 301 : 300, 255, 241);
@@ -143,6 +165,7 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
     if (!found) {
         FieldListMenu_AddOption(menu, 303, 255, 242);
     }
+    FieldListMenu_AddOption(menu, 323, 255, 244);
     FieldListMenu_AddOption(menu, 131, 255, 243);
     gMegaQuestLogList = TRUE;
 }
@@ -299,6 +322,18 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
             const struct MegaQuestEntry *entry = &sMegaQuests[*selection];
             *selection = entry->details[MegaQuestStatus(entry)];
         }
+        break;
+    }
+
+    case 21: {
+        static const u16 items[] = {ITEM_RARE_CANDY, ITEM_HEART_SCALE, ITEM_SHINY_BALL};
+        static const u16 quantities[] = {3, 3, 1};
+        u16 claimed = VarGet(ctx->fsys, VAR_MEGA_QUEST_MILESTONES_CLAIMED);
+        int next = (claimed + 1) * MEGA_QUEST_MILESTONE_INTERVAL;
+        int reward = claimed % NELEMS(items);
+        VarSet(ctx->fsys, 0x8008, VarGet(ctx->fsys, 0x8006) >= next ? items[reward] : ITEM_NONE);
+        VarSet(ctx->fsys, 0x8009, quantities[reward]);
+        VarSet(ctx->fsys, 0x800A, next);
         break;
     }
 

@@ -6,6 +6,8 @@ MegaQuestLogRefresh:
     touchscreen_menu_hide
     prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
     RunNewCommand 18, VAR_SPECIAL_x8004
+    buffer_int 1, VAR_SPECIAL_x8006
+    buffer_int 2, VAR_SPECIAL_x8007
     compare VAR_SPECIAL_x8004, 0
     goto_if_eq MegaQuestLogActiveHeading
     msgbox_extern 40, 296
@@ -21,9 +23,33 @@ MegaQuestLogShow:
     case 240, MegaQuestLogSort
     case 241, MegaQuestLogSwitchTab
     case 242, MegaQuestLogRefresh
+    case 244, MegaQuestLogMilestones
     case 0, MegaQuestLogDetail
     case 1, MegaQuestLogDetail
     goto VioletTrainingExit
+MegaQuestLogMilestones:
+    RunNewCommand 21, 0
+    compare VAR_SPECIAL_x8008, 0
+    goto_if_eq MegaQuestLogNextMilestone
+    giveitem VAR_SPECIAL_x8008, VAR_SPECIAL_x8009, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq MegaQuestLogMilestoneBagFull
+    addvar VAR_MEGA_QUEST_MILESTONES_CLAIMED, 1
+    buffer_item_name 0, VAR_SPECIAL_x8008
+    buffer_int 1, VAR_SPECIAL_x8009
+    buffer_int 2, VAR_SPECIAL_x800A
+    play_fanfare SEQ_ME_ITEM
+    msgbox_extern 40, 331
+    wait_fanfare
+    goto MegaQuestLogEndDetail
+MegaQuestLogMilestoneBagFull:
+    msgbox_extern 40, 153
+    goto MegaQuestLogEndDetail
+MegaQuestLogNextMilestone:
+    buffer_int 0, VAR_SPECIAL_x8006
+    buffer_int 1, VAR_SPECIAL_x800A
+    msgbox_extern 40, 330
+    goto MegaQuestLogEndDetail
 MegaQuestLogSwitchTab:
     compare VAR_SPECIAL_x8004, 0
     goto_if_eq MegaQuestLogCompleted

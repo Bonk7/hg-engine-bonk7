@@ -293,8 +293,8 @@ Climb to the top of Sprout Tower\nand win Sage Li’s battle.\rThen come back an
 Now you have seen what a strong bond\ncan do. Take these for your journey!\rYou received the Mega Ring\nand Beedrillite!
 Before we battle, see Professor Elm\nat the entrance to Sprout Tower.\rHe is studying a power that\nyou will see in this Gym.
 Take this Mega Quest Log.\nYou can check it from your Bag.
-Active & undiscovered\nR: Sort by {STRVAR_1 0, 0, 0}
-Completed\nR: Sort by {STRVAR_1 0, 0, 0}
+Active  {STRVAR_1 52, 1, 0}/{STRVAR_1 52, 2, 0}\n{STRVAR_1 0, 3, 0}   R: {STRVAR_1 0, 0, 0}
+Completed  {STRVAR_1 52, 1, 0}/{STRVAR_1 52, 2, 0}\n{STRVAR_1 0, 3, 0}   R: {STRVAR_1 0, 0, 0}
 Quest name
 Area
 Reward
@@ -321,3 +321,12 @@ Heracross has perked up.\nThanks for helping the grove!
 Violet City · Beedrillite\nYou completed Elm’s trial.
 Azalea Town · Heracronite\nYou helped the Heracross grove.
 You found {STRVAR_1 0, 0, 0}!
+Milestone rewards
+□□□□□
+{COLOR 2}■{COLOR 0}□□□□
+{COLOR 2}■■{COLOR 0}□□□
+{COLOR 2}■■■{COLOR 0}□□
+{COLOR 2}■■■■{COLOR 0}□
+{COLOR 2}■■■■■{COLOR 0}
+{STRVAR_1 52, 0, 0} quests completed.\nNext reward at {STRVAR_1 52, 1, 0} completed quests.
+{STRVAR_1 52, 2, 0} quests milestone reached!\nReceived {STRVAR_1 52, 1, 0} × {STRVAR_1 0, 0, 0}!
