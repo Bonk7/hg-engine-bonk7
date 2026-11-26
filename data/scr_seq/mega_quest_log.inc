@@ -31,15 +31,35 @@ MegaQuestLogMilestones:
     RunNewCommand 21, 0
     compare VAR_SPECIAL_x8008, 0
     goto_if_eq MegaQuestLogNextMilestone
+    compare VAR_SPECIAL_x800B, 0
+    goto_if_eq MegaQuestLogGiveItems
+    hasspaceforitem ITEM_SHINY_BALL, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq MegaQuestLogMilestoneBagFull
+MegaQuestLogGiveItems:
     giveitem VAR_SPECIAL_x8008, VAR_SPECIAL_x8009, VAR_SPECIAL_RESULT
     compare VAR_SPECIAL_RESULT, 0
     goto_if_eq MegaQuestLogMilestoneBagFull
+    compare VAR_SPECIAL_x800B, 0
+    goto_if_eq MegaQuestLogMilestoneGranted
+    giveitem ITEM_SHINY_BALL, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne MegaQuestLogMilestoneGranted
+    takeitem VAR_SPECIAL_x8008, VAR_SPECIAL_x8009, VAR_SPECIAL_RESULT
+    goto MegaQuestLogMilestoneBagFull
+MegaQuestLogMilestoneGranted:
     addvar VAR_MEGA_QUEST_MILESTONES_CLAIMED, 1
     buffer_item_name 0, VAR_SPECIAL_x8008
     buffer_int 1, VAR_SPECIAL_x8009
     buffer_int 2, VAR_SPECIAL_x800A
     play_fanfare SEQ_ME_ITEM
+    compare VAR_SPECIAL_x800B, 0
+    goto_if_ne MegaQuestLogBonusMessage
     msgbox_extern 40, 331
+    goto MegaQuestLogRewardDone
+MegaQuestLogBonusMessage:
+    msgbox_extern 40, 332
+MegaQuestLogRewardDone:
     wait_fanfare
     goto MegaQuestLogEndDetail
 MegaQuestLogMilestoneBagFull:

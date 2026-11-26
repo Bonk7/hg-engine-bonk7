@@ -330,3 +330,4 @@ Milestone rewards
 {COLOR 2}■■■■■{COLOR 0}
 {STRVAR_1 52, 0, 0} quests completed.\nNext reward at {STRVAR_1 52, 1, 0} completed quests.
 {STRVAR_1 52, 2, 0} quests milestone reached!\nReceived {STRVAR_1 52, 1, 0} × {STRVAR_1 0, 0, 0}!
+{STRVAR_1 52, 2, 0} quests milestone reached!\nReceived {STRVAR_1 52, 1, 0} × {STRVAR_1 0, 0, 0}!\rBonus reward: 1 Shiny Ball!

@@ -326,14 +326,14 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
     }
 
     case 21: {
-        static const u16 items[] = {ITEM_RARE_CANDY, ITEM_HEART_SCALE, ITEM_SHINY_BALL};
-        static const u16 quantities[] = {3, 3, 1};
+        static const u16 items[] = {ITEM_RARE_CANDY, ITEM_HEART_SCALE};
         u16 claimed = VarGet(ctx->fsys, VAR_MEGA_QUEST_MILESTONES_CLAIMED);
         int next = (claimed + 1) * MEGA_QUEST_MILESTONE_INTERVAL;
         int reward = claimed % NELEMS(items);
         VarSet(ctx->fsys, 0x8008, VarGet(ctx->fsys, 0x8006) >= next ? items[reward] : ITEM_NONE);
-        VarSet(ctx->fsys, 0x8009, quantities[reward]);
+        VarSet(ctx->fsys, 0x8009, 3);
         VarSet(ctx->fsys, 0x800A, next);
+        VarSet(ctx->fsys, 0x800B, next % 10 == 0);
         break;
     }
 
