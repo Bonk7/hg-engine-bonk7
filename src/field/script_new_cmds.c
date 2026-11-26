@@ -77,9 +77,10 @@ static const struct MegaQuestEntry {
     u16 completed;
     u16 title[3];
     u16 details[3];
+    const char *sortKey[3];
 } sMegaQuests[] = {
-    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}},
-    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}},
+    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}, {"elms discovery", "violet city", "beedrillite"}},
+    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "azalea town", "heracronite"}},
 };
 
 static int MegaQuestStatus(const struct MegaQuestEntry *entry)
@@ -88,6 +89,23 @@ static int MegaQuestStatus(const struct MegaQuestEntry *entry)
         return 2;
     }
     return CheckScriptFlag(entry->started) != 0;
+}
+
+static BOOL MegaQuestSortsBefore(int left, int right, u16 sort)
+{
+    const struct MegaQuestEntry *a = &sMegaQuests[left];
+    const struct MegaQuestEntry *b = &sMegaQuests[right];
+    // Sort unrevealed rows by the common placeholder, then by their visible area.
+    const char *first = sort == 0 && !MegaQuestStatus(a) ? "to be discovered" : a->sortKey[sort];
+    const char *second = sort == 0 && !MegaQuestStatus(b) ? "to be discovered" : b->sortKey[sort];
+    while (*first == *second && *first != '\0') {
+        first++;
+        second++;
+    }
+    if (*first != *second) {
+        return *first < *second;
+    }
+    return sort == 0 && MegaQuestSortsBefore(left, right, 1);
 }
 
 static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
@@ -102,10 +120,19 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
         DestroyMsgData(texts);
     }
     FieldListMenu_AddOption(menu, completed ? 301 : 300, 255, 241);
-    BOOL found = FALSE;
-    // Area order is Azalea then Violet. Name and reward put Elm first.
+    u8 order[NELEMS(sMegaQuests)];
     for (int i = 0; i < NELEMS(sMegaQuests); i++) {
-        int index = sort == 1 ? NELEMS(sMegaQuests) - i - 1 : i;
+        int position = i;
+        while (position > 0 && MegaQuestSortsBefore(i, order[position - 1], sort)) {
+            order[position] = order[position - 1];
+            position--;
+        }
+        order[position] = i;
+    }
+
+    BOOL found = FALSE;
+    for (int i = 0; i < NELEMS(sMegaQuests); i++) {
+        int index = order[i];
         const struct MegaQuestEntry *entry = &sMegaQuests[index];
         int state = MegaQuestStatus(entry);
         if ((state == 2) == completed) {
