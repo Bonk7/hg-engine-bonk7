@@ -127,42 +127,42 @@ I can train one team member up to\nLv. {STRVAR_1 52, 0, 0}. Want to train?\r
 Training complete! The Move Reminder\ncan help with any missed moves.\r
 That Pokémon cannot be trained here.\nTry a team member below my target level.\r
 How can I help your team?\r
-Catch-up training\r
-Adjust EVs\r
-Back\r
+Catch-up training
+Adjust EVs
+Back
 Choose a stat to adjust.\r
-HP\r
-Attack\r
-Defense\r
-Speed\r
-Sp. Atk\r
-Sp. Def\r
-Reset all\r
+HP
+Attack
+Defense
+Speed
+Sp. Atk
+Sp. Def
+Reset all
 Current value: {STRVAR_1 52, 0, 0}.\nChoose an adjustment.\r
-+1\r
-+10\r
-Max\r
--1\r
--10\r
-Set to zero\r
++1
++10
+Max
+-1
+-10
+Set to zero
 Reset all six values?\r
-Adjust IVs\r
+Adjust IVs
 Beat the Pokémon League Champion\nbefore adjusting IVs.\r
-Get Box Link\r
+Get Box Link
 Here is a Pokémon Box Link!\nUse it from the Bag to open your boxes.\r
 You already have a Pokémon Box Link.\r
 Make some room in your Bag first.\r
 Welcome to the Pokémon Center!\r
-Heal Pokémon\r
-Team services\r
-Move Reminder\r
-Team Exp. Share\r
-Collect an Egg\r
+Heal Pokémon
+Team services
+Move Reminder
+Team Exp. Share
+Collect an Egg
 You received the Day Care Egg!\r
 There is no Egg waiting at the Day Care.\r
 Make room in your party for the Egg.\r
 Collect your first Egg from\nthe Day Care family on Route 34.\r
-Battle settings\r
+Battle settings
 Shorten battle pauses and skip\nroutine animations?\r
 Restore the standard battle pace?\r
 I run the Shiny Trial. Come back\nafter you beat the Champion.\r
@@ -173,13 +173,13 @@ Final round. Good luck, Champion!\r
 You cleared the trial and earned\na Shiny Ball! Enter again anytime.\r
 Make room for a Shiny Ball\nin your Bag first.\r
 Choose how to start this save.\r
-Normal game\r
-Debug menu\r
+Normal game
+Debug menu
 Debug enabled for this save.\nOpen the player menu with X,\fthen press SELECT for debug tools.\r
 What would you like to do?\r
-Badge\r
-Item\r
-Pokémon\r
+Badge
+Item
+Pokémon
 Choose a badge.\r
 Badge added to your Trainer Card.\r
 Choose a name or search.\r
@@ -193,44 +193,44 @@ Pokémon added to your party.\r
 That level is out of range.\r
 The Bag could not hold those items.\r
 Make room in your party first.\r
-Search by name\r
-Previous page\r
-Next page\r
-Clear search\r
-No matching names\r
-Zephyr\r
-Hive\r
-Plain\r
-Fog\r
-Storm\r
-Mineral\r
-Glacier\r
-Rising\r
-Boulder\r
-Cascade\r
-Thunder\r
-Rainbow\r
-Soul\r
-Marsh\r
-Volcano\r
-Earth\r
-0\r
-1\r
-2\r
-3\r
-4\r
-5\r
-6\r
-7\r
-8\r
-9\r
+Search by name
+Previous page
+Next page
+Clear search
+No matching names
+Zephyr
+Hive
+Plain
+Fog
+Storm
+Mineral
+Glacier
+Rising
+Boulder
+Cascade
+Thunder
+Rainbow
+Soul
+Marsh
+Volcano
+Earth
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
 The ruins are sending signals.\nWhich reading should we follow?\r
-Stone signal\r
-Frost signal\r
-Metal signal\r
-Central chamber\r
-Final signal\r
-Research notes\r
+Stone signal
+Frost signal
+Metal signal
+Central chamber
+Final signal
+Research notes
 The stone dial has locked into place.\nAnswer the signal?\r
 Frost has formed on the receiver.\nAnswer the signal?\r
 The metal dial is vibrating.\nAnswer the signal?\r
@@ -244,15 +244,15 @@ The signal has faded for now.\nYou may try again.\r
 Bring a Pokémon that can battle.\r
 Need help preparing your team?\r
 What should we do with\nyour newly caught Pokémon?\r
-Summary\r
-Send to Box\r
-Put in team\r
+Summary
+Send to Box
+Put in team
 There is no room in your Boxes.\r
 Keep a Pokémon that can battle\nin your team.\r
 Which team member should\ngo to the Box?\r
 Remove the Mail or Seal Capsule\nbefore boxing that Pokémon.\r
-{STRVAR_1 0, 0, 0}\r
-Warp to town\r
+{STRVAR_1 0, 0, 0}
+Warp to town
 Choose a destination.
 Pokémon Box Link
 Open boxes
