@@ -56,18 +56,22 @@ LD = $(PREFIX)ld
 OBJCOPY = $(PREFIX)objcopy
 PYTHON_NO_VENV = python3
 VENV = .venv
-PYTHON_VENV_VERSION := $(shell $(PYTHON_NO_VENV) -m ensurepip 2>&1 | grep -i -q 'No module named'; echo $$?)
-
-ifneq ($(PYTHON_VENV_VERSION), 0)
-# we can use a virtual environment because ensurepip is packaged with the python install
-VENV_ACTIVATE = $(VENV)/bin/activate
-PYTHON = . $(VENV_ACTIVATE); $(PYTHON_NO_VENV)
 REQUIREMENTS = requirements.txt
+
+# MSYS2 can use a Python distribution that does not ship ensurepip.
+# On Linux/macOS always use the project environment, even if the caller activated another one.
+ifeq ($(MSYS2),0)
+USE_VENV := $(shell $(PYTHON_NO_VENV) -c 'import ensurepip' >/dev/null 2>&1 && echo yes)
+else
+USE_VENV := yes
+endif
+
+ifeq ($(USE_VENV),yes)
+VENV_PYTHON = $(VENV)/bin/python3
+PYTHON = $(VENV_PYTHON)
 VENV_READY = $(VENV)/.requirements-installed
 else
-# there is no need to use a virtual environment because python does not have the requirements installed
 PYTHON = $(PYTHON_NO_VENV)
-VENV_ACTIVATE =
 endif
 
 .PHONY: clean all dumprom move_narc
@@ -79,22 +83,25 @@ NOSCAN ?= 0
 
 default: all
 
-ifneq ($(PYTHON_VENV_VERSION), 0)
-# only set up venv if we need to
+ifeq ($(USE_VENV),yes)
+.PHONY: venv refresh-python-dependencies
 venv: $(VENV_READY)
 
-# divorce this python3 from venv so that it works
-$(VENV_ACTIVATE):
+$(VENV_PYTHON):
 	$(PYTHON_NO_VENV) -m venv $(VENV)
 
-$(VENV_READY): $(REQUIREMENTS) Makefile | $(VENV_ACTIVATE)
-ifeq ($(MSYS2), 0)
+# Recover from incomplete environments and stamps copied from older builds.
+ifneq ($(shell $(VENV_PYTHON) -c 'import ndspy.narc, yaml' >/dev/null 2>&1 && echo ready),ready)
+$(VENV_READY): refresh-python-dependencies
+endif
+
+$(VENV_READY): $(REQUIREMENTS) | $(VENV_PYTHON)
+ifeq ($(MSYS2),0)
 	$(PYTHON) -m pip install ndspy==4.1.0 PyYAML
 else
 	$(PYTHON) -m pip install -r $(REQUIREMENTS)
 endif
 	touch $@
-
 endif
 
 ####################### Tools #######################
@@ -251,7 +258,12 @@ endif
 TOOLS += tools/ntrWavTool.py
 
 NITROGFX_SOURCES := $(wildcard tools/source/nitrogfx/*.c) $(wildcard tools/source/nitrogfx/*.h)
-$(GFX): $(NITROGFX_SOURCES)
+ifeq ($(wildcard tools/source/nitrogfx/Makefile),)
+tools/source/nitrogfx/Makefile:
+	git submodule update --init -- tools/source/nitrogfx
+endif
+
+$(GFX): tools/source/nitrogfx/Makefile $(NITROGFX_SOURCES)
 	cd tools/source/nitrogfx ; $(MAKE) clean; $(MAKE)
 	mv tools/source/nitrogfx/nitrogfx $(GFX)
 
@@ -302,7 +314,7 @@ $(BTX):
 TOOLS += $(BTX)
 
 ####################### Build #######################
-$(BUILD)/rom_gen.ld:$(LINK) $(OUTPUT) rom.ld
+$(BUILD)/rom_gen.ld:$(LINK) $(OUTPUT) rom.ld | $(VENV_READY)
 	cp rom.ld $(BUILD)/rom_gen.ld
 	$(PYTHON) scripts/generate_ld.py $(BUILD)/rom_gen.ld $(LINK)
 
@@ -357,7 +369,7 @@ $(BASE)/arm9.bin: $(ROMNAME) $(NDSTOOL) | $(VENV_READY)
 	$(NARCHIVE) extract $(FILESYS)/a/0/2/8 -o $(BUILD)/a028/ -nf
 endif
 
-all: $(OUTPUT) $(OVERLAY_OUTPUTS) $(TOOLS) $(BASE)/arm9.bin
+all: $(OUTPUT) $(OVERLAY_OUTPUTS) $(TOOLS) $(BASE)/arm9.bin | $(VENV_READY)
 	@# find and delete macOS and windows files
 	find . \( -name "*.DS_Store" -o -name "*:Zone.Identifier" \) -delete
 	$(PYTHON) scripts/make.py $(CFLAGS)
