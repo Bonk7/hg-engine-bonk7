@@ -739,13 +739,17 @@ $(eval $(call SCR_SEQ_RULE,$(SCR_SEQ_DEPENDENCIES_DIR)/violet_move_reminder.s,vi
 ALPH_RESEARCH := $(SCR_SEQ_OBJ_DIR)/alph_research_entry
 $(eval $(call SCR_SEQ_RULE,$(SCR_SEQ_DEPENDENCIES_DIR)/alph_research_entry.s,alph_research_entry))
 
+MEGA_GYM := $(SCR_SEQ_OBJ_DIR)/mega_gym_entry
+$(eval $(call SCR_SEQ_RULE,$(SCR_SEQ_DEPENDENCIES_DIR)/mega_gym_entry.s,mega_gym_entry))
+
 # only the members that were built replace what the rom already has, so every script left out stays as rom.nds had it
-$(SCR_SEQ_NARC): $(SCR_SEQ_OBJS) $(VIOLET_MOVE_REMINDER) $(VIOLET_TEAM_EXP) $(VIOLET_TRAINING) $(ALPH_RESEARCH) | $(SCR_SEQ_DIR)
+$(SCR_SEQ_NARC): $(SCR_SEQ_OBJS) $(VIOLET_MOVE_REMINDER) $(VIOLET_TEAM_EXP) $(VIOLET_TRAINING) $(ALPH_RESEARCH) $(MEGA_GYM) | $(SCR_SEQ_DIR)
 	$(NARCHIVE) extract $(SCR_SEQ_TARGET) -o $(SCR_SEQ_DIR) -nf
 	$(if $(SCR_SEQ_OBJS),cp $(SCR_SEQ_OBJS) $(SCR_SEQ_DIR)/)
 	$(PYTHON) scripts/patch_violet_center.py $(SCR_SEQ_DIR)/2_860 $(VIOLET_MOVE_REMINDER) $(VIOLET_TEAM_EXP) $(VIOLET_TRAINING)
 	$(PYTHON) scripts/patch_debug_bedroom.py $(SCR_SEQ_DIR)/2_619 $(SCR_SEQ_DIR)/2_846
 	$(PYTHON) scripts/patch_alph_research.py $(SCR_SEQ_DIR)/2_038 $(ALPH_RESEARCH)
+	$(PYTHON) scripts/patch_mega_story.py gym $(SCR_SEQ_DIR)/2_859 $(MEGA_GYM)
 	$(NARCHIVE) create $@ $(SCR_SEQ_DIR) -nf
 
 # for convenience, rebuild SCR_SEQ_NARC every build so that DSPRE changes are not overwritten
@@ -797,6 +801,7 @@ $(ZONE_EVENT_NARC): $(ZONE_EVENT_OBJS) | $(ZONE_EVENT_DIR)
 	$(NARCHIVE) extract $(ZONE_EVENT_TARGET) -o $(ZONE_EVENT_DIR) -nf
 	$(if $(ZONE_EVENT_OBJS),cp $(ZONE_EVENT_OBJS) $(ZONE_EVENT_DIR)/)
 	$(PYTHON) scripts/add_center_staff.py $(ZONE_EVENT_DIR)
+	$(PYTHON) scripts/patch_mega_story.py elm $(ZONE_EVENT_DIR)/2_107
 	$(NARCHIVE) create $@ $(ZONE_EVENT_DIR) -nf
 
 .PHONY: $(ZONE_EVENT_NARC)

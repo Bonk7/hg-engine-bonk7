@@ -12,6 +12,8 @@
 #define FLAG_HIDE_BATTLE_TYPE_HINTS 2610
 // Persistent flags 2611 through 2627, in legendary profile order.
 #define FLAG_LEGENDARY_TRIAL_FIRST 2611
+#define FLAG_ELM_MEGA_STARTED 2628
+#define FLAG_ELM_MEGA_COMPLETE 2629
 #define VAR_DEBUG_SETUP 0x416F
 #define FLAG_CHAMPION_CLEARED 2404
 

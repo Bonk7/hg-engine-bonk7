@@ -287,3 +287,8 @@ You need ¥3,000 for a Mega Stone.
 The Pokémon must hold its own Mega\nStone. Tap Mega Evolution in battle.\rRayquaza needs to know Dragon\nAscent instead of holding a stone.
 How to Mega Evolve
 Browse Mega Stones
+Professor Elm is at Sprout Tower\nin Violet City. Ask him about his\fMega Evolution research.
+You have come a long way since you\nleft New Bark Town!\rI found a stone that responds to the\nbond between a Beedrill and its Trainer.\rSage Li is testing it upstairs.\nI would like you to help with his trial.
+Climb to the top of Sprout Tower\nand win Sage Li’s battle.\rThen come back and tell me\nwhat you saw!
+Now you have seen what a strong bond\ncan do. Take these for your journey!\rYou received the Mega Ring\nand Beedrillite!
+Before we battle, see Professor Elm\nat the entrance to Sprout Tower.\rHe is studying a power that\nyou will see in this Gym.

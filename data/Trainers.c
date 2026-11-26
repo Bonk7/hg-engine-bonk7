@@ -12754,7 +12754,7 @@ const TrainerData sTrainerData[] = {
     [290] = {
         .name = "Li",
         .data = {
-            .trainerType = TRAINER_DATA_TYPE_NOTHING,
+            .trainerType = TRAINER_DATA_TYPE_ITEMS,
             .trainerClass = TRAINERCLASS_ELDER,
             .items = { ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE },
             .aiFlags = F_PRIORITIZE_SUPER_EFFECTIVE | F_EXPERT_ATTACKS,
@@ -12779,7 +12779,8 @@ const TrainerData sTrainerData[] = {
                 .ivs = 30,
                 .abilitySlot = TRAINER_POKEMON_ABILITY_1,
                 .level = 12,
-                .species = SPECIES_HOOTHOOT,
+                .species = SPECIES_BEEDRILL,
+                .item = ITEM_BEEDRILLITE,
                 .ballSeal = 0,
             },
         },

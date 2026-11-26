@@ -108,6 +108,8 @@ scrdef AlphResearch
 scrdef CenterServices
 scrdef CaptureReview
 scrdef CenterShinyTrial
+scrdef ElmMegaResearch
+scrdef FalknerMegaGate
 scrdef_end
 
 CenterServices:
@@ -2061,20 +2063,13 @@ CenterShinyTrialExit:
 .include "data/scr_seq/capture_review.inc"
 
 CenterMegaEvolution:
-    hasitem ITEM_MEGA_RING, 1, VAR_SPECIAL_RESULT
-    compare VAR_SPECIAL_RESULT, 0
-    goto_if_ne CenterMegaRingOwned
-    giveitem ITEM_MEGA_RING, 1, VAR_SPECIAL_RESULT
-    compare VAR_SPECIAL_RESULT, 0
-    goto_if_eq VioletBoxLinkNoSpace
-    setflag FLAG_MEGA_EVOLUTION_ENABLED
-    play_fanfare SEQ_ME_KEYITEM
-    msgbox_extern 40, 281
-    wait_fanfare
+    goto_if_set FLAG_ELM_MEGA_COMPLETE, CenterMegaRingOwned
+    msgbox_extern 40, 289
     wait_button
     closemsg
+    goto VioletTrainingExit
+
 CenterMegaRingOwned:
-    setflag FLAG_MEGA_EVOLUTION_ENABLED
     touchscreen_menu_hide
     menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
     menu_item_add 288, 255, 0
@@ -2140,3 +2135,50 @@ CenterMegaPreviousPage:
 CenterMegaNextPage:
     addvar VAR_SPECIAL_x8004, 1
     goto CenterMegaStonePage
+
+ElmMegaResearch:
+    lockall
+    faceplayer
+    goto_if_set FLAG_ELM_MEGA_COMPLETE, ElmMegaAlreadyDone
+    goto_if_set FLAG_ELM_MEGA_STARTED, ElmMegaCheckTrial
+    setflag FLAG_ELM_MEGA_STARTED
+    msgbox_extern 40, 290
+    wait_button
+    closemsg
+ElmMegaCheckTrial:
+    goto_if_set 118, ElmMegaReward
+    msgbox_extern 40, 291
+    goto ElmMegaExit
+ElmMegaReward:
+    hasitem ITEM_MEGA_RING, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne ElmMegaStone
+    giveitem ITEM_MEGA_RING, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq VioletBoxLinkNoSpace
+ElmMegaStone:
+    giveitem ITEM_BEEDRILLITE, 1, VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq VioletBoxLinkNoSpace
+    setflag FLAG_ELM_MEGA_COMPLETE
+    setflag FLAG_MEGA_EVOLUTION_ENABLED
+    play_fanfare SEQ_ME_KEYITEM
+    msgbox_extern 40, 292
+    wait_fanfare
+    goto ElmMegaExit
+ElmMegaAlreadyDone:
+    msgbox_extern 40, 286
+ElmMegaExit:
+    wait_button
+    closemsg
+    goto VioletTrainingExit
+
+FalknerMegaGate:
+    lockall
+    faceplayer
+    msgbox_extern 40, 293
+    wait_button
+    closemsg
+    releaseall
+    endstd
+    end
