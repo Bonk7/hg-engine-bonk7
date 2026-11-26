@@ -123,7 +123,7 @@ void LONG_CALL ClearWindowPixelBuffer(void *window, u32 deferCopy);
 
 static struct {
     struct Window window;
-    String *labels[9];
+    String *labels[10];
     String *number;
     u8 values[6];
     u8 selected;
@@ -141,15 +141,9 @@ static int TrainingSlider_Total(void)
     return total;
 }
 
-static void TrainingSlider_PrintNumber(int value, int x, int y, BOOL total)
+static void TrainingSlider_PrintNumber(int value, int x, int y)
 {
-    u16 digits[] = {
-        0x121 + value / 100, 0x121 + value / 10 % 10, 0x121 + value % 10,
-        0x1B1, 0x126, 0x122, 0x121, 0xFFFF,
-    };
-    if (!total) {
-        digits[3] = 0xFFFF;
-    }
+    u16 digits[] = {0x121 + value / 100, 0x121 + value / 10 % 10, 0x121 + value % 10, 0xFFFF};
     CopyU16ArrayToString(sTrainingSliders.number, digits + (value < 10 ? 2 : value < 100));
     AddTextPrinterParameterizedWithColor(&sTrainingSliders.window, 1, sTrainingSliders.number,
                                          x, y, 0xFF, 0x01020F, NULL);
@@ -162,7 +156,11 @@ static void TrainingSlider_Draw(void)
     FillWindowPixelBuffer(window, 15);
     AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[6], 9, 3, 0xFF, 0x01020F, NULL);
     if (!sTrainingSliders.editIVs) {
-        TrainingSlider_PrintNumber(TrainingSlider_Total(), 161, 3, TRUE);
+        int invested = TrainingSlider_Total();
+        TrainingSlider_PrintNumber(invested, 87, 3);
+        AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[9], 124, 3,
+                                             0xFF, 0x01020F, NULL);
+        TrainingSlider_PrintNumber(510 - invested, 205, 3);
     }
     for (int i = 0; i < 6; i++) {
         int y = 23 + 17 * i;
@@ -171,7 +169,7 @@ static void TrainingSlider_Draw(void)
         AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[i], 9, y, 0xFF, color, NULL);
         FillWindowPixelRect(window, 2, 66, y + 6, 125, 3);
         FillWindowPixelRect(window, i == sTrainingSliders.selected ? 7 : 1, knob - 2, y + 3, 5, 9);
-        TrainingSlider_PrintNumber(sTrainingSliders.values[i], 201, y, FALSE);
+        TrainingSlider_PrintNumber(sTrainingSliders.values[i], 201, y);
     }
     AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[7], 9, 132, 0xFF, 0x07080F, NULL);
     AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[8], 9, 148, 0xFF, 0x01020F, NULL);
@@ -191,7 +189,9 @@ static BOOL TrainingSlider_HandleInput(SCRIPTCONTEXT *ctx)
         ClearWindowPixelBuffer(&sTrainingSliders.window, FALSE);
         RemoveWindow(&sTrainingSliders.window);
         for (u32 i = 0; i < NELEMS(sTrainingSliders.labels); i++) {
-            String_Delete(sTrainingSliders.labels[i]);
+            if (sTrainingSliders.labels[i] != NULL) {
+                String_Delete(sTrainingSliders.labels[i]);
+            }
         }
         String_Delete(sTrainingSliders.number);
         return TRUE;
@@ -242,6 +242,7 @@ static BOOL TrainingSlider_Open(SCRIPTCONTEXT *ctx, u16 result)
     sTrainingSliders.labels[6] = NewString_ReadMsgData(texts, sTrainingSliders.editIVs ? 348 : 347);
     sTrainingSliders.labels[7] = NewString_ReadMsgData(texts, 349);
     sTrainingSliders.labels[8] = NewString_ReadMsgData(texts, 350);
+    sTrainingSliders.labels[9] = sTrainingSliders.editIVs ? NULL : NewString_ReadMsgData(texts, 351);
     DestroyMsgData(texts);
     sTrainingSliders.number = String_New(8, HEAPID_FIELD1);
     AddWindowParameterized(ctx->fsys->bg_config, &sTrainingSliders.window, 3, 1, 1, 30, 21, 13, 61);

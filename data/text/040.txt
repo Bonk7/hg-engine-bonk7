@@ -345,7 +345,8 @@ Reward:
 B  Back to quests
 Defeat Sage Li and report to Elm.
 Bring an Oran Berry for the grove.
-Adjust EVs
+EVs invested
 Adjust IVs   Max 31 per stat
 A Apply    B Cancel    Y Clear all
 D-pad Adjust   L/R Fast   X Clear
+Remaining
