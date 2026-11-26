@@ -64,10 +64,11 @@ if __name__ == "__main__":
     elif operation == "grove":
         add_quest_object(*paths, 12, 14, 325, 2085)
     elif operation == "early-stones":
-        union_cave, tower, route_center = paths
+        union_cave, tower, route_center, route_32 = paths
         add_quest_object(union_cave, 27, 31, 87, 2086, 2632, 30)
         add_quest_object(tower, 18, 8, 87, 2087, 2633, 30)
-        add_quest_object(route_center, 12, 14, 87, 2088, 2634, 30)
+        remove_generated_pickups(route_center, {2088: 2634})
+        add_quest_object(route_32, 464, 421, 87, 2088, 2634, 30)
     elif operation == "research":
         directory, placements = paths
         with placements.open() as file:

@@ -813,7 +813,7 @@ $(ZONE_EVENT_NARC): $(ZONE_EVENT_OBJS) $(BUILD)/mega_research_events.csv | $(ZON
 	$(PYTHON) scripts/add_center_staff.py $(ZONE_EVENT_DIR)
 	$(PYTHON) scripts/patch_mega_story.py elm $(ZONE_EVENT_DIR)/2_107
 	$(PYTHON) scripts/patch_mega_story.py grove $(ZONE_EVENT_DIR)/2_160
-	$(PYTHON) scripts/patch_mega_story.py early-stones $(ZONE_EVENT_DIR)/2_148 $(ZONE_EVENT_DIR)/2_151 $(ZONE_EVENT_DIR)/2_163
+	$(PYTHON) scripts/patch_mega_story.py early-stones $(ZONE_EVENT_DIR)/2_148 $(ZONE_EVENT_DIR)/2_151 $(ZONE_EVENT_DIR)/2_163 $(ZONE_EVENT_DIR)/2_033
 	$(PYTHON) scripts/patch_mega_story.py research $(ZONE_EVENT_DIR) $(BUILD)/mega_research_events.csv
 	$(NARCHIVE) create $@ $(ZONE_EVENT_DIR) -nf
 
