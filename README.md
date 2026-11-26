@@ -41,6 +41,10 @@
 
 If you are looking to contribute to hg-engine, please see the [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## BonkHG
+
+Zie de [BonkHG-handleiding](documentation/BONKHG.md) voor lokaal bouwen, de featurelijst en de testroute.
+
 ## Setup Instructions (Linux with apt)
 1. In a Terminal window, run the following command:
     * ```sudo apt-get install libpng-dev build-essential cmake python3-pip python3-venv git gcc-arm-none-eabi pkg-config pipx```

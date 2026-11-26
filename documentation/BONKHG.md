@@ -1,0 +1,105 @@
+# BonkHG
+
+Deze handleiding beschrijft de wijzigingen op de branch `bonkhg` van [Bonk7/hg-engine-bonk7](https://github.com/Bonk7/hg-engine-bonk7/tree/bonkhg). Het is een HeartGold-enhancement met aangepaste wilde encounters en trainerteams in Johto en Kanto, geïnspireerd op Storm Silver. Er zijn geen levelcaps.
+
+## Lokaal bouwen op Linux of WSL
+
+Als je bestaande clone op `bonkhg` staat en `origin` naar de fork wijst, volstaat na iedere update:
+
+```sh
+git pull --ff-only
+make -j3
+```
+
+Open na **Done. See output test.nds** het bestand `test.nds` uit deze repository. De build maakt of herstelt zelf de lokale Python-omgeving en haalt zo nodig de nitrogfx-submodule op. Je hoeft geen venv te activeren, geen losse Python-pakketten te installeren en geen gegenereerde bestanden uit de cloud te kopiëren.
+
+### Eenmalige installatie
+
+- Gebruik een Git-clone. Controleer met `git remote -v` of `origin` naar de fork wijst en met `git branch --show-current` of je op `bonkhg` staat. Ga zo nodig naar die branch met `git switch bonkhg`.
+- Plaats je eigen schone Amerikaanse HeartGold-ROM met gamecode `IPKE` als `rom.nds` in de hoofdmap. Bewaar je bestaande saves en de originele ROM apart. Git levert de basis-ROM niet mee.
+- Op Debian, Ubuntu en Ubuntu onder WSL installeer je eenmalig de systeempakketten. Installeer ook een actuele stabiele Rust-toolchain via [rustup](https://rustup.rs/) en zorg dat `cargo --version` werkt. De eerste build downloadt tools en Python-pakketten en heeft daarvoor internet nodig.
+
+```sh
+sudo apt update
+sudo apt install build-essential git libpng-dev cmake pkg-config python3 python3-venv gcc-arm-none-eabi binutils-arm-none-eabi libnewlib-arm-none-eabi curl
+```
+
+Voor andere systemen staan de installatie-instructies in de [upstream README](../README.md). Als je bij een bestaande clone toch een oude build of foutmelding krijgt, controleer eerst de branch en de naam van het ROM-bestand. `make clean` gevolgd door `make -j3` maakt de afgeleide ROM-data opnieuw. De bron-ROM en emulator-saves vallen buiten deze opruimactie. Bij een fout in de build is de eerste foutmelding meestal het nuttigst. `Error 2` onderaan meldt alleen dat een stap eerder is mislukt.
+
+## Praktische testroute
+
+Gebruik DeSmuME of melonDS met twee emulatorprofielen of afzonderlijke savebestanden. Start één **Normal game** voor verhaal en regressies en één **Debug menu** voor snelle controles. Sla in het spel zelf op vóór een belangrijke test. Laad bij een andere ROM-build de normale in-game save via **Continue**. Emulator-savestates bevatten ook code en geheugen van de oude ROM.
+
+### 1. Nieuwe save en eerste badge
+
+| Test | Zo controleer je het |
+| --- | --- |
+| Debugopt-in | Kies in de slaapkamer de gewenste modus. Open buiten het spelermenu met **X**, druk op **SELECT** en vergelijk beide saves. Alleen op de debugsave verschijnt het menu. |
+| Zoekfuncties | Zoek op een deel van een itemnaam, zoals `SHINY`, en op een deel van een soortnaam, zoals `PIKA`. Geef één item en één Pokémon en controleer tas, team en gekozen level. Voeg een badge toe en controleer de Trainer Card. Badge-toekenning verandert geen verhaalvlaggen. |
+| Warps en snelle winst | Kies **Warp to town**. Controleer aankomst, wandelen en in- en uitlopen van een gebouw, bijvoorbeeld bij Violet en daarna in Kanto. Tijdens de gevechtskeuze geeft **L+A** op de debugsave een directe overwinning. Test op de normale save ook dat deze combinatie geen overwinning geeft. |
+| Wilde encounters en trainers | Speel Route 30, Route 31 en Sprout Tower. Vergelijk soorten, levels en teams met de Pokédex-gids en de trainerdata. Herhaal halverwege Johto, rond de League en in Kanto. Test gras, water, hengel en verschillende dagdelen waar die relevant zijn. |
+| Verhaal-Mega | Spreek Elm bij de ingang van Sprout Tower, versla Sage Li en meld je terug. Controleer **Mega Quest Log**, **Mega Ring** en **Beedrillite**. Spreek Falkner vóór en na Elms opdracht. Laat Beedrill de steen vasthouden en activeer Mega Evolution in het aanvalsmenu. |
+
+### 2. Pokémon Center, route en gevecht
+
+| Feature | Test en verwacht resultaat |
+| --- | --- |
+| Center-diensten | Gebruik in verschillende Centers de medewerker voor teamdiensten, Move Reminder, Exp. Share, eieren, Mega-onderzoek en gevechtsinstellingen. De verpleegster geneest en de Shiny Trial heeft een eigen NPC. Controleer ook de League-lobby. |
+| Training en statbewerking | Train een Pokémon onder het getoonde doellevel. Gebruik Move Reminder om eventueel gemiste zetten te leren. Verhoog/verlaag EV's per stat en probeer **Max**, **Set to zero** en **Reset all**. Controleer 252 per stat en 510 totaal. Na de Champion kun je hetzelfde doen voor IV's, tot 31 per stat. |
+| Move Reminder en Exp. Share | Laat een vergeten zet gratis terugleren. Zet team-Exp. Share aan/uit, win een gevecht en vergelijk de ervaring van een Pokémon die niet heeft meegevochten. Sla op en laad de instelling opnieuw. |
+| Box Link | Haal het sleutelitem bij de medewerker. Open buiten een Center de box vanuit de tas. Sla Story, Catching en Training op, verplaats teamleden naar de box en laad een preset. Probeer ook een preset met een ontbrekend teamlid of een teamlid met Mail. Een mislukte wissel laat het team intact. |
+| Hergebruik van Repel | Gebruik een Repel en loop tot het effect afloopt. Bevestig het aanbod om hetzelfde type opnieuw te gebruiken en controleer de voorraad. |
+| Field HMs en rematches | Probeer een geschikte veldactie met de juiste HM en badge, zonder de zet aan een teamlid te leren. Bel vervolgens een rematchcontact buiten het oorspronkelijke tijdvenster. De gewone voortgangsvoorwaarden gelden nog. |
+| Nature Mints en abilities | Controleer een gewone Poké Mart bij 3 badges voor Mints en Ability Capsule en bij 8 badges voor Ability Patch. Gebruik ze op een geschikte Pokémon en controleer stat- of abilitywijziging. |
+| Fokken | Haal het eerste ei op bij de Day Care op Route 34. Laat daarna opnieuw een ei ontstaan en haal het op bij de Center-medewerker. Controleer ook het kortere uitbroeden en het gesprek bij een vol team. |
+| Gevechtsinstellingen | Schakel **Battle pace** en **Type hints** onafhankelijk om. Vergelijk routineanimaties en tekstpauzes. Controleer bij aanvallen groen voor super effective, oranje voor not very effective en rood voor no effect. Bij verschillende uitkomsten in een dubbelgevecht kan **Depends on target** verschijnen. |
+| Vanginformatie | Vecht tegen een al gevangen wilde soort. Controleer de melding en bekijk de Quick Ball in de gevechtstas op beurt één en daarna. De omschrijving geeft aan of de situatiebonus actief is. |
+| Vangstbeheer | Vang een gewone wilde Pokémon. Na de bijnaamvraag verschijnen **Summary**, **Send to Box** en **Put in team**. Probeer zowel vrije als volle teamplekken. Kies bij zes leden wie naar de box gaat en controleer beide Pokémon. Test Mail of Seal Capsule op het te vervangen teamlid. |
+
+### 3. Pokédex en evoluties
+
+Houd de combinatie ingedrukt terwijl je een soortentry opent. Blader in de gidsen met **L/R**. De gewone entry toont de bediening.
+
+| Invoer | Weergave |
+| --- | --- |
+| SELECT | Evolutievoorwaarden, inclusief alternatieven voor ruilen |
+| SELECT+X | Gedetailleerde vindplaatsen voor deze soort |
+| SELECT+Y | Soortprofiel met stats, abilities en learnsetinformatie |
+| SELECT+X+Y | Encountergids van de huidige route, met methode, levels en gevangen status |
+| SELECT+START | Training met EV-opbrengst, level-up, TM/HM, egg moves en tutor-moves met locatie of vereisten |
+| SELECT+L+R | Oorspronkelijke soortbeschrijving |
+
+Controleer de gewone area-markers en de gedetailleerde gids met een soort die je net op die route hebt gevangen. Test een single-player ruilevolutie, bijvoorbeeld Kadabra met een Linking Cord. Gebruik voor item- of soortspecifieke alternatieven de evolutiegids.
+
+### 4. Mega-journal en teams
+
+- Open het log vanuit **Key Items**. Controleer het actieve tabblad, de groene Completed-lijst, paginering en de standaard alfabetische volgorde. Druk op **R** voor sorteren op naam, gebied of beloning. De blauwe balk toont het aandeel afgeronde quests en het percentage.
+- Open met **A** een verborgen quest voor de locatiehint en een ontdekte of voltooide quest voor het doel, de beloning en het itemicoon. Met **B** keer je terug naar de lijst.
+- Test één opdracht per type via **Mega Evolution → Local Mega research** bij de Center-medewerker. In Azalea kun je een Oran Berry ruilen voor Heracronite. Violet heeft een Abra-quiz en een Bellsprout-Pokédex-opdracht, en Goldenrod heeft een optioneel onderzoeksgevecht. Test ook weigeren, ontbreken van het vereiste en opnieuw openen na voltooiing.
+- Er zijn 91 stenen verdeeld over Elms verhaalbeloning, 23 eenmalige vondsten en 67 sidequests. Het log telt 68 quests inclusief Elm. Voor de volledige locaties en opdrachten zie [vindplaatsen](../data/mega_stone_pickups.tsv) en [sidequests](../data/mega_stone_quests.tsv). De drie vroege vondsten staan op Sprout Tower 3F, in het Route 32 Pokémon Center en in Union Cave B1F.
+- Onder **Milestone rewards** haal je na iedere vijf quests drie Rare Candies of drie Heart Scales op, afwisselend. Bij iedere tien komt daar één Shiny Ball bovenop. Bewaar een save bij 4 en 9 quests, voltooi er nog één, haal het pakket op en controleer dat opnieuw ophalen niets dubbel geeft.
+- Test één boss en één gewone trainer zonder **L+A** tot minstens één aanval is gekozen. Er zijn 66 aangepaste bossvarianten en 40 gewone trainerteams met een Mega. William in het National Park heeft Mega Raichu, Union Cave B1F heeft Mega Kangaskhan en Wade gebruikt Mega Beedrill in een latere rematch. Rayquaza gebruikt Dragon Ascent voor Mega Evolution.
+
+### 5. Champion en postgame
+
+| Feature | Test en verwacht resultaat |
+| --- | --- |
+| Champion-ontgrendelingen | Gebruik een save waarop je de League echt hebt gewonnen. Controleer IV-bewerking, de Shiny Trial en de onderzoeksopties in de Ruins of Alph. Een via debug toegekende badge vervangt de Champion-overwinning niet. |
+| Shiny Trial | Praat met de aparte NPC. Er zijn drie gevechten zonder automatisch herstel tussen de rondes. Eerst Morty of Jasmine, dan Koga of Karen en als laatste Lance of Blue, met hun rematchteams. Drie overwinningen geven één Shiny Ball. Je kunt de trial herhalen. |
+| Shiny Ball | Test een geldige worp op een gewone wilde Pokémon. De vangst slaagt gegarandeerd en de gevangen Pokémon is shiny. Bekijk dit in Summary en na opslaan en herladen. |
+| Statische legendaries | Versla eerst fase 1, controleer dat je terugkeert naar het veld en sla op vóór je zelf fase 2 start. Test soft reset, vluchten en opnieuw uitdagen. Beide fasen gebruiken 31 IVs per stat en een soortspecifieke verdeling van 252/252/6 EVs. Fase 2 gebruikt de gewone shinykans. |
+| Ruins of Alph en Arceus | Na de Champion geeft de onderzoeker toegang tot Regirock, Regice en Registeel. De drie vangsten openen Regigigas. Arceus opent wanneer alle andere reguliere soorten in de uitgebreide nationale Pokédex gevangen zijn. Test de afwijzing met een ontbrekende soort vóór je een volledige save gebruikt. De beschikbaarheid van alle soorten in één normale playthrough is nog niet volledig geverifieerd. |
+
+De statische proeven omvatten Articuno, Zapdos, Moltres, Mewtwo, Suicune, Lugia, Ho-Oh, Latias, Latios, Kyogre, Groudon, Rayquaza, de drie Regis, Regigigas en Arceus.
+
+## Regresstests en bronbestanden
+
+Controleer ook **Continue**, Center in/uit in Violet City, een gewone route na een warp, een verlaten menu en meerdere Pokédex- en questlogpagina's. Roze dialoogpijltjes mogen na het sluiten van een menu niet blijven hangen. Controleer bij een bug de commit, emulatorversie, locatie en handelingen en bewaar zo mogelijk een normale in-game save van vlak ervoor.
+
+| Onderdeel | Bron |
+| --- | --- |
+| Wilde encounters en trainerteams | [Encounters.c](../data/Encounters.c), [Trainers.c](../data/Trainers.c) |
+| Evolutievoorwaarden | [Evolutions.c](../data/Evolutions.c) |
+| Mega-combinaties en quests | [mega_stones.inc](../include/mega_stones.inc), [build_mega_research.py](../scripts/build_mega_research.py), [questlogscript](../data/scr_seq/mega_quest_log.inc) |
+| Gevechtsregressies | [Battle test README](../data/battle_tests/README.md). Bouw deze in een aparte clone met `make AUTO_TEST=Y -j3` en start op Linux met `SDL_VIDEODRIVER=dummy scripts/run_tests.sh -j 3`. |
+| Eerdere build- en emulatorchecks | [QOL_PROGRESS.md](../QOL_PROGRESS.md) beschrijft de ontwikkelgeschiedenis, inclusief tijdelijke implementaties die later zijn vervangen. |
