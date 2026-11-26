@@ -47,12 +47,28 @@ static const struct MegaQuestEntry {
     u16 title[3];
     u16 details[3];
     const char *sortKey[3];
-    u16 map, item, kind, argument, officeTitle, logObjective;
+    u16 map, item, kind, argument, officeTitle, logObjective, requiredBadges;
 } sMegaQuests[] = {
-    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}, {"elms discovery", "violet city", "beedrillite"}, 0, ITEM_BEEDRILLITE, 0, 0, 0, 345},
-    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "azalea town", "heracronite"}, 0, ITEM_HERACRONITE, 0, 0, 0, 346},
+    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}, {"elms discovery", "violet city", "beedrillite"}, 0, ITEM_BEEDRILLITE, 0, 0, 0, 345, 0},
+    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "azalea town", "heracronite"}, 0, ITEM_HERACRONITE, 0, 0, 0, 346, 0},
 #include "../../build/mega_research_table.inc"
 };
+
+static BOOL MegaQuest_MeetsRequirements(SCRIPTCONTEXT *ctx, const struct MegaQuestEntry *entry)
+{
+    if (entry->requiredBadges == 0) {
+        return TRUE;
+    }
+    if (entry->requiredBadges == 9) {
+        return CheckScriptFlag(FLAG_CHAMPION_CLEARED);
+    }
+    struct PlayerProfile *profile = Sav2_PlayerData_GetProfileAddr(ctx->fsys->savedata);
+    int badges = 0;
+    for (int i = 0; i < 8; i++) {
+        badges += !!PlayerProfile_TestBadgeFlag(profile, i);
+    }
+    return badges >= entry->requiredBadges;
+}
 
 static int MegaQuestStatus(const struct MegaQuestEntry *entry)
 {
@@ -598,7 +614,13 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         }
         SetScriptFlag(entry->started);
         VarSet(ctx->fsys, 0x8005, entry->item);
-        VarSet(ctx->fsys, 0x8006, CheckScriptFlag(entry->started + 2) ? 0 : entry->kind);
+        u16 objective = entry->kind;
+        if (CheckScriptFlag(entry->started + 2)) {
+            objective = 0;
+        } else if (!MegaQuest_MeetsRequirements(ctx, entry)) {
+            objective = 5; // Show the briefing without launching the objective.
+        }
+        VarSet(ctx->fsys, 0x8006, objective);
         VarSet(ctx->fsys, 0x8007, entry->argument);
         break;
     }

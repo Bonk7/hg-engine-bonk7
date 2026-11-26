@@ -55,6 +55,19 @@ def main(output):
             rotation = index % 3
             answers = answers[-rotation:] + answers[:-rotation]
             arg = str(rotation)
+        required_badges = 0
+        if kind == "battle":
+            level_spec, *partners = arg.split(",")
+            level_spec, _, requirement = level_spec.partition("@")
+            arg = ",".join([level_spec, *partners])
+            if requirement == "champion":
+                required_badges = 9
+                briefing = "Become Champion first. " + briefing
+            elif requirement:
+                required_badges = int(requirement)
+                if not 1 <= required_badges <= 8:
+                    raise ValueError(f"{title}: invalid Johto badge requirement")
+                briefing = f"Earn {required_badges} Johto badges. " + briefing
         texts.extend((
             f"To be discovered · {area}",
             f"{{COLOR 3}}{title}{{COLOR 0}}",
@@ -98,7 +111,7 @@ def main(output):
             f'    {{{start_flag}, {start_flag + 1}, {{{msg}, {msg+1}, {msg+2}}}, '
             f'{{{msg+3}, {msg+4}, {msg+5}}}, '
             f'{{"{title.lower()}", "{area.lower()}", "{reward.lower()}"}}, '
-            f'{map_id}, ITEM_{stone}, {objective[kind]}, {arg}, {msg+6}, {msg+10}}},'
+            f'{map_id}, ITEM_{stone}, {objective[kind]}, {arg}, {msg+6}, {msg+10}, {required_badges}}},'
         )
     for index, (stone, area, bank, x, z) in enumerate(pickups):
         event_script = 2089 + index

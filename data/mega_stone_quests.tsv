@@ -1,43 +1,43 @@
 # Stone|Center map|Area|Title|Objective|Argument (battle uses level,partners or level:trainer ID,partners)|Briefing|Answers (correct first)
 VICTREEBELITE|158|Violet City|A Sprout in the Tower|show|BELLSPROUT|Catch a Bellsprout on Route 31. Its Pokédex record will help the tower's gardeners.
-ALAKAZITE|158|Violet City|An Abra's Escape|quiz|0|Abra vanished before the researcher could act. Which move did it use?|Teleport;Flash;Roost
+ALAKAZITE|158|Violet City|An Abra's Escape|battle|32:761@4,HYPNO,KADABRA,MR_MIME|Outthink the Psychic researcher and Mega Alakazam.
 STARMINITE|428|Cerulean City|The Power of the Tide|battle|56,QUAGSIRE,LANTURN|Take on Misty's student and her Mega Starmie in a three-Pokémon battle.
 GENGARITE|81|Ecruteak City|The Missing Lanterns|battle|32:755,MISDREAVUS,HAUNTER|The Burned Tower lantern keeper is here. Beat their ghost team and Mega Gengar to earn the stone.
 SLOWBRONITE|166|Azalea Town|Notes from the Well|show|SLOWPOKE|Record a Slowpoke from the well in your Pokédex for the local researchers.
 SCIZORITE|166|Azalea Town|Sharp as Scizor|battle|22:756,PINECO,LEDIAN|Spar with the smith's apprentice. Break through Pineco and Ledian before taking on Mega Scizor.
-GYARADOSITE|236|Cianwood City|A Safe Way Home|quiz|0|A diver near Whirl Islands asks how to cross the spinning current. Which field move can clear it?|Whirlpool;Waterfall;Surf
-KANGASKHANITE|534|Safari Zone Gate|A Mother's Watch|show|KANGASKHAN|Catch a Kangaskhan and record it in your Pokédex. The Safari Zone's Wasteland is a good place to look.
+GYARADOSITE|236|Cianwood City|A Safe Way Home|battle|39:762@5,QUAGSIRE,LANTURN,MANTINE|Win the diver’s current trial against Mega Gyarados.
+KANGASKHANITE|534|Safari Zone Gate|A Mother's Watch|battle|42:763@6,MILTANK,TAUROS,URSARING|Beat the Safari warden’s team and Mega Kangaskhan.
 PINSIRITE|185|Goldenrod City|Two Horns at the Park|battle|27,PARASECT,LEDIAN|Challenge a Bug-Catching Contest regular and his Mega Pinsir.
 MEGANIUMITE|158|Violet City|A Garden for Everyone|trade|POTION|Bring a Potion for a school garden's injured Pokémon.
 FERALIGITE|69|Cherrygrove City|Riverbank Patrol|battle|22:757,QUAGSIRE,WARTORTLE|Return for the riverbank patrol's rescue drill. Beat the patrol captain and Mega Feraligatr.
 SKARMORITE|226|Olivine City|Wings of Steel|battle|38,MAGNETON,MAWILE|Take on an Olivine metalworker with a team led by Mega Skarmory.
 HOUNDOOMINITE|246|Mahogany Town|Rocket Leftovers|battle|42,ARBOK,WEEZING|A confiscated Rocket crate contained this stone. Beat its former guard and Mega Houndoom.
-GARDEVOIRITE|185|Goldenrod City|A Quiet Mind|show|RALTS|Record a Ralts from Route 34 in your Pokédex.
+GARDEVOIRITE|185|Goldenrod City|A Quiet Mind|battle|36:764@4,KIRLIA,ESPEON,GRUMPIG|Face the Psychic Club’s team and Mega Gardevoir.
 MEDICHAMITE|236|Cianwood City|The Still Fist|battle|34,HITMONTOP,PRIMEAPE|Face a Cianwood martial artist whose team includes Mega Medicham.
 MANECTITE|534|Safari Zone Gate|Sparks in the Grass|show|ELECTRIKE|Record an Electrike from the Safari Zone in your Pokédex.
 ALTARIANITE|293|Blackthorn City|Clouds over Blackthorn|show|SWABLU|Record a Swablu from Route 44 or 45 in your Pokédex.
 ABSOLITE|166|Azalea Town|The Watcher's Warning|trade|ESCAPE_ROPE|Donate an Escape Rope to the Union Cave rescue team.
-SALAMENCITE|534|Safari Zone Gate|The First Flight|battle|47,PELIPPER,ALTARIA|Defeat the Safari ranger and her Mega Salamence.
-METAGROSSITE|534|Safari Zone Gate|Four Limbs of Steel|battle|46,BRONZONG,FORRETRESS|Challenge the ranger who studies Mega Metagross and partners that resist its weaknesses.
-LUCARIONITE|293|Blackthorn City|The Aura Trial|battle|47,HITMONTOP,BRELOOM|Win the Blackthorn aura trial against a trainer with Mega Lucario.
-LUCARIONITE_Z|293|Blackthorn City|An Aura Record|show|RIOLU|Record a Riolu. A researcher at the Safari Zone Meadow saw one.
+SALAMENCITE|534|Safari Zone Gate|The First Flight|battle|51@8,PELIPPER,ALTARIA,FLYGON,SKARMORY|Beat the Safari ranger’s flight team and Mega Salamence.
+METAGROSSITE|534|Safari Zone Gate|Four Limbs of Steel|battle|51@8,BRONZONG,FORRETRESS,MAGNEZONE,CLAYDOL|Beat the ranger’s steel formation and Mega Metagross.
+LUCARIONITE|293|Blackthorn City|The Aura Trial|battle|48@7,HITMONTOP,BRELOOM,BRONZONG|Break the aura dojo’s guard and beat Mega Lucario.
+LUCARIONITE_Z|293|Blackthorn City|An Aura Record|battle|58:765@champion,GALLADE,MIENSHAO,TOGEKISS,SPIRITOMB|Face the aura master’s team and Mega Lucario Z.
 GALLADITE|185|Goldenrod City|A Blade for Good|battle|29,KIRLIA,KADABRA|Battle a Psychic Club student who chose Mega Gallade.
-GARCHOMPITE|534|Safari Zone Gate|Tracks in the Sand|show|GIBLE|Catch a Gible and show its Pokédex record at the Safari Zone Gate.
-GARCHOMPITE_Z|293|Blackthorn City|The Sand Trial|battle|50,DUGTRIO,FLYGON|Defeat a sand specialist with Mega Garchomp.
-VENUSAURITE|407|Saffron City|Oak's Garden Samples|trade|ORAN_BERRY|Donate an Oran Berry to the Kanto starter research garden.
-CHARIZARDITE_X|501|Viridian City|Embers of Mount Silver|battle|65,ARCANINE,DRAGONAIR|Battle a veteran who uses Mega Charizard X alongside a Fire and a Dragon partner.
-CHARIZARDITE_Y|508|Cinnabar Island|The Sun over Cinnabar|quiz|0|The wind drops and sunlight intensifies when Charizard Mega Evolves. Which ability caused it?|Drought;Drizzle;Sand Stream
-BLASTOISINITE|358|Vermilion City|Harbor Water Test|trade|FRESH_WATER|Deliver a bottle of Fresh Water for the harbor team's comparison samples.
+GARCHOMPITE|534|Safari Zone Gate|Tracks in the Sand|battle|51:766@8,DUGTRIO,HIPPOWDON,FLYGON,GLISCOR|Beat the Safari sand team and Mega Garchomp.
+GARCHOMPITE_Z|293|Blackthorn City|The Sand Trial|battle|58@champion,DUGTRIO,FLYGON,SKARMORY,HIPPOWDON|Face the Blackthorn sand master and Mega Garchomp Z.
+VENUSAURITE|407|Saffron City|Oak's Garden Samples|battle|60:767@champion,VICTREEBEL,BRELOOM,ROSERADE|Win the research garden’s trial against Mega Venusaur.
+CHARIZARDITE_X|501|Viridian City|Embers of Mount Silver|battle|65@champion,ARCANINE,DRAGONAIR,EXCADRILL,TURTONATOR|Beat the mountain expedition team and Mega Charizard X.
+CHARIZARDITE_Y|508|Cinnabar Island|The Sun over Cinnabar|battle|64:768@champion,NINETALES,VENUSAUR,HELIOLISK,VOLCARONA|Beat the solar expedition team and Mega Charizard Y.
+BLASTOISINITE|358|Vermilion City|Harbor Water Test|battle|60:769@champion,LANTURN,POLIWRATH,FERROTHORN|Beat the harbor defense team and Mega Blastoise.
 RAICHUNITE_Y|358|Vermilion City|Electric Circuit|battle|54,ELECTRODE,LANTURN|Challenge an electrician with Mega Raichu and two Electric partners.
-MEWTWONITE_Y|428|Cerulean City|The Second Resonance|show|MEWTWO|Record Mewtwo from Cerulean Cave in your Pokédex.
+MEWTWONITE_Y|428|Cerulean City|The Second Resonance|battle|72:770@champion,ALAKAZAM,SLOWBRO,BRONZONG,ESPEON|Beat the resonance team and Mega Mewtwo Y.
 SCEPTILITE|407|Saffron City|Hoenn Seed Exchange|trade|PECHA_BERRY|Bring a Pecha Berry for a Hoenn seed exchange.
 BLAZIKENITE|407|Saffron City|Footwork Drill|battle|57,COMBUSKEN,HITMONCHAN|A visiting Hoenn trainer challenges you with Mega Blaziken and two fighters.
-SWAMPERTITE|407|Saffron City|A Hoenn Flood Drill|trade|ESCAPE_ROPE|Bring an Escape Rope for an indoor flood rescue drill.
+SWAMPERTITE|407|Saffron City|A Hoenn Flood Drill|battle|63:771@champion,PELIPPER,LUDICOLO,KINGDRA,FERROTHORN|Pass the rain rescue drill against Mega Swampert.
 ABOMASITE|246|Mahogany Town|Cold Weather Study|trade|ICE_HEAL|Bring an Ice Heal for the Ice Path survey crew.
-LATIASITE|358|Vermilion City|The Red Eon Trail|quiz|0|The harbor witness saw a red Eon Pokémon. Which Pokémon was it?|Latias;Latios;Lugia
-LATIOSITE|358|Vermilion City|The Blue Eon Trail|quiz|0|A sailor reported a blue Eon Pokémon. Which name belongs in the report?|Latios;Latias;Suicune
-HEATRANITE|508|Cinnabar Island|Magma Survey|battle|60:758,CAMERUPT,SKARMORY|Face the volcano survey leader. Their team covers the vents until Mega Heatran takes the field.
-DARKRANITE|434|Lavender Town|The Nightmare Report|quiz|0|A villager describes a dark silhouette that causes nightmares. Which Pokémon fits the report?|Darkrai;Jigglypuff;Clefairy
+LATIASITE|358|Vermilion City|The Red Eon Trail|battle|64:772@champion,ALTARIA,TOGEKISS,BRONZONG,DRAGONITE|Beat the red trail team and Mega Latias.
+LATIOSITE|358|Vermilion City|The Blue Eon Trail|battle|64:773@champion,FLYGON,STARMIE,SKARMORY,KINGDRA|Beat the blue trail team and Mega Latios.
+HEATRANITE|508|Cinnabar Island|Magma Survey|battle|64:758@champion,CAMERUPT,SKARMORY,ROTOM,ARCANINE|Beat the volcano survey team and Mega Heatran.
+DARKRANITE|434|Lavender Town|The Nightmare Report|battle|68:774@champion,HYPNO,MISMAGIUS,HOUNDOOM,SPIRITOMB|Defeat the nightmare team and Mega Darkrai.
 EMBOARITE|475|Pewter City|The Unova Hearth|battle|57,GRUMPIG,TORKOAL|Battle the museum's visiting Fire specialist and their Mega Emboar.
 AUDINITE|393|Celadon City|A Kindly Aid|trade|SUPER_POTION|Bring one Super Potion for the traveling Audino clinic.
 SCOLIPITE|482|Fuchsia City|Spines on the Trail|battle|57,VENOMOTH,ARIADOS|Challenge a reserve trainer who leads with Mega Scolipede.
@@ -49,19 +49,19 @@ CHESNAUGHTITE|393|Celadon City|The Living Shield|trade|ORAN_BERRY|Bring an Oran 
 DELPHOXITE|434|Lavender Town|The Wand's Flame|quiz|0|The visitor carries a wand and uses Fire and Psychic moves. Who is it?|Delphox;Alakazam;Ninetales
 GRENINJITE|428|Cerulean City|Ninja at the Canal|battle|57,QUAGSIRE,GOLDUCK|Battle the canal patrol trainer and their Mega Greninja.
 PYROARITE|508|Cinnabar Island|The Lion Exhibit|trade|BURN_HEAL|Bring one Burn Heal for the lion exhibit's field medic.
-FLOETTITE|393|Celadon City|The Eternal Flower|quiz|0|Which Pokémon carries the Eternal Flower described by the florist?|Floette;Roserade;Bellossom
+FLOETTITE|393|Celadon City|The Eternal Flower|battle|64:775@champion,FLORGES,ROSERADE,CLEFABLE,MAWILE|Beat the flower exhibit’s team and Mega Floette.
 MEOWSTICITE|407|Saffron City|A Silent Warning|trade|PARALYZE_HEAL|Bring a Parlyz Heal for the Psychic club's field kit.
 MALAMARITE|434|Lavender Town|Against the Current|quiz|0|The team's stat drops turned into boosts. Which ability reverses those changes?|Contrary;Intimidate;Pressure
 BARBARACITE|508|Cinnabar Island|Shells on the Shore|trade|NET_BALL|Bring a Net Ball for the intertidal survey.
 DRAGALGITE|358|Vermilion City|The Kelp Sample|trade|ANTIDOTE|Bring an Antidote for the harbor's poisonous kelp survey.
 HAWLUCHANITE|407|Saffron City|The Aerial Ring|battle|57,PRIMEAPE,NOCTOWL|Face the dojo's aerial wrestler and their Mega Hawlucha.
-DIANCITE|475|Pewter City|The Living Diamond|quiz|0|The curator describes the Jewel Pokémon, a Rock and Fairy type. Which Pokémon is it?|Diancie;Carbink;Sableye
+DIANCITE|475|Pewter City|The Living Diamond|battle|65:776@champion,CARBINK,GIGALITH,EXCADRILL,FROSLASS|Win the museum’s crystal trial against Mega Diancie.
 GOLISOPITE|482|Fuchsia City|The Tidal Retreat|quiz|0|Which ability makes Golisopod leave battle when it falls to half HP?|Emergency Exit;Shell Armor;Water Absorb
 DRAMPANITE|428|Cerulean City|A Dragon's Kindness|trade|FRESH_WATER|Bring Fresh Water for the child helping a visiting Drampa.
-MAGEARNITE|407|Saffron City|A Heart of Steel|quiz|0|The researcher describes Magearna's special ability. What is it called?|Soul-Heart;Clear Body;Sturdy
-ZERAORITE|358|Vermilion City|Lightning Outrun|battle|58:759,LANTURN,ELECTRODE|Race the harbor's lightning team in battle. Outlast Lanturn and Electrode, then defeat Mega Zeraora.
+MAGEARNITE|407|Saffron City|A Heart of Steel|battle|67:777@champion,KLEFKI,BRONZONG,ROTOM,SCIZOR|Beat the clockwork team and Mega Magearna.
+ZERAORITE|358|Vermilion City|Lightning Outrun|battle|63:759@champion,LANTURN,ELECTRODE,AMPHAROS,GLISCOR|Outlast the harbor’s electric team and Mega Zeraora.
 FALINKSITE|482|Fuchsia City|Hold the Formation|quiz|0|Which move raises all of Falinks's stats and prevents it from switching out?|No Retreat;Bulk Up;Protect
 SCOVILLAINITE|393|Celadon City|Two Peppers|trade|RAWST_BERRY|Bring one Rawst Berry for the spicy botanical exhibit.
 GLIMMORANITE|475|Pewter City|A Toxic Bloom|trade|ANTIDOTE|Bring an Antidote for the museum's toxic mineral demonstration.
 TATSUGIRINITE|428|Cerulean City|The Little Commander|quiz|0|Which Pokémon joins Dondozo and commands it during battle?|Tatsugiri;Magikarp;Remoraid
-BAXCALIBRITE|508|Cinnabar Island|The Icebound Expedition|battle|62:760,CLOYSTER,MAMOSWINE|Prove you can handle the Seafoam expedition. Beat the guide's ice team and Mega Baxcalibur.
+BAXCALIBRITE|508|Cinnabar Island|The Icebound Expedition|battle|65:760@champion,CLOYSTER,MAMOSWINE,ABOMASNOW,WEAVILE|Beat the Seafoam guide’s team and Mega Baxcalibur.
