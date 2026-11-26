@@ -961,3 +961,5 @@ FieldListMenu_AddOption = 0x021EDF9C | 1;
 MapToFlySpawn = 0x0203BB50 | 1;
 GetFlyWarpData = 0x0203BA74 | 1;
 BattleInput_CreateTextObject = 0x02268550 | 1;
+
+ClearWindowPixelBuffer = 0x0200E5D4 | 1;

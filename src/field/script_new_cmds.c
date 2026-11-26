@@ -1,5 +1,6 @@
 #include "config.h"
 #include "capture_review.h"
+#include "battle.h"
 #include "debug_catalog.h"
 #include "constants/file.h"
 #include "constants/item.h"
@@ -111,28 +112,59 @@ static int MegaQuestCompletedCount(void)
     return count;
 }
 
+// The field list occupies rows 0–17 and uses character tiles starting at 61.
+static struct Window sMegaQuestProgress;
+void LONG_CALL ClearWindowPixelBuffer(void *window, u32 deferCopy);
+
+static void MegaQuestLog_DrawProgress(SCRIPTCONTEXT *ctx)
+{
+    MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
+    MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 40, HEAPID_FIELD1);
+    if (texts == NULL) {
+        return;
+    }
+    int count = MegaQuestCompletedCount();
+    int progress = count - MEGA_QUEST_MILESTONE_INTERVAL * VarGet(ctx->fsys, VAR_MEGA_QUEST_MILESTONES_CLAIMED);
+    if (progress < 0) {
+        progress = 0;
+    } else if (progress > MEGA_QUEST_MILESTONE_INTERVAL) {
+        progress = MEGA_QUEST_MILESTONE_INTERVAL;
+    }
+
+    ReadMsgDataIntoString(texts, 297 + VarGet(ctx->fsys, 0x8005), format->buffer);
+    SetStringAsPlaceholder(format, 0, format->buffer, NULL);
+    AddWindowParameterized(ctx->fsys->bg_config, &sMegaQuestProgress, 3, 1, 18, 29, 5, 13, 640);
+    FillWindowPixelBuffer(&sMegaQuestProgress, 15);
+    for (int i = 0; i < MEGA_QUEST_MILESTONE_INTERVAL; i++) {
+        int x = 8 + i * 24;
+        FillWindowPixelRect(&sMegaQuestProgress, 2, x, 28, 22, 8);
+        FillWindowPixelRect(&sMegaQuestProgress, i < progress ? 7 : 15, x + 1, 29, 20, 6);
+    }
+    FillWindowPixelRect(&sMegaQuestProgress, 2, 137, 4, 1, 32);
+
+    String *line = String_New(64, HEAPID_FIELD1);
+    String *expanded = String_New(64, HEAPID_FIELD1);
+    const u16 messages[] = {295, 340, 341, 342};
+    for (u32 i = 0; i < NELEMS(messages); i++) {
+        ReadMsgDataIntoString(texts, messages[i], line);
+        StringExpandPlaceholders(format, expanded, line);
+        AddTextPrinterParameterizedWithColor(&sMegaQuestProgress, 1, expanded,
+                                             i < 2 ? 8 : 146, (i & 1) ? 14 : 2,
+                                             0xFF, i == 2 ? 0x07080F : 0x01020F, NULL);
+    }
+    String_Delete(expanded);
+    String_Delete(line);
+    DestroyMsgData(texts);
+    LoadUserFrameGfx1(ctx->fsys->bg_config, 3, 985, 11, 0, HEAPID_FIELD1);
+    DrawFrameAndWindow1(&sMegaQuestProgress, 0, 985, 11);
+}
+
 static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
 {
     void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
-    MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
     u16 sort = VarGet(ctx->fsys, 0x8005);
-    int count = MegaQuestCompletedCount();
-    int towardReward = count - MEGA_QUEST_MILESTONE_INTERVAL * VarGet(ctx->fsys, VAR_MEGA_QUEST_MILESTONES_CLAIMED);
-    if (towardReward < 0) {
-        towardReward = 0;
-    } else if (towardReward > MEGA_QUEST_MILESTONE_INTERVAL) {
-        towardReward = MEGA_QUEST_MILESTONE_INTERVAL;
-    }
-    VarSet(ctx->fsys, 0x8006, count);
+    VarSet(ctx->fsys, 0x8006, MegaQuestCompletedCount());
     VarSet(ctx->fsys, 0x8007, NELEMS(sMegaQuests));
-    MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, 40, HEAPID_FIELD1);
-    if (texts != NULL) {
-        ReadMsgDataIntoString(texts, 297 + sort, format->buffer);
-        SetStringAsPlaceholder(format, 0, format->buffer, NULL);
-        ReadMsgDataIntoString(texts, 324 + towardReward, format->buffer);
-        SetStringAsPlaceholder(format, 3, format->buffer, NULL);
-        DestroyMsgData(texts);
-    }
     FieldListMenu_AddOption(menu, completed ? 301 : 300, 255, 241);
     u8 order[NELEMS(sMegaQuests)];
     for (int i = 0; i < (int)NELEMS(sMegaQuests); i++) {
@@ -325,6 +357,14 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 
     case 19:
         gMegaQuestLogList = FALSE;
+        if (sMegaQuestProgress.pixelBuffer != NULL) {
+            ClearWindowPixelBuffer(&sMegaQuestProgress, FALSE);
+            RemoveWindow(&sMegaQuestProgress);
+        }
+        break;
+
+    case 26:
+        MegaQuestLog_DrawProgress(ctx);
         break;
 
     case 20: {

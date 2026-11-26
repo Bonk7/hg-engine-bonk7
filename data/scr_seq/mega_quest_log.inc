@@ -9,17 +9,10 @@ MegaQuestLogRefresh:
     RunNewCommand 18, VAR_SPECIAL_x8004
     buffer_int 1, VAR_SPECIAL_x8006
     buffer_int 2, VAR_SPECIAL_x8007
-    compare VAR_SPECIAL_x8004, 0
-    goto_if_eq MegaQuestLogActiveHeading
-    msgbox_extern 40, 296
-    goto MegaQuestLogShow
-MegaQuestLogActiveHeading:
-    msgbox_extern 40, 295
-MegaQuestLogShow:
+    RunNewCommand 26, VAR_SPECIAL_x8004
     show_prepared_list
     RunNewCommand 19, 0
     touchscreen_menu_show
-    closemsg
     switch VAR_SPECIAL_RESULT
     case 240, MegaQuestLogSort
     case 241, MegaQuestLogSwitchTab
