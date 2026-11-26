@@ -23,17 +23,19 @@
 #define SCRIPT_NEW_CMD_EDIT_STATS 3
 #define SCRIPT_NEW_CMD_COUNT_MISSING_DEX 4
 
-u16 Training_GetTargetLevel(void *saveData);
-BOOL Training_TrainPartyMember(void *saveData, u16 slot);
-u16 Training_EditStats(void *saveData, u16 slot, u16 stat, u16 operation, BOOL editIVs);
+// These functions live in the main code, outside the field overlay.
+// LONG_CALL preserves the Thumb state when their absolute symbols are linked.
+u16 LONG_CALL Training_GetTargetLevel(void *saveData);
+BOOL LONG_CALL Training_TrainPartyMember(void *saveData, u16 slot);
+u16 LONG_CALL Training_EditStats(void *saveData, u16 slot, u16 stat, u16 operation, BOOL editIVs);
 
 BOOL LONG_CALL Pokedex_CheckMonCaughtFlag(const void *pokedex, u16 species);
 
 u16 LONG_CALL MapToFlySpawn(u16 map);
 void LONG_CALL GetFlyWarpData(u16 spawn, Location *location);
 
-u16 BoxLink_ApplyPreset(SCRIPTCONTEXT *ctx, u16 preset, BOOL saving);
-void BoxLink_AddMenuOptions(SCRIPTCONTEXT *ctx, BOOL presetList);
+u16 LONG_CALL BoxLink_ApplyPreset(SCRIPTCONTEXT *ctx, u16 preset, BOOL saving);
+void LONG_CALL BoxLink_AddMenuOptions(SCRIPTCONTEXT *ctx, BOOL presetList);
 
 void LONG_CALL FieldListMenu_AddOption(void *menu, u16 message, u16 description, u8 value);
 
