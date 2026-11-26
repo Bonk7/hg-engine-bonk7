@@ -27,7 +27,7 @@
 // LONG_CALL preserves the Thumb state when their absolute symbols are linked.
 u16 LONG_CALL Training_GetTargetLevel(void *saveData);
 BOOL LONG_CALL Training_TrainPartyMember(void *saveData, u16 slot);
-u16 LONG_CALL Training_EditStats(void *saveData, u16 slot, u16 stat, u16 operation, BOOL editIVs);
+BOOL LONG_CALL Training_TransferStats(void *saveData, u16 slot, BOOL editIVs, u8 values[6], BOOL apply);
 
 BOOL LONG_CALL Pokedex_CheckMonCaughtFlag(const void *pokedex, u16 species);
 
@@ -120,6 +120,138 @@ static int MegaQuestCompletedCount(void)
 // The field list occupies rows 0–17 and uses character tiles starting at 61.
 static struct Window sMegaQuestProgress;
 void LONG_CALL ClearWindowPixelBuffer(void *window, u32 deferCopy);
+
+static struct {
+    struct Window window;
+    String *labels[9];
+    String *number;
+    u8 values[6];
+    u8 selected;
+    u16 slot;
+    u16 result;
+    BOOL editIVs;
+} sTrainingSliders;
+
+static int TrainingSlider_Total(void)
+{
+    int total = 0;
+    for (int i = 0; i < 6; i++) {
+        total += sTrainingSliders.values[i];
+    }
+    return total;
+}
+
+static void TrainingSlider_PrintNumber(int value, int x, int y, BOOL total)
+{
+    u16 digits[] = {
+        0x121 + value / 100, 0x121 + value / 10 % 10, 0x121 + value % 10,
+        0x1B1, 0x126, 0x122, 0x121, 0xFFFF,
+    };
+    if (!total) {
+        digits[3] = 0xFFFF;
+    }
+    CopyU16ArrayToString(sTrainingSliders.number, digits + (value < 10 ? 2 : value < 100));
+    AddTextPrinterParameterizedWithColor(&sTrainingSliders.window, 1, sTrainingSliders.number,
+                                         x, y, 0xFF, 0x01020F, NULL);
+}
+
+static void TrainingSlider_Draw(void)
+{
+    struct Window *window = &sTrainingSliders.window;
+    int maximum = sTrainingSliders.editIVs ? 31 : 252;
+    FillWindowPixelBuffer(window, 15);
+    AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[6], 9, 3, 0xFF, 0x01020F, NULL);
+    if (!sTrainingSliders.editIVs) {
+        TrainingSlider_PrintNumber(TrainingSlider_Total(), 161, 3, TRUE);
+    }
+    for (int i = 0; i < 6; i++) {
+        int y = 23 + 17 * i;
+        int knob = 66 + sTrainingSliders.values[i] * 124 / maximum;
+        u32 color = i == sTrainingSliders.selected ? 0x07080F : 0x01020F;
+        AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[i], 9, y, 0xFF, color, NULL);
+        FillWindowPixelRect(window, 2, 66, y + 6, 125, 3);
+        FillWindowPixelRect(window, i == sTrainingSliders.selected ? 7 : 1, knob - 2, y + 3, 5, 9);
+        TrainingSlider_PrintNumber(sTrainingSliders.values[i], 201, y, FALSE);
+    }
+    AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[7], 9, 132, 0xFF, 0x07080F, NULL);
+    AddTextPrinterParameterizedWithColor(window, 1, sTrainingSliders.labels[8], 9, 148, 0xFF, 0x01020F, NULL);
+    CopyWindowToVram(window);
+}
+
+static BOOL TrainingSlider_HandleInput(SCRIPTCONTEXT *ctx)
+{
+    u32 pressed = gSystem.newKeys;
+    if (pressed & (PAD_BUTTON_A | PAD_BUTTON_B)) {
+        BOOL ok = TRUE;
+        if (pressed & PAD_BUTTON_A) {
+            ok = Training_TransferStats(ctx->fsys->savedata, sTrainingSliders.slot, sTrainingSliders.editIVs,
+                                        sTrainingSliders.values, TRUE);
+        }
+        VarSet(ctx->fsys, sTrainingSliders.result, ok);
+        ClearWindowPixelBuffer(&sTrainingSliders.window, FALSE);
+        RemoveWindow(&sTrainingSliders.window);
+        for (u32 i = 0; i < NELEMS(sTrainingSliders.labels); i++) {
+            String_Delete(sTrainingSliders.labels[i]);
+        }
+        String_Delete(sTrainingSliders.number);
+        return TRUE;
+    }
+    u32 keys = gSystem.newAndRepeatedKeys;
+    if (!(keys & (PAD_PLUS_KEY_MASK | PAD_BUTTON_L | PAD_BUTTON_R)) && !(pressed & (PAD_BUTTON_X | PAD_BUTTON_Y))) {
+        return FALSE;
+    }
+    if (keys & PAD_KEY_UP) {
+        sTrainingSliders.selected = (sTrainingSliders.selected + 5) % 6;
+    } else if (keys & PAD_KEY_DOWN) {
+        sTrainingSliders.selected = (sTrainingSliders.selected + 1) % 6;
+    }
+    u8 *value = &sTrainingSliders.values[sTrainingSliders.selected];
+    int desired = *value;
+    int step = sTrainingSliders.editIVs ? 5 : 16;
+    if (keys & PAD_KEY_LEFT) desired--;
+    if (keys & PAD_KEY_RIGHT) desired++;
+    if (keys & PAD_BUTTON_L) desired -= step;
+    if (keys & PAD_BUTTON_R) desired += step;
+    if (pressed & PAD_BUTTON_X) desired = 0;
+    if (pressed & PAD_BUTTON_Y) {
+        for (int i = 0; i < 6; i++) sTrainingSliders.values[i] = 0;
+        desired = 0;
+    }
+    int maximum = sTrainingSliders.editIVs ? 31 : 510 - TrainingSlider_Total() + *value;
+    if (maximum > 252) maximum = 252;
+    *value = desired < 0 ? 0 : desired > maximum ? maximum : desired;
+    TrainingSlider_Draw();
+    return FALSE;
+}
+
+static BOOL TrainingSlider_Open(SCRIPTCONTEXT *ctx, u16 result)
+{
+    sTrainingSliders.slot = VarGet(ctx->fsys, 0x8005);
+    sTrainingSliders.editIVs = VarGet(ctx->fsys, 0x8009) == 1;
+    sTrainingSliders.selected = 0;
+    sTrainingSliders.result = result;
+    if (!Training_TransferStats(ctx->fsys->savedata, sTrainingSliders.slot, sTrainingSliders.editIVs,
+                                sTrainingSliders.values, FALSE)) {
+        VarSet(ctx->fsys, result, FALSE);
+        return FALSE;
+    }
+    MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 40, HEAPID_FIELD1);
+    for (int i = 0; i < 6; i++) {
+        sTrainingSliders.labels[i] = NewString_ReadMsgData(texts, 133 + i);
+    }
+    sTrainingSliders.labels[6] = NewString_ReadMsgData(texts, sTrainingSliders.editIVs ? 348 : 347);
+    sTrainingSliders.labels[7] = NewString_ReadMsgData(texts, 349);
+    sTrainingSliders.labels[8] = NewString_ReadMsgData(texts, 350);
+    DestroyMsgData(texts);
+    sTrainingSliders.number = String_New(8, HEAPID_FIELD1);
+    AddWindowParameterized(ctx->fsys->bg_config, &sTrainingSliders.window, 3, 1, 1, 30, 21, 13, 61);
+    LoadUserFrameGfx1(ctx->fsys->bg_config, 3, 985, 11, 0, HEAPID_FIELD1);
+    DrawFrameAndWindow1(&sTrainingSliders.window, 1, 985, 11);
+    TrainingSlider_Draw();
+    ctx->native_ptr = TrainingSlider_HandleInput;
+    ctx->mode = 2;
+    return TRUE;
+}
 
 static struct Window sMegaQuestDetail;
 static struct Window sMegaQuestRewardIcon;
@@ -365,14 +497,8 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         break;
     }
 
-    case SCRIPT_NEW_CMD_EDIT_STATS: {
-        u16 slot = *GetVarPointer(ctx->fsys, 0x8005);
-        u16 stat = *GetVarPointer(ctx->fsys, 0x8007);
-        u16 operation = *GetVarPointer(ctx->fsys, 0x8008);
-        BOOL editIVs = *GetVarPointer(ctx->fsys, 0x8009) == 1;
-        *GetVarPointer(ctx->fsys, arg0) = Training_EditStats(ctx->fsys->savedata, slot, stat, operation, editIVs);
-        break;
-    }
+    case SCRIPT_NEW_CMD_EDIT_STATS:
+        return TrainingSlider_Open(ctx, arg0);
 
     case SCRIPT_NEW_CMD_COUNT_MISSING_DEX: {
         const void *dex = SaveData_GetDexPtr(ctx->fsys->savedata);

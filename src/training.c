@@ -38,62 +38,38 @@ BOOL Training_TrainPartyMember(void *saveData, u16 slot)
     return TRUE;
 }
 
-u16 Training_EditStats(void *saveData, u16 slot, u16 stat, u16 operation, BOOL editIVs)
+BOOL Training_TransferStats(void *saveData, u16 slot, BOOL editIVs, u8 values[6], BOOL apply)
 {
     struct Party *party = SaveData_GetPlayerPartyPtr(saveData);
-    if (slot >= party->count || stat > 6 || operation > 7
-        || (editIVs && !CheckScriptFlag(FLAG_CHAMPION_CLEARED))) {
-        return 0xFFFF;
+    if (slot >= party->count || (editIVs && !CheckScriptFlag(FLAG_CHAMPION_CLEARED))) {
+        return FALSE;
     }
     struct PartyPokemon *mon = Party_GetMonByIndex(party, slot);
     if (!GetMonData(mon, MON_DATA_SPECIES, NULL) || GetMonData(mon, MON_DATA_IS_EGG, NULL)) {
-        return 0xFFFF;
+        return FALSE;
     }
 
     int firstStat = editIVs ? MON_DATA_HP_IV : MON_DATA_HP_EV;
-    if (operation == 7) {
-        u8 zero = 0;
-        for (unsigned i = 0; i < 6; i++) {
-            SetMonData(mon, firstStat + i, &zero);
+    int maximum = editIVs ? 31 : 252;
+    int total = 0;
+    for (int i = 0; i < 6; i++) {
+        if (!apply) {
+            int value = GetMonData(mon, firstStat + i, NULL);
+            values[i] = value < maximum ? value : maximum;
+        }
+        if (values[i] > maximum) {
+            return FALSE;
+        }
+        total += values[i];
+    }
+    if (!editIVs && total > 510) {
+        return FALSE;
+    }
+    if (apply) {
+        for (int i = 0; i < 6; i++) {
+            SetMonData(mon, firstStat + i, &values[i]);
         }
         RecalcPartyPokemonStats(mon);
-        return 0;
     }
-    if (stat >= 6) {
-        return 0xFFFF;
-    }
-
-    int current = GetMonData(mon, firstStat + stat, NULL);
-    if (!operation) {
-        return current;
-    }
-    static const int adjustments[] = { 0, 1, 10, 252, -1, -10, -252 };
-    int otherEVs = 0;
-    if (!editIVs) {
-        for (unsigned i = 0; i < 6; i++) {
-            if (i != stat) {
-                otherEVs += GetMonData(mon, firstStat + i, NULL);
-            }
-        }
-    }
-    int desired = current + adjustments[operation];
-    if (desired > current) {
-        int maximum = editIVs ? 31 : 510 - otherEVs;
-        if (maximum > 252) {
-            maximum = 252;
-        }
-        if (maximum < current) {
-            maximum = current;
-        }
-        if (desired > maximum) {
-            desired = maximum;
-        }
-    }
-    if (desired < 0) {
-        desired = 0;
-    }
-    u8 value = desired;
-    SetMonData(mon, firstStat + stat, &value);
-    RecalcPartyPokemonStats(mon);
-    return value;
+    return TRUE;
 }
