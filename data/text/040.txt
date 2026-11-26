@@ -341,3 +341,7 @@ You can return when you have what\nthe researcher needs.
 Next milestone
 R  Sort / Filter
 {STRVAR_1 0, 0, 0}
+Reward:
+B  Back to quests
+Defeat Sage Li and report to Elm.
+Bring an Oran Berry for the grove.

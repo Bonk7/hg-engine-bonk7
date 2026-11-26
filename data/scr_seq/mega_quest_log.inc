@@ -99,7 +99,10 @@ MegaQuestLogSort:
     setvar VAR_SPECIAL_x8003, 0
     goto MegaQuestLogRefresh
 MegaQuestLogDetail:
+    touchscreen_menu_hide
     RunNewCommand 20, VAR_SPECIAL_RESULT
+    touchscreen_menu_show
+    goto MegaQuestLogRefresh
 MegaQuestLogEndDetail:
     wait_button
     closemsg

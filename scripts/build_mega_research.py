@@ -17,10 +17,8 @@ def define_values(path, prefix):
     )}
 
 
-def wrap(text, heading=None):
+def wrap(text):
     lines = textwrap.wrap(text, width=36, break_long_words=False, break_on_hyphens=False)
-    if heading is not None:
-        lines.insert(0, heading)
     return "".join(line + (r"\r" if index % 2 else r"\n")
                    for index, line in enumerate(lines))[:-2]
 
@@ -66,6 +64,7 @@ def main(output):
             wrap(f"{title} completed.") + r"\nReward: " + reward,
             title,
             *(answers + ["-"] * (3 - len(answers))),
+            r"\n".join(textwrap.wrap(briefing, width=36)),
         ))
         if kind == "trade":
             arg = "ITEM_" + arg
@@ -92,7 +91,7 @@ def main(output):
             f'    {{{start_flag}, {start_flag + 1}, {{{msg}, {msg+1}, {msg+2}}}, '
             f'{{{msg+3}, {msg+4}, {msg+5}}}, '
             f'{{"{title.lower()}", "{area.lower()}", "{reward.lower()}"}}, '
-            f'{map_id}, ITEM_{stone}, {objective[kind]}, {arg}, {msg+6}}},'
+            f'{map_id}, ITEM_{stone}, {objective[kind]}, {arg}, {msg+6}, {msg+10}}},'
         )
     for index, (stone, area, bank, x, z) in enumerate(pickups):
         event_script = 2089 + index

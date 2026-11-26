@@ -8,6 +8,9 @@
 #include "legendary_trials.h"
 #include "constants/save.h"
 #include "message.h"
+#include "item.h"
+#include "system.h"
+#include "constants/buttons.h"
 #include "repel.h"
 #include "roamer.h"
 #include "script.h"
@@ -42,10 +45,10 @@ static const struct MegaQuestEntry {
     u16 title[3];
     u16 details[3];
     const char *sortKey[3];
-    u16 map, item, kind, argument, officeTitle;
+    u16 map, item, kind, argument, officeTitle, logObjective;
 } sMegaQuests[] = {
-    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}, {"elms discovery", "violet city", "beedrillite"}, 0, 0, 0, 0, 0},
-    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "azalea town", "heracronite"}, 0, 0, 0, 0, 0},
+    {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}, {"elms discovery", "violet city", "beedrillite"}, 0, ITEM_BEEDRILLITE, 0, 0, 0, 345},
+    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "azalea town", "heracronite"}, 0, ITEM_HERACRONITE, 0, 0, 0, 346},
 #include "../../build/mega_research_table.inc"
 };
 
@@ -115,6 +118,129 @@ static int MegaQuestCompletedCount(void)
 // The field list occupies rows 0–17 and uses character tiles starting at 61.
 static struct Window sMegaQuestProgress;
 void LONG_CALL ClearWindowPixelBuffer(void *window, u32 deferCopy);
+
+static struct Window sMegaQuestDetail;
+static struct Window sMegaQuestRewardIcon;
+static u16 sMegaQuestSavedPalette[16];
+static volatile u16 *const sMegaQuestIconPalette = (volatile u16 *)(0x05000000 + 12 * 32);
+
+static void MegaQuestLog_DrawRewardIcon(void *bgConfig, u16 item)
+{
+    enum { ITEM_ICON_NCGR = 1, ITEM_ICON_NCLR = 2, NCGR_PIXELS = 0x30, NCLR_COLORS = 0x28 };
+    u8 *image = LoadItemDataOrGfx(item, ITEM_ICON_NCGR, HEAPID_FIELD1);
+    u8 *palette = LoadItemDataOrGfx(item, ITEM_ICON_NCLR, HEAPID_FIELD1);
+    if (image != NULL && palette != NULL) {
+        AddWindowParameterized(bgConfig, &sMegaQuestRewardIcon, 3, 3, 13, 4, 4, 12, 720);
+        const u16 *colors = (const u16 *)(palette + NCLR_COLORS);
+        for (int i = 0; i < 16; i++) {
+            sMegaQuestSavedPalette[i] = sMegaQuestIconPalette[i];
+            sMegaQuestIconPalette[i] = colors[i];
+        }
+        memcpy(sMegaQuestRewardIcon.pixelBuffer, image + NCGR_PIXELS, 512);
+        // BG color zero is transparent. Use a spare palette index for the white backing.
+        u8 *pixels = sMegaQuestRewardIcon.pixelBuffer;
+        u16 usedColors = 1;
+        for (int i = 0; i < 512; i++) {
+            usedColors |= (1 << (pixels[i] & 0x0F)) | (1 << (pixels[i] >> 4));
+        }
+        u8 backing = 0;
+        for (int i = 15; i > 0; i--) {
+            if (!(usedColors & (1 << i))) {
+                backing = i;
+                sMegaQuestIconPalette[i] = 0x7FFF;
+                break;
+            }
+        }
+        if (backing == 0) {
+            // Full palettes use the lightest existing shade without losing an icon color.
+            int brightest = -1;
+            for (int i = 1; i < 16; i++) {
+                int brightness = (colors[i] & 31) + ((colors[i] >> 5) & 31) + ((colors[i] >> 10) & 31);
+                if (brightness > brightest) {
+                    backing = i;
+                    brightest = brightness;
+                }
+            }
+        }
+        for (int i = 0; i < 512; i++) {
+            if ((pixels[i] & 0x0F) == 0) {
+                pixels[i] |= backing;
+            }
+            if ((pixels[i] & 0xF0) == 0) {
+                pixels[i] |= backing << 4;
+            }
+        }
+        CopyWindowToVram(&sMegaQuestRewardIcon);
+    }
+    if (image != NULL) {
+        sys_FreeMemoryEz(image);
+    }
+    if (palette != NULL) {
+        sys_FreeMemoryEz(palette);
+    }
+}
+
+static BOOL MegaQuestLog_CloseDetail(SCRIPTCONTEXT *ctx)
+{
+    (void)ctx;
+    if (!(gSystem.newKeys & PAD_BUTTON_B)) {
+        return FALSE;
+    }
+    if (sMegaQuestRewardIcon.pixelBuffer != NULL) {
+        RemoveWindow(&sMegaQuestRewardIcon);
+        for (int i = 0; i < 16; i++) {
+            sMegaQuestIconPalette[i] = sMegaQuestSavedPalette[i];
+        }
+    }
+    ClearWindowPixelBuffer(&sMegaQuestDetail, FALSE);
+    RemoveWindow(&sMegaQuestDetail);
+    return TRUE;
+}
+
+static BOOL MegaQuestLog_OpenDetail(SCRIPTCONTEXT *ctx, u16 selection)
+{
+    if (selection >= NELEMS(sMegaQuests)) {
+        return FALSE;
+    }
+    const struct MegaQuestEntry *entry = &sMegaQuests[selection];
+    int status = MegaQuestStatus(entry);
+    MsgData *ui = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 40, HEAPID_FIELD1);
+    MsgData *quest = selection < 2 ? ui : NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 860, HEAPID_FIELD1);
+    String *line = String_New(256, HEAPID_FIELD1);
+    AddWindowParameterized(ctx->fsys->bg_config, &sMegaQuestDetail, 3, 1, 1, 30, 21, 13, 61);
+    FillWindowPixelBuffer(&sMegaQuestDetail, 15);
+
+    ReadMsgDataIntoString(quest, entry->title[status], line);
+    AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 12, 8, 0xFF, 0x07080F, NULL);
+    FillWindowPixelRect(&sMegaQuestDetail, 2, 12, 25, 216, 1);
+    ReadMsgDataIntoString(quest, status ? entry->logObjective : entry->details[0], line);
+    AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 12, 34, 0xFF, 0x01020F, NULL);
+    if (status) {
+        FillWindowPixelRect(&sMegaQuestDetail, 2, 12, 91, 216, 1);
+        ReadMsgDataIntoString(ui, 343, line);
+        AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 58, 96, 0xFF, 0x07080F, NULL);
+        AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 59, 96, 0xFF, 0x070800, NULL);
+        MsgData *items = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 222, HEAPID_FIELD1);
+        ReadMsgDataIntoString(items, entry->item, line);
+        AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 58, 115, 0xFF, 0x01020F, NULL);
+        DestroyMsgData(items);
+    }
+    ReadMsgDataIntoString(ui, 344, line);
+    AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 12, 147, 0xFF, 0x07080F, NULL);
+    String_Delete(line);
+    if (quest != ui) {
+        DestroyMsgData(quest);
+    }
+    DestroyMsgData(ui);
+    LoadUserFrameGfx1(ctx->fsys->bg_config, 3, 985, 11, 0, HEAPID_FIELD1);
+    DrawFrameAndWindow1(&sMegaQuestDetail, 0, 985, 11);
+    if (status) {
+        MegaQuestLog_DrawRewardIcon(ctx->fsys->bg_config, entry->item);
+    }
+    ctx->native_ptr = MegaQuestLog_CloseDetail;
+    ctx->mode = 2; // Run the native input callback before resuming the field script.
+    return TRUE;
+}
 
 static void MegaQuestLog_DrawProgress(SCRIPTCONTEXT *ctx)
 {
@@ -364,14 +490,8 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         MegaQuestLog_DrawProgress(ctx);
         break;
 
-    case 20: {
-        u16 selection = VarGet(ctx->fsys, arg0);
-        if (selection < NELEMS(sMegaQuests)) {
-            const struct MegaQuestEntry *entry = &sMegaQuests[selection];
-            MegaQuestShowMessage(ctx, selection < 2 ? 40 : 860, entry->details[MegaQuestStatus(entry) ? 2 : 0]);
-        }
-        break;
-    }
+    case 20:
+        return MegaQuestLog_OpenDetail(ctx, VarGet(ctx->fsys, arg0));
 
     case 21: {
         static const u16 items[] = {ITEM_RARE_CANDY, ITEM_HEART_SCALE};
