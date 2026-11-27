@@ -352,3 +352,6 @@ D-pad Adjust   L/R Fast   X Clear
 Remaining
 Thanks again for completing my research.
 All milestone rewards claimed.
+Egg Moves
+Which Egg Move should I teach?\r
+This Pokémon has no new Egg Moves\nto learn.\r

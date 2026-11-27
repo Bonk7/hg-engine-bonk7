@@ -44,6 +44,8 @@ def training_pages(species, entry, learnset, moves, move_ids, machines, tutors):
     evs = struct.unpack_from("<H", entry, 10)[0]
     yields = [f"{name} {(evs >> (i * 2)) & 3}" for i, name in enumerate(("HP", "Atk", "Def", "Spe", "SpA", "SpD")) if (evs >> (i * 2)) & 3]
     pages = [["Training", "EV yield: " + (", ".join(yields) or "None")]]
+    if learnset.get("EggMoves"):
+        pages.append(["Egg Move tutor", "Talk to the staff member", "in any Pokémon Center."])
     for key, heading in (("LevelMoves", "Level-up moves"), ("MachineMoves", "TM/HM moves"),
                          ("EggMoves", "Egg moves")):
         display = []

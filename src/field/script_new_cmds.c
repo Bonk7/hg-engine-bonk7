@@ -3,6 +3,7 @@
 #include "battle.h"
 #include "debug_catalog.h"
 #include "constants/file.h"
+#include "constants/generated/learnsets.h"
 #include "constants/item.h"
 #include "constants/species.h"
 #include "legendary_trials.h"
@@ -22,6 +23,14 @@
 #define SCRIPT_NEW_CMD_TRAIN_PARTY_MEMBER 2
 #define SCRIPT_NEW_CMD_EDIT_STATS 3
 #define SCRIPT_NEW_CMD_COUNT_MISSING_DEX 4
+#define SCRIPT_NEW_CMD_CENTER_EGG_MOVES 27
+
+enum {
+    EGG_TUTOR_COUNT,
+    EGG_TUTOR_LIST,
+    EGG_TUTOR_SELECT,
+    EGG_TUTOR_MOVE_NAMES_BANK = 750,
+};
 
 u16 Training_GetTargetLevel(void *saveData);
 BOOL Training_TrainPartyMember(void *saveData, u16 slot);
@@ -488,6 +497,53 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
     gMegaQuestLogList = TRUE;
 }
 
+static u16 CenterEggMoves(SCRIPTCONTEXT *ctx, u16 action)
+{
+    struct Party *party = SaveData_GetPlayerPartyPtr(ctx->fsys->savedata);
+    u16 slot = VarGet(ctx->fsys, 0x8005);
+    if (slot >= party->count) {
+        return 0;
+    }
+    struct PartyPokemon *mon = Party_GetMonByIndex(party, slot);
+    if (!GetMonData(mon, MON_DATA_SPECIES, NULL) || GetMonData(mon, MON_DATA_IS_EGG, NULL)) {
+        return 0;
+    }
+
+    u16 moves[MAX_EGG_MOVES];
+    u16 count = LoadEggMoves(mon, moves);
+    u16 available = 0;
+    for (u16 i = 0; i < count; i++) {
+        u16 move = moves[i];
+        if (move != 0 && !MonHasMove(mon, move)) {
+            moves[available++] = move;
+        }
+    }
+    if (action == EGG_TUTOR_COUNT) {
+        return available;
+    }
+    if (action == EGG_TUTOR_SELECT) {
+        u16 choice = VarGet(ctx->fsys, 0x8006);
+        return choice < available ? moves[choice] : 0;
+    }
+    if (action != EGG_TUTOR_LIST) {
+        return 0;
+    }
+
+    void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
+    MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
+    MsgData *names = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, EGG_TUTOR_MOVE_NAMES_BANK, HEAPID_FIELD1);
+    if (names != NULL) {
+        for (u16 i = 0; i < available; i++) {
+            ReadMsgDataIntoString(names, moves[i], format->buffer);
+            SetStringAsPlaceholder(format, 0, format->buffer, NULL);
+            FieldListMenu_AddOption(menu, 253, 255, i);
+        }
+        DestroyMsgData(names);
+    }
+    FieldListMenu_AddOption(menu, 131, 255, 255);
+    return 0;
+}
+
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 {
     u8 sw = ScriptReadByte(ctx);
@@ -619,6 +675,10 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
             ClearWindowPixelBuffer(&sMegaQuestProgress, FALSE);
             RemoveWindow(&sMegaQuestProgress);
         }
+        break;
+
+    case SCRIPT_NEW_CMD_CENTER_EGG_MOVES:
+        VarSet(ctx->fsys, 0x8007, CenterEggMoves(ctx, arg0));
         break;
 
     case 26:

@@ -127,6 +127,7 @@ CenterServices:
     menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
     menu_item_add 156, 255, 1
     menu_item_add 157, 255, 2
+    menu_item_add 354, 255, 7
     menu_item_add 158, 255, 3
     menu_item_add 164, 255, 4
     menu_item_add 280, 255, 5
@@ -137,6 +138,7 @@ CenterServices:
     switch VAR_SPECIAL_RESULT
     case 1, VioletTrainingMenu
     case 2, CenterMoveReminder
+    case 7, CenterEggMoveTutor
     case 3, CenterTeamExp
     case 4, CenterBattleSettings
     case 5, CenterMegaEvolution
@@ -1861,6 +1863,46 @@ PortableBoxLinkOpen:
 PortableBoxLinkExit:
     releaseall
     end
+
+CenterEggMoveTutor:
+    fade_screen 6, 1, 0, RGB_BLACK
+    wait_fade
+    party_select_ui
+    get_party_selection VAR_SPECIAL_x8005
+    restore_overworld
+    fade_screen 6, 1, 1, RGB_BLACK
+    wait_fade
+    compare VAR_SPECIAL_x8005, 255
+    goto_if_eq CenterMoveReminderDone
+    RunNewCommand 27, 0
+    compare VAR_SPECIAL_x8007, 0
+    goto_if_eq CenterEggMoveNone
+
+    msgbox_extern 40, 355
+    touchscreen_menu_hide
+    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_x8006
+    RunNewCommand 27, 1
+    show_prepared_list
+    touchscreen_menu_show
+    closemsg
+    RunNewCommand 27, 2
+    compare VAR_SPECIAL_x8007, 0
+    goto_if_eq CenterMoveReminderDone
+
+    fade_screen 6, 1, 0, RGB_BLACK
+    wait_fade
+    move_tutor_init VAR_SPECIAL_x8005, VAR_SPECIAL_x8007
+    move_relearner_get_result VAR_SPECIAL_RESULT
+    restore_overworld
+    fade_screen 6, 1, 1, RGB_BLACK
+    wait_fade
+    goto CenterMoveReminderDone
+
+CenterEggMoveNone:
+    msgbox_extern 40, 356
+    wait_button
+    closemsg
+    goto CenterMoveReminderDone
 
 CenterMoveReminder:
     get_std_msg_naix 3, VAR_SPECIAL_RESULT
