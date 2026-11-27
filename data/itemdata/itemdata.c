@@ -70146,7 +70146,7 @@ const ITEMDATA __data[] =
     },
 },
 
-[ITEM_UNKNOWN_1079] =
+[ITEM_MEGA_STONE_BOX] =
 {
     ITEM_PRICE(0),
     .holdEffect = 0,
@@ -70156,11 +70156,11 @@ const ITEMDATA __data[] =
     .flingPower = 0,
     .naturalGiftPower = 0,
     .naturalGiftType = TYPE_NORMAL,
-    .prevent_toss = 0,
+    .prevent_toss = TRUE,
     .selectable = 0,
-    .fieldPocket = POCKET_ITEMS,
+    .fieldPocket = POCKET_KEY_ITEMS,
     .battlePocket = BATTLE_POCKET_NONE,
-    .fieldUseFunc = 0,
+    .fieldUseFunc = 38,
     .battleUseFunc = 0,
     .partyUse = 0,
     .partyUseParam = {

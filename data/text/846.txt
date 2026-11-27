@@ -3,7 +3,7 @@ A device that allows you to access the\nPokémon storage system. There are some\
 A stone found in the Galar region with\na mysterious power. It’s said that your\ndreams come true if you find one.
 A Wishing Star has been affixed to it.\nIt lets out a light that allows Pokémon\nto Dynamax when at a Power Spot.
 Elm’s notebook for Mega Stone quests.\nShows the location and progress\nof each quest.
-- - -
+A case for Mega Stones. Open it\nfrom the Bag to browse your stones\nand give them to your Pokémon.
 Use it by the water to fish up\nvarious kinds of Pokémon.
 This bike can be combined with the\nPokémon Rotom to use a turbo boost.
 - - -

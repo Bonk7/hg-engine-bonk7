@@ -115,6 +115,9 @@ void *LONG_CALL GetItemFieldUseFunc(int funcType, u16 itemType)
 u16 GetItemIndex(u16 item, u16 type)
 {
     u16 ret = 0;
+    if (item == ITEM_MEGA_STONE_BOX && (type == ITEM_GET_ICON_CGX || type == ITEM_GET_ICON_PAL)) {
+        item = ITEM_APRICORN_BOX;
+    }
     switch (type) {
     case ITEM_GET_DATA:
         if (item == ITEM_DUMMY_ID || item == ITEM_RETURN_ID) {
@@ -162,6 +165,9 @@ void *GetItemNarcData(u16 item, u16 type, u32 heapID)
     int dataID, picID, palID;
 
     dataID = item;
+    if (item == ITEM_MEGA_STONE_BOX) {
+        item = ITEM_APRICORN_BOX;
+    }
     picID = item * 2 + 2;
     palID = item * 2 + 3;
 

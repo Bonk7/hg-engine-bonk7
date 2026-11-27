@@ -1082,7 +1082,7 @@
 #define ITEM_WISHING_STAR                1076
 #define ITEM_DYNAMAX_BAND                1077
 #define ITEM_MEGA_QUEST_LOG                1078
-#define ITEM_UNKNOWN_1079                1079
+#define ITEM_MEGA_STONE_BOX                1079
 #define ITEM_FISHING_ROD_SWSH            1080
 #define ITEM_ROTOM_BIKE_LAND_MODE        1081
 #define ITEM_UNKNOWN_1082                1082

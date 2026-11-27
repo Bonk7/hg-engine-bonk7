@@ -9,6 +9,30 @@
 BOOL LONG_CALL Bag_Init(void *manager, int *state);
 BOOL LONG_CALL Bag_Main(void *manager, int *state);
 BOOL LONG_CALL Bag_Exit(void *manager, int *state);
+int LONG_CALL BagApp_ItemContextMenu_Use(void *app);
+
+int LONG_CALL BagAppMainTask_CancelContextMenu(void *app);
+
+struct BagTabPocket {
+    ITEM_SLOT *slots;
+    u16 position;
+    s16 scroll;
+    u8 id;
+    u8 count;
+};
+
+struct BagTabView {
+    void *save;
+    struct BagTabPocket pockets[8];
+    u8 current;
+    u8 context;
+    u16 itemId;
+};
+
+static struct BagTabView *GetView(void *app)
+{
+    return *(struct BagTabView **)((u8 *)app + 0x234);
+}
 
 #ifndef DEBUG_BATTLE_SCENARIOS
 
@@ -26,21 +50,6 @@ enum {
     MEGA_TAB_HEIGHT = 2,
 };
 
-struct BagTabPocket {
-    ITEM_SLOT *slots;
-    u16 position;
-    s16 scroll;
-    u8 id;
-    u8 count;
-};
-
-struct BagTabView {
-    void *save;
-    struct BagTabPocket pockets[8];
-    u8 current;
-    u8 context;
-};
-
 struct MegaTab {
     ITEM_SLOT *original;
     ITEM_SLOT items[NUM_BAG_ITEMS];
@@ -50,6 +59,7 @@ struct MegaTab {
     String *title;
     BOOL active;
     BOOL visible;
+    u8 returnPocket;
     u16 itemPosition;
     s16 itemScroll;
 };
@@ -65,12 +75,8 @@ static const u16 sMegaStoneIds[] = {
 };
 
 void *LONG_CALL OverlayManager_GetData(void *manager);
+void *LONG_CALL OverlayManager_GetArgs(void *manager);
 int LONG_CALL BagApp_HandleCursorAction(void *app, int input, u8 *selected, int a3, int a4, int mode);
-
-static struct BagTabView *GetView(void *app)
-{
-    return *(struct BagTabView **)((u8 *)app + 0x234);
-}
 
 static int *GetCursor(void *app)
 {
@@ -134,8 +140,61 @@ static void SetMegaTab(struct BagTabView *view, BOOL active)
     tab->active = active;
 }
 
+// The organizer is unlocked by the Mega Ring or by already owning a stone.
+static void GiveMegaStoneBox(const struct BagTabView *view)
+{
+    if (view->save == NULL || view->context != BAG_CONTEXT_NORMAL || view->pockets[POCKET_KEY_ITEMS].slots == NULL) {
+        return;
+    }
+    BAG_DATA *bag = Sav2_Bag_get(view->save);
+    if (Bag_HasItem(bag, ITEM_MEGA_STONE_BOX, 1, HEAPID_WORLD)) {
+        return;
+    }
+    if (Bag_HasItem(bag, ITEM_MEGA_RING, 1, HEAPID_WORLD)) {
+        Bag_AddItem(bag, ITEM_MEGA_STONE_BOX, 1, HEAPID_WORLD);
+        return;
+    }
+    for (int i = 0; i < NUM_BAG_ITEMS; i++) {
+        if (bag->items[i].quantity && IsMegaStone(bag->items[i].id)) {
+            Bag_AddItem(bag, ITEM_MEGA_STONE_BOX, 1, HEAPID_WORLD);
+            return;
+        }
+    }
+}
+
+static void SwitchMegaPocket(void *app, BOOL active, u8 pocket)
+{
+    struct BagTabView *view = GetView(app);
+    if (active) {
+        sMegaTab->returnPocket = view->current;
+    }
+    SetMegaTab(view, active);
+    u8 selected = 0;
+    *GetCursor(app) = pocket;
+    BagApp_HandleCursorAction(app, pocket, &selected, 1, 2, BAG_TOUCH_MODE);
+    if (active) {
+        ShowMegaTitle(app);
+    }
+    DrawMegaButton();
+}
+
+int BagMega_UseItem(void *app)
+{
+    if (GetView(app)->itemId != ITEM_MEGA_STONE_BOX) {
+        return BagApp_ItemContextMenu_Use(app);
+    }
+
+    int state = BagAppMainTask_CancelContextMenu(app);
+    if (sMegaTab != NULL) {
+        SwitchMegaPocket(app, TRUE, POCKET_ITEMS);
+    }
+    return state;
+}
+
 BOOL BagMega_Init(void *manager, int *state)
 {
+    // Grant the box before Bag_Init draws the key-item pocket.
+    GiveMegaStoneBox(OverlayManager_GetArgs(manager));
     BOOL ready = Bag_Init(manager, state);
     if (!ready) {
         return FALSE;
@@ -201,15 +260,10 @@ BOOL BagMega_Main(void *manager, int *state)
         BOOL megaPressed = gSystem.touchNew && gSystem.touchX >= MEGA_TAB_X * 8
             && gSystem.touchX < (MEGA_TAB_X + MEGA_TAB_WIDTH) * 8 && gSystem.touchY >= MEGA_TAB_Y * 8;
         BOOL itemsPressed = tab->active && gSystem.touchNew && gSystem.touchX < 32 && gSystem.touchY < 32;
-        if (megaPressed || itemsPressed || (gSystem.newKeys & PAD_BUTTON_SELECT)) {
-            u8 selected = 0;
-            SetMegaTab(view, !tab->active);
-            *GetCursor(app) = POCKET_ITEMS;
-            BagApp_HandleCursorAction(app, POCKET_ITEMS, &selected, 1, 2, BAG_TOUCH_MODE);
-            if (tab->active) {
-                ShowMegaTitle(app);
-            }
-            DrawMegaButton();
+        BOOL closeBox = tab->active && (gSystem.newKeys & PAD_BUTTON_B);
+        if (megaPressed || itemsPressed || closeBox || (gSystem.newKeys & PAD_BUTTON_SELECT)) {
+            u8 pocket = closeBox ? tab->returnPocket : POCKET_ITEMS;
+            SwitchMegaPocket(app, !tab->active, pocket);
             return FALSE;
         }
     }
@@ -272,6 +326,13 @@ BOOL BagMega_Exit(void *manager, int *state)
 #else
 
 // Battle scenario ROMs use the original Bag UI to leave room for the test runner.
+int BagMega_UseItem(void *app)
+{
+    return GetView(app)->itemId == ITEM_MEGA_STONE_BOX
+        ? BagAppMainTask_CancelContextMenu(app)
+        : BagApp_ItemContextMenu_Use(app);
+}
+
 BOOL BagMega_Init(void *manager, int *state)
 {
     return Bag_Init(manager, state);
