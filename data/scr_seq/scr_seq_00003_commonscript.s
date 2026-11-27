@@ -1864,6 +1864,7 @@ PortableBoxLinkExit:
     releaseall
     end
 
+.equ CENTER_EGG_MOVE_PRICE, 500
 CenterEggMoveTutor:
     fade_screen 6, 1, 0, RGB_BLACK
     wait_fade
@@ -1878,24 +1879,35 @@ CenterEggMoveTutor:
     compare VAR_SPECIAL_x8007, 0
     goto_if_eq CenterEggMoveNone
 
+    hasenoughmoneyimmediate VAR_SPECIAL_RESULT, CENTER_EGG_MOVE_PRICE
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_eq CenterEggMoveCannotAfford
     msgbox_extern 40, 355
-    touchscreen_menu_hide
-    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_x8006
-    RunNewCommand 27, 1
-    show_prepared_list
-    touchscreen_menu_show
+    yesno VAR_SPECIAL_RESULT
     closemsg
-    RunNewCommand 27, 2
-    compare VAR_SPECIAL_x8007, 0
-    goto_if_eq CenterMoveReminderDone
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterMoveReminderDone
 
     fade_screen 6, 1, 0, RGB_BLACK
     wait_fade
-    move_tutor_init VAR_SPECIAL_x8005, VAR_SPECIAL_x8007
+    RunNewCommand 27, 1
+    compare VAR_SPECIAL_x8007, 0
+    goto_if_eq CenterEggMoveLaunchFailed
     move_relearner_get_result VAR_SPECIAL_RESULT
+    compare VAR_SPECIAL_RESULT, 0
+    goto_if_ne CenterEggMoveReturn
+    submoneyimmediate CENTER_EGG_MOVE_PRICE
+CenterEggMoveReturn:
     restore_overworld
+CenterEggMoveLaunchFailed:
     fade_screen 6, 1, 1, RGB_BLACK
     wait_fade
+    goto CenterMoveReminderDone
+
+CenterEggMoveCannotAfford:
+    msgbox_extern 40, 357
+    wait_button
+    closemsg
     goto CenterMoveReminderDone
 
 CenterEggMoveNone:

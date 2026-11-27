@@ -27,9 +27,9 @@
 
 enum {
     EGG_TUTOR_COUNT,
-    EGG_TUTOR_LIST,
-    EGG_TUTOR_SELECT,
-    EGG_TUTOR_MOVE_NAMES_BANK = 750,
+    EGG_TUTOR_OPEN,
+    MOVE_RELEARNER_TUTOR = 0,
+    MOVE_RELEARNER_HEAP = 32,
 };
 
 u16 Training_GetTargetLevel(void *saveData);
@@ -497,16 +497,34 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
     gMegaQuestLogList = TRUE;
 }
 
-static u16 CenterEggMoves(SCRIPTCONTEXT *ctx, u16 action)
+struct EggTutorArgs {
+    struct PartyPokemon *mon;
+    struct PlayerProfile *profile;
+    void *options;
+    void *menuInput;
+    u16 *eligibleMoves;
+    u8 appState[5];
+    u8 type;
+    u8 result[2];
+    u16 moves[];
+};
+
+void *LONG_CALL Save_PlayerData_GetOptionsAddr(void *save);
+void LONG_CALL MoveRelearner_LaunchApp(FieldSystem *field, struct EggTutorArgs *args);
+BOOL LONG_CALL ScrNative_WaitApplication(SCRIPTCONTEXT *ctx);
+void LONG_CALL SetupNativeScript(SCRIPTCONTEXT *ctx, ScrCmdFunc callback);
+
+static BOOL CenterEggMoves(SCRIPTCONTEXT *ctx, u16 action)
 {
+    VarSet(ctx->fsys, 0x8007, 0);
     struct Party *party = SaveData_GetPlayerPartyPtr(ctx->fsys->savedata);
     u16 slot = VarGet(ctx->fsys, 0x8005);
     if (slot >= party->count) {
-        return 0;
+        return FALSE;
     }
     struct PartyPokemon *mon = Party_GetMonByIndex(party, slot);
     if (!GetMonData(mon, MON_DATA_SPECIES, NULL) || GetMonData(mon, MON_DATA_IS_EGG, NULL)) {
-        return 0;
+        return FALSE;
     }
 
     u16 moves[MAX_EGG_MOVES];
@@ -518,30 +536,35 @@ static u16 CenterEggMoves(SCRIPTCONTEXT *ctx, u16 action)
             moves[available++] = move;
         }
     }
+    if (available == 0) {
+        return FALSE;
+    }
     if (action == EGG_TUTOR_COUNT) {
-        return available;
+        VarSet(ctx->fsys, 0x8007, available);
+        return FALSE;
     }
-    if (action == EGG_TUTOR_SELECT) {
-        u16 choice = VarGet(ctx->fsys, 0x8006);
-        return choice < available ? moves[choice] : 0;
-    }
-    if (action != EGG_TUTOR_LIST) {
-        return 0;
+    if (action != EGG_TUTOR_OPEN) {
+        return FALSE;
     }
 
-    void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
-    MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
-    MsgData *names = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, EGG_TUTOR_MOVE_NAMES_BANK, HEAPID_FIELD1);
-    if (names != NULL) {
-        for (u16 i = 0; i < available; i++) {
-            ReadMsgDataIntoString(names, moves[i], format->buffer);
-            SetStringAsPlaceholder(format, 0, format->buffer, NULL);
-            FieldListMenu_AddOption(menu, 253, 255, i);
-        }
-        DestroyMsgData(names);
+    // Keep the list in the app arguments until move_relearner_get_result frees them.
+    struct EggTutorArgs *args = sys_AllocMemory(MOVE_RELEARNER_HEAP, sizeof(*args) + (available + 1) * sizeof(u16));
+    if (args == NULL) {
+        return FALSE;
     }
-    FieldListMenu_AddOption(menu, 131, 255, 255);
-    return 0;
+    memset(args, 0, sizeof(*args));
+    args->mon = mon;
+    args->profile = Sav2_PlayerData_GetProfileAddr(ctx->fsys->savedata);
+    args->options = Save_PlayerData_GetOptionsAddr(ctx->fsys->savedata);
+    args->eligibleMoves = args->moves;
+    args->type = MOVE_RELEARNER_TUTOR;
+    memcpy(args->moves, moves, available * sizeof(u16));
+    args->moves[available] = 0xFFFF;
+    *(struct EggTutorArgs **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_AC) = args;
+    VarSet(ctx->fsys, 0x8007, 1);
+    MoveRelearner_LaunchApp(ctx->fsys, args);
+    SetupNativeScript(ctx, ScrNative_WaitApplication);
+    return TRUE;
 }
 
 BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
@@ -678,8 +701,7 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         break;
 
     case SCRIPT_NEW_CMD_CENTER_EGG_MOVES:
-        VarSet(ctx->fsys, 0x8007, CenterEggMoves(ctx, arg0));
-        break;
+        return CenterEggMoves(ctx, arg0);
 
     case 26:
         MegaQuestLog_DrawProgress(ctx);

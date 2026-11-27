@@ -956,6 +956,9 @@ NamingScreen_CreateArgs = 0x020830D8 | 1;
 NamingScreen_DeleteArgs = 0x0208311C | 1;
 DebugNamingScreenTemplate = 0x02102610;
 FieldSystem_LaunchApplication = 0x0203DFB4 | 1;
+MoveRelearner_LaunchApp = 0x0203F9C4 | 1;
+SetupNativeScript = 0x0203FD58 | 1;
+ScrNative_WaitApplication = 0x020429F8 | 1;
 FieldListMenu_AddOption = 0x021EDF9C | 1;
 
 MapToFlySpawn = 0x0203BB50 | 1;

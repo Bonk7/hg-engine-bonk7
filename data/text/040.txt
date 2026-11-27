@@ -353,5 +353,6 @@ Remaining
 Thanks again for completing my research.
 All milestone rewards claimed.
 Egg Moves
-Which Egg Move should I teach?\r
+I can teach one Egg Move for ¥500.\nWould you like to see the moves?\r
 This Pokémon has no new Egg Moves\nto learn.\r
+You need ¥500 to learn an Egg Move.\r
