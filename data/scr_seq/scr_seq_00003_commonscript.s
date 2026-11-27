@@ -119,6 +119,10 @@ scrdef MegaPickupAmpharosite
 scrdef KantoRocketSilph
 scrdef KantoRocketLavender
 scrdef KantoRocketGiovanni
+scrdef EarlyTradeCherrygrove
+scrdef EarlyTradeViolet
+scrdef EarlyTradeAzalea
+scrdef EarlyTradeGoldenrod
 scrdef_end
 
 CenterServices:
@@ -2280,3 +2284,5 @@ FalknerMegaGate:
 #include "mega_quest_log.inc"
 
 #include "kanto_rocket.inc"
+
+#include "early_trades.inc"

@@ -815,6 +815,7 @@ $(ZONE_EVENT_NARC): $(ZONE_EVENT_OBJS) $(BUILD)/mega_research_events.csv $(BUILD
 	$(PYTHON) scripts/patch_mega_story.py early-stones $(ZONE_EVENT_DIR)/2_148 $(ZONE_EVENT_DIR)/2_151 $(ZONE_EVENT_DIR)/2_163 $(ZONE_EVENT_DIR)/2_033
 	$(PYTHON) scripts/patch_mega_story.py research $(ZONE_EVENT_DIR) $(BUILD)/mega_research_events.csv $(BUILD)/mega_research_npcs.csv
 	$(PYTHON) scripts/patch_rocket_kanto.py $(ZONE_EVENT_DIR)
+	$(PYTHON) scripts/add_early_trades.py events $(ZONE_EVENT_DIR)
 	$(NARCHIVE) create $@ $(ZONE_EVENT_DIR) -nf
 
 .PHONY: $(ZONE_EVENT_NARC)

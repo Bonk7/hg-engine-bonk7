@@ -372,3 +372,9 @@ Your Bag is too full for the rest.\nMake room and come back to Silph.\r
 The relay is dead. I can only pick\nup the regular radio stations now.\r
 Mega
 Mega Stone Box\nSelect a stone to give to a Pokémon.
+Skipper loves the shallows here.\nWant my Surskit for your Sentret?\r
+I like the songs on Route 31.\nMy Numel for your Kricketot?\r
+Your Sandshrew could help me dig.\nWant to trade it for my Snubbull?\r
+I saw Drowzee south of town.\nTrade me one for my Swinub?\r
+Thanks for the trade!\nTake good care of your new partner.\r
+That is a different Pokemon.\nCome back with the one I asked for.\r

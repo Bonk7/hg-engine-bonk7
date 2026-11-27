@@ -116,3 +116,14 @@ Na de Pokémon League start je dit Kanto-verhaal bij de agent in de lobby van Si
 Giovanni vecht met zes Pokémon op level 76–80, waaronder Mega Kangaskhan en Heatran. Keer na je overwinning terug naar Silph Co. voor het Silph-pakket met 1 Shiny Ball, 1 Ability Patch, 5 Rare Candies en 3 Heart Scales. Een nederlaag laat je het gevecht opnieuw proberen. Als de tas vol is, kun je de resterende items later ophalen. Heb je de Ability Patch al in een oudere versie opgehaald, dan kun je de andere items alsnog krijgen.
 
 Als een bestaande build bij de gevechtsintro blijft hangen, gebruik dan `make -W rom.nds -j3` om opnieuw te beginnen vanaf de schone basis-ROM.
+
+## Vroege ruilen in Johto
+
+| Locatie | Geef | Krijg | Waar je de gevraagde Pokémon vindt |
+| --- | --- | --- | --- |
+| Cherrygrove, huis ten zuidwesten van het Center | Sentret | Surskit | Route 29, overdag of in de ochtend |
+| Violet City, noordwestelijk huis | Kricketot | Numel | Route 31, in de ochtend of overdag |
+| Azalea Town, huis van Kurt | Sandshrew | Snubbull | Union Cave 1F |
+| Goldenrod City, huis van de Friendship Checker | Drowzee | Swinub | Route 34 |
+
+Elke ruil kan één keer. Je krijgt een basisevolutie op het level van de Pokémon die je inlevert, met gemiddelde IV’s, de gewone level-up-moves en zonder vastgehouden bonusitem.
