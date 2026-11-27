@@ -112,6 +112,6 @@ Controleer ook **Continue**, Center in/uit in Violet City, een gewone route na e
 
 Na de Pokémon League start je dit Kanto-verhaal bij de agent in de lobby van Silph Co. in Saffron City. De agent stuurt je naar de Lavender Radio Station. Versla daar de infiltrant met Mega Houndoom en volg zijn aanwijzing naar de westelijke trap van Seafoam Islands B3F.
 
-Giovanni vecht met zes Pokémon op level 76–80, waaronder Mega Kangaskhan en Heatran. Keer na je overwinning terug naar Silph Co. voor een Ability Patch. Een nederlaag laat je het gevecht opnieuw proberen. Als de tas vol is, blijft de beloning bij de agent liggen totdat je ruimte hebt.
+Giovanni vecht met zes Pokémon op level 76–80, waaronder Mega Kangaskhan en Heatran. Keer na je overwinning terug naar Silph Co. voor het Silph-pakket met 1 Shiny Ball, 1 Ability Patch, 5 Rare Candies en 3 Heart Scales. Een nederlaag laat je het gevecht opnieuw proberen. Als de tas vol is, kun je de resterende items later ophalen. Heb je de Ability Patch al in een oudere versie opgehaald, dan kun je de andere items alsnog krijgen.
 
 Als een bestaande build bij de gevechtsintro blijft hangen, gebruik dan `make -W rom.nds -j3` om opnieuw te beginnen vanaf de schone basis-ROM.

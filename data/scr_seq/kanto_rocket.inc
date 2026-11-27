@@ -3,7 +3,7 @@ KantoRocketSilph:
     lockall
     faceplayer
     goto_if_unset FLAG_GAME_CLEAR, KantoRocketLocked
-    goto_if_set FLAG_KANTO_ROCKET_REWARDED, KantoRocketThanks
+    goto_if_set FLAG_KANTO_ROCKET_PACKAGE_CLAIMED, KantoRocketThanks
     goto_if_set FLAG_KANTO_ROCKET_DEFEATED, KantoRocketReward
     goto_if_set FLAG_KANTO_ROCKET_RELAY, KantoRocketSeafoamHint
     goto_if_set FLAG_KANTO_ROCKET_STARTED, KantoRocketRadioHint
@@ -23,11 +23,20 @@ KantoRocketSeafoamHint:
 KantoRocketThanks:
     msgbox_extern 40, 369
     goto KantoRocketMessage
-KantoRocketReward:
-    giveitem ITEM_ABILITY_PATCH, 1, VAR_SPECIAL_RESULT
+.macro kanto_rocket_award item, quantity, flag
+    goto_if_set \flag, .Lrocket_awarded\@
+    giveitem \item, \quantity, VAR_SPECIAL_RESULT
     compare VAR_SPECIAL_RESULT, 0
     goto_if_eq KantoRocketRewardFull
-    setflag FLAG_KANTO_ROCKET_REWARDED
+    setflag \flag
+.Lrocket_awarded\@:
+.endm
+
+KantoRocketReward:
+    kanto_rocket_award ITEM_ABILITY_PATCH, 1, FLAG_KANTO_ROCKET_PATCH_CLAIMED
+    kanto_rocket_award ITEM_RARE_CANDY, 5, FLAG_KANTO_ROCKET_CANDIES_CLAIMED
+    kanto_rocket_award ITEM_HEART_SCALE, 3, FLAG_KANTO_ROCKET_SCALES_CLAIMED
+    kanto_rocket_award ITEM_SHINY_BALL, 1, FLAG_KANTO_ROCKET_PACKAGE_CLAIMED
     play_fanfare SEQ_ME_KEYITEM
     msgbox_extern 40, 368
     wait_fanfare
