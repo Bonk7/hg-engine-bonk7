@@ -63,9 +63,14 @@ MegaQuestLogMilestoneBagFull:
     msgbox_extern 40, 153
     goto MegaQuestLogEndDetail
 MegaQuestLogNextMilestone:
+    compare VAR_SPECIAL_x800A, 0
+    goto_if_eq MegaQuestLogAllMilestonesClaimed
     buffer_int 0, VAR_SPECIAL_x8006
     buffer_int 1, VAR_SPECIAL_x800A
     msgbox_extern 40, 330
+    goto MegaQuestLogEndDetail
+MegaQuestLogAllMilestonesClaimed:
+    msgbox_extern 40, 353
     goto MegaQuestLogEndDetail
 MegaQuestLogPreviousPage:
     subvar VAR_SPECIAL_x8003, 1

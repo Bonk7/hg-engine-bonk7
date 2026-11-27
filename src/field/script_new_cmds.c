@@ -637,7 +637,7 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         int reward = claimed % NELEMS(items);
         VarSet(ctx->fsys, 0x8008, VarGet(ctx->fsys, 0x8006) >= next ? items[reward] : ITEM_NONE);
         VarSet(ctx->fsys, 0x8009, 3);
-        VarSet(ctx->fsys, 0x800A, next);
+        VarSet(ctx->fsys, 0x800A, next <= NELEMS(sMegaQuests) ? next : 0);
         VarSet(ctx->fsys, 0x800B, next % 10 == 0);
         break;
     }
