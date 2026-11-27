@@ -31504,6 +31504,59 @@ const TrainerData sTrainerData[] = {
         },
     },
 
+// Operation Aftershock, used by the Lavender relay and Seafoam scripts.
+    [778] = {
+        .name = "Relay Agent",
+        .data = {
+            .trainerType = TRAINER_DATA_TYPE_MOVES | TRAINER_DATA_TYPE_ITEMS,
+            .trainerClass = TRAINERCLASS_TEAM_ROCKET,
+            .aiFlags = F_PRIORITIZE_SUPER_EFFECTIVE | F_EVALUATE_ATTACKS | F_EXPERT_ATTACKS,
+            .battleType = SINGLE_BATTLE,
+        },
+        .party = {
+            {.ivs = 175, .level = 68, .species = SPECIES_CROBAT, .item = ITEM_NONE,
+             .moves = {MOVE_CROSS_POISON, MOVE_U_TURN, MOVE_TAUNT, MOVE_ROOST}},
+            {.ivs = 175, .level = 68, .species = SPECIES_MAGNETON, .item = ITEM_EVIOLITE,
+             .moves = {MOVE_THUNDERBOLT, MOVE_FLASH_CANNON, MOVE_VOLT_SWITCH, MOVE_THUNDER_WAVE}},
+            {.ivs = 175, .level = 69, .species = SPECIES_WEAVILE, .item = ITEM_NONE,
+             .moves = {MOVE_ICE_PUNCH, MOVE_ICE_SHARD, MOVE_NIGHT_SLASH, MOVE_LOW_KICK}},
+            {.ivs = 175, .level = 71, .species = SPECIES_HOUNDOOM, .item = ITEM_HOUNDOOMINITE,
+             .moves = {MOVE_FLAMETHROWER, MOVE_DARK_PULSE, MOVE_NASTY_PLOT, MOVE_WILL_O_WISP}},
+        },
+        .text = {
+            {.type = TRMSG_LOSE, .text = "The relay was only a test...\n"},
+        },
+    },
+
+    [779] = {
+        .name = "Giovanni",
+        .data = {
+            .trainerType = TRAINER_DATA_TYPE_MOVES | TRAINER_DATA_TYPE_ITEMS,
+            .trainerClass = TRAINERCLASS_ROCKET_BOSS,
+            .items = {ITEM_FULL_RESTORE, ITEM_NONE, ITEM_NONE, ITEM_NONE},
+            .aiFlags = F_PRIORITIZE_SUPER_EFFECTIVE | F_EVALUATE_ATTACKS | F_EXPERT_ATTACKS,
+            .battleType = SINGLE_BATTLE,
+        },
+        .party = {
+            {.ivs = 220, .level = 76, .species = SPECIES_NIDOQUEEN, .item = ITEM_BLACK_SLUDGE,
+             .moves = {MOVE_EARTH_POWER, MOVE_SLUDGE_WAVE, MOVE_ICE_BEAM, MOVE_STEALTH_ROCK}},
+            {.ivs = 220, .level = 76, .species = SPECIES_HONCHKROW, .item = ITEM_NONE,
+             .moves = {MOVE_BRAVE_BIRD, MOVE_SUCKER_PUNCH, MOVE_NIGHT_SLASH, MOVE_ROOST}},
+            {.ivs = 220, .level = 77, .species = SPECIES_RHYPERIOR, .item = ITEM_ASSAULT_VEST,
+             .moves = {MOVE_EARTHQUAKE, MOVE_STONE_EDGE, MOVE_MEGAHORN, MOVE_ICE_PUNCH}},
+            {.ivs = 220, .level = 77, .species = SPECIES_NIDOKING, .item = ITEM_LIFE_ORB,
+             .moves = {MOVE_EARTH_POWER, MOVE_SLUDGE_WAVE, MOVE_THUNDERBOLT, MOVE_FLAMETHROWER}},
+            {.ivs = 220, .level = 79, .species = SPECIES_KANGASKHAN, .item = ITEM_KANGASKHANITE,
+             .moves = {MOVE_FAKE_OUT, MOVE_RETURN, MOVE_CRUNCH, MOVE_EARTHQUAKE}},
+            {.ivs = 220, .level = 80, .species = SPECIES_HEATRAN, .item = ITEM_SHUCA_BERRY,
+             .moves = {MOVE_MAGMA_STORM, MOVE_FLASH_CANNON, MOVE_EARTH_POWER, MOVE_ROCK_TOMB}},
+        },
+        .text = {
+            {.type = TRMSG_LAST_POKE, .text = "Heatran! Shut this down.\n"},
+            {.type = TRMSG_LOSE, .text = "The resonance is fading...\n"},
+        },
+    },
+
 #include "../build/mega_research_trainers.inc"
 };
 
@@ -32144,6 +32197,8 @@ const u16 sTrainerTextOrder[] = {
     628,
     629,
     630,
+    778,
+    779,
 };
 
 const u32 sTrainerDataCount = sizeof(sTrainerData) / sizeof(sTrainerData[0]);

@@ -356,3 +356,17 @@ Egg Moves
 I can teach one Egg Move for ¥500.\nWould you like to see the moves?\r
 This Pokémon has no new Egg Moves\nto learn.\r
 You need ¥500 to learn an Egg Move.\r
+Silph Co. is investigating a theft.\nCome back after the Pokémon League.\r
+Operation Aftershock. That was on\nthe note left in our empty vault.\fSomeone stole our Mega Resonator.\nIt reads the bond behind a Mega.\fThe thief sent a test signal through\nthe Lavender Radio Station.\fWill you find out why?\r
+Try the Lavender Radio Station.\nLook for someone guarding the relay.\r
+This channel is reserved.\nMove along.\r
+The Johto broadcast begged Giovanni\nto return. We sent him a prototype.\fThe director wants a test subject.\nCare to see our first Mega?\r
+The relay was only for calibration.\nThe machine is in Seafoam Islands.\fBasement three, by the west stairs.\nGiovanni is working with Heatran.\r
+The machine is silent.\nA faint radio tone echoes in the ice.\r
+You followed a test signal all the\nway into the ice. Impressive.\fHeatran keeps the machine running.\nKangaskhan is my benchmark.\fThe Resonator can measure our bond.\nCan it reproduce what it measures?\r
+Let us put that theory to the test.\nAre you ready to face my team?\r
+Kangaskhan fought for me long before\nSilph built that machine.\fI copied the signal. I could never\ncopy the reason she answers it.\fHeatran, stand down. We are leaving.\nGive Silph back their Resonator.\r
+You returned the Mega Resonator!\nPlease take this Ability Patch.\r
+The Resonator is back in its vault.\nThis time we changed the locks.\r
+I have an Ability Patch for you.\nMake room in your Bag and come back.\r
+The relay is dead. I can only pick\nup the regular radio stations now.\r

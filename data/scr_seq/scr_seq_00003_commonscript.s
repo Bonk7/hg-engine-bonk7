@@ -116,6 +116,9 @@ scrdef MegaPickupSteelixite
 scrdef MegaPickupPidgeotite
 scrdef MegaPickupAmpharosite
 .include "build/mega_research_definitions.inc"
+scrdef KantoRocketSilph
+scrdef KantoRocketLavender
+scrdef KantoRocketGiovanni
 scrdef_end
 
 CenterServices:
@@ -2275,3 +2278,5 @@ FalknerMegaGate:
     end
 
 #include "mega_quest_log.inc"
+
+#include "kanto_rocket.inc"
