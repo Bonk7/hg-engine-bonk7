@@ -103,4 +103,5 @@ Controleer ook **Continue**, Center in/uit in Violet City, een gewone route na e
 | Evolutievoorwaarden | [Evolutions.c](../data/Evolutions.c) |
 | Mega-combinaties en quests | [mega_stones.inc](../include/mega_stones.inc), [build_mega_research.py](../scripts/build_mega_research.py), [questlogscript](../data/scr_seq/mega_quest_log.inc) |
 | Gevechtsregressies | [Battle test README](../data/battle_tests/README.md). Bouw deze in een aparte clone met `make AUTO_TEST=Y -j3` en start op Linux met `SDL_VIDEODRIVER=dummy scripts/run_tests.sh -j 3`. |
+| Resultaten per functie | [BonkHG regressiecontrole](BONKHG_QA.md) geeft per functie de uitgevoerde controles en de open testgevallen. |
 | Eerdere build- en emulatorchecks | [QOL_PROGRESS.md](../QOL_PROGRESS.md) beschrijft de ontwikkelgeschiedenis, inclusief tijdelijke implementaties die later zijn vervangen. |

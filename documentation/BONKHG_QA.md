@@ -1,0 +1,20 @@
+# BonkHG regressiecontrole
+
+Deze controle vertrekt van de [BonkHG-testroute](BONKHG.md) en de eerdere resultaten in [QOL_PROGRESS.md](../QOL_PROGRESS.md). De emulatortests gebruiken aparte test-saves. Waar debugwinst of aangepaste savevlaggen zijn gebruikt, staat dat erbij.
+
+| Onderdeel | Getest of nagekeken | Nog open |
+| --- | --- | --- |
+| ROM en werelddata | Normale build en controle van de ingepakte data. 142 encountertabellen, 12 Safari-gebieden, 540 Headbutt-tabellen en 778 trainerrecords. | Een doorlopende playthrough van alle gebieden en vangmethodes. |
+| Start, debug en warps | Eerder beide keuzes bij New Game en alle 21 warpbestemmingen in DeSmuME. Item- en Pokémonlijsten en EV-bewerking werkten na de ARM/Thumb-fix ook in de melonDS-kern. Opnieuw in DeSmuME getest dat zoeken op `PO` items toont en zoeken op `PI` Pokémon toont na terugkeer van het toetsenbord. | Dezelfde controles op DraStic en gebruikerssaves. |
+| Center-diensten en training | Eerder gesprekken van verpleegster en medewerker gecontroleerd. EV-sliders en beide tellers opnieuw gecontroleerd bij aanpassen, opslaan en annuleren. De IV-editor weigert toegang vóór de Champion-vlag en begrenst invoer op 31 per stat met een Champion-testsave. | Ontgrendeling na een reguliere League-overwinning. Een volledige playthrough met Move Reminder, Exp. Share en ei-afhaling. |
+| Veldfuncties en winkels | De testroute documenteert de badge- en voorraadvereisten voor HM-gebruik, rematches, Mints, Ability-items en Repels. | Alle ontgrendelingen en aankoop- of gebruiksgrenzen opnieuw doortesten. |
+| Pokédex en evoluties | Eerdere emulatorcontroles van de routegids, de hulptekst en de Training-pagina, plus validatie van de gegenereerde tekstbanken tijdens het bouwen. | Alle soorten, vangmethodes, tutors en singleplayer-evoluties doorlopen. |
+| Box Link en vangstkeuze | In de herbouwde ROM een preset opgeslagen en teruggeladen. Een uit de box opgehaalde Pokémon verving het eerste teamlid, dat daarna in de box stond. Eerder een wilde vangst bekeken en gewisseld met een vol team. | Alle foutpaden met volle boxen, Mail en Seal Capsules. |
+| Gevechtsweergave | De groene, oranje en rode hints opnieuw in het aanvalsmenu gecontroleerd met aangepaste doelwittypes. DeSmuME en melonDS-kern toonden eerder geen omgekeerde sprites in de geteste intro’s. | Dubbele gevechten met verschillende matchups, alle Ball-bonussen en de spritefout met de save van de gebruiker. |
+| Mega quests | 67 questgevers aangesproken op hun nieuwe locatie, 15 verplaatste losse stenen opgepakt, Feraligite na debugwinst ontvangen en de Alakazite-badge-eis getest. Met een testsave op 68/68 en 13 geclaimde pakketten meldt het log nu dat alle mijlpaalbeloningen zijn opgehaald. | Alle opdrachten natuurlijk uitspelen en alle routes naar de questgevers nalopen. |
+| Shiny Trial en Shiny Ball | In DeSmuME eerst de Champion-blokkade gezien. Daarna twee volledige reeksen van drie gevechten met Champion-vlag en debugwinst doorlopen. De balvoorraad ging van nul naar één naar twee. Een eerder vangexperiment controleerde de shinywaarde van het gevangen exemplaar. | De trial volledig spelen met reguliere gevechten en controleren hoe de moeilijkheid oploopt. |
+| Statische legendaries | 17 profielen met tweefaselogica. Eerdere fasecontroles met testfixtures. | Alle vanglocaties, verlies- en herstartpaden en een volledige Pokédex voor Arceus op een natuurlijke save. |
+
+Voor de geautomatiseerde gevechtssuite is de upstream [CI-testsave](https://github.com/BluRosie/hg-engine/raw/workflows/assets/test.sav) nodig als `test.sav` in de hoofdmap. Gebruik een aparte werkmap voor `make AUTO_TEST=Y`, zodat de test-ROM en de speel-ROM gescheiden blijven.
+
+De build met `AUTO_TEST=Y` slaagde nadat trainingscode, de debugcatalogus en Box Link-presets naar de veld-overlay waren verplaatst. De automatische runner verdeelde 547 scenario’s over drie processen, maar bereikte in DeSmuME geen eerste resultaat. Een afzonderlijke poging met dezelfde test-ROM en testsave bleef op witte schermen. De gewone speel-ROM is vervolgens opnieuw gebouwd en de ingepakte werelddata is nogmaals gecontroleerd.
