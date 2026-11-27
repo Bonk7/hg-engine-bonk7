@@ -979,4 +979,4 @@ BagApp_ItemContextMenu_Use = 0x021FB680 | 1;
 BagAppMainTask_CancelContextMenu = 0x021FB604 | 1;
 
 /* Native follower checks for the Johto gift events. */
-ScrCmd_FollowerPokeIsEventTrigger = 0x02046420 | 1;
+ScrCmd_FollowerPokeIsEventTrigger = 0x02046A1C | 1;
