@@ -21,7 +21,7 @@ u32 PlayerAppearance_GetSprite(s32 state, u32 gender)
         [APPEARANCE_ETHAN] = 0,      // SPRITE_HERO
         [APPEARANCE_LYRA] = 97,      // SPRITE_HEROINE
         [APPEARANCE_LANCE] = 364,    // SPRITE_WATARU
-        [APPEARANCE_MISTY] = 369,    // SPRITE_GSLEADER10
+        [APPEARANCE_MISTY] = 370,    // SPRITE_GSLEADER11
         [APPEARANCE_JASMINE] = 357,  // SPRITE_GSLEADER6
         [APPEARANCE_PALMER] = 169,   // SPRITE_TOWERBOSS
     };
