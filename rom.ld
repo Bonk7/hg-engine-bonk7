@@ -966,3 +966,10 @@ GetFlyWarpData = 0x0203BA74 | 1;
 BattleInput_CreateTextObject = 0x02268550 | 1;
 
 ClearWindowPixelBuffer = 0x0200E5D4 | 1;
+
+/* Bag UI (overlay 15). */
+Bag_Init = 0x021F9380 | 1;
+Bag_Main = 0x021F9608 | 1;
+Bag_Exit = 0x021F982C | 1;
+OverlayManager_GetData = 0x02007290 | 1;
+BagApp_HandleCursorAction = 0x021FA73C | 1;

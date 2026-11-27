@@ -370,3 +370,5 @@ You earned the Silph reward package!\f1 Shiny Ball and 1 Ability Patch,\n5 Rare 
 The Resonator is back in its vault.\nThis time we changed the locks.\r
 Your Bag is too full for the rest.\nMake room and come back to Silph.\r
 The relay is dead. I can only pick\nup the regular radio stations now.\r
+Mega
+Mega Stones\nSelect a stone to give to a Pokémon.
