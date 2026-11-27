@@ -23,19 +23,17 @@
 #define SCRIPT_NEW_CMD_EDIT_STATS 3
 #define SCRIPT_NEW_CMD_COUNT_MISSING_DEX 4
 
-// These functions live in the main code, outside the field overlay.
-// LONG_CALL preserves the Thumb state when their absolute symbols are linked.
-u16 LONG_CALL Training_GetTargetLevel(void *saveData);
-BOOL LONG_CALL Training_TrainPartyMember(void *saveData, u16 slot);
-BOOL LONG_CALL Training_TransferStats(void *saveData, u16 slot, BOOL editIVs, u8 values[6], BOOL apply);
+u16 Training_GetTargetLevel(void *saveData);
+BOOL Training_TrainPartyMember(void *saveData, u16 slot);
+BOOL Training_TransferStats(void *saveData, u16 slot, BOOL editIVs, u8 values[6], BOOL apply);
 
 BOOL LONG_CALL Pokedex_CheckMonCaughtFlag(const void *pokedex, u16 species);
 
 u16 LONG_CALL MapToFlySpawn(u16 map);
 void LONG_CALL GetFlyWarpData(u16 spawn, Location *location);
 
-u16 LONG_CALL BoxLink_ApplyPreset(SCRIPTCONTEXT *ctx, u16 preset, BOOL saving);
-void LONG_CALL BoxLink_AddMenuOptions(SCRIPTCONTEXT *ctx, BOOL presetList);
+u16 BoxLink_ApplyPreset(SCRIPTCONTEXT *ctx, u16 preset, BOOL saving);
+void BoxLink_AddMenuOptions(SCRIPTCONTEXT *ctx, BOOL presetList);
 
 void LONG_CALL FieldListMenu_AddOption(void *menu, u16 message, u16 description, u8 value);
 
@@ -633,7 +631,7 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
     case 21: {
         static const u16 items[] = {ITEM_RARE_CANDY, ITEM_HEART_SCALE};
         u16 claimed = VarGet(ctx->fsys, VAR_MEGA_QUEST_MILESTONES_CLAIMED);
-        int next = (claimed + 1) * MEGA_QUEST_MILESTONE_INTERVAL;
+        u32 next = (claimed + 1) * MEGA_QUEST_MILESTONE_INTERVAL;
         int reward = claimed % NELEMS(items);
         VarSet(ctx->fsys, 0x8008, VarGet(ctx->fsys, 0x8006) >= next ? items[reward] : ITEM_NONE);
         VarSet(ctx->fsys, 0x8009, 3);

@@ -3,9 +3,9 @@
 
 #include "script.h"
 
-void LONG_CALL DebugCatalog_Reset(BOOL pokemon);
-u16 LONG_CALL DebugCatalog_FillMenu(SCRIPTCONTEXT *ctx);
-u16 LONG_CALL DebugCatalog_GetSelection(u16 choice);
-BOOL LONG_CALL DebugCatalog_Search(SCRIPTCONTEXT *ctx);
+void DebugCatalog_Reset(BOOL pokemon);
+u16 DebugCatalog_FillMenu(SCRIPTCONTEXT *ctx);
+u16 DebugCatalog_GetSelection(u16 choice);
+BOOL DebugCatalog_Search(SCRIPTCONTEXT *ctx);
 
 #endif

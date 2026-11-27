@@ -31,8 +31,8 @@ struct PresetHeader {
     u32 count;
 };
 
-void PCStorage_DeleteBoxMonByIndexPair(PCStorage *storage, u32 box, u32 slot);
-BOOL PCStorage_PlaceMonInBoxByIndexPair(PCStorage *storage, u32 box, u32 slot, struct BoxPokemon *mon);
+void LONG_CALL PCStorage_DeleteBoxMonByIndexPair(PCStorage *storage, u32 box, u32 slot);
+BOOL LONG_CALL PCStorage_PlaceMonInBoxByIndexPair(PCStorage *storage, u32 box, u32 slot, struct BoxPokemon *mon);
 void LONG_CALL FieldListMenu_AddOption(void *menu, u16 message, u16 description, u8 value);
 
 static void *PresetBlock(PCStorage *storage, int preset, int block)
