@@ -102,7 +102,7 @@ static enum EffectHint GetHint(struct BattleSystem *battle, u16 move)
 void BattleTypeHint_Create(void *input, void *object, u16 move, int slot, int color,
                           int palette, int resource, int x, int y, int centered, void *cached)
 {
-    static const char *const labels[] = {NULL, "Super effective", "Not very effective", "No effect", "Depends on target"};
+    static const char *const labels[] = {NULL, "Super eff.", "Resisted", "No effect", "Varies"};
     static const u32 colors[] = {0, HINT_COLOR(10, 9), HINT_COLOR(5, 6), HINT_COLOR(7, 8), HINT_COLOR(1, 2)};
     struct BattleSystem *battle = *(struct BattleSystem **)input;
     enum EffectHint hint = GetHint(battle, move);
@@ -116,6 +116,8 @@ void BattleTypeHint_Create(void *input, void *object, u16 move, int slot, int co
     for (const char *p = labels[hint]; *p; p++) {
         if (*p == ' ') {
             encoded[length++] = 0x1DE;
+        } else if (*p == '.') {
+            encoded[length++] = 0x1AE;
         } else if (*p < 'a') {
             encoded[length++] = 0x12B + *p - 'A';
         } else {
@@ -130,6 +132,6 @@ void BattleTypeHint_Create(void *input, void *object, u16 move, int slot, int co
     }
     CopyU16ArrayToString(text, encoded);
     BattleInput_CreateTextObject(input, object, text, 0, colors[hint], palette, resource,
-                                 (slot & 1) ? 192 : 64, y + 7, TRUE, NULL);
+                                 (slot & 1) ? 192 : 64, y + 9, TRUE, NULL);
     String_Delete(text);
 }
