@@ -378,3 +378,39 @@ Your Sandshrew could help me dig.\nWant to trade it for my Snubbull?\r
 I saw Drowzee south of town.\nTrade me one for my Swinub?\r
 Thanks for the trade!\nTake good care of your new partner.\r
 That is a different Pokemon.\nCome back with the one I asked for.\r
+Take this Event Quest Log.\nOpen it from the Bag for clues.\r
+I study minerals from Johto.\nShow me a Geodude from a cave.\r
+Take this Enigma Stone. Leave and\nreenter the museum to have it checked.\fBring it to Steven and the curator.\r
+The shrine reacts to unusual Pokemon.\nBring a Mareep from Route 31 first.\r
+This shiny Pichu can sense the shrine.\nTake it with you into Ilex Forest.\r
+Lead with the shiny Pichu and check\nthe shrine in Ilex Forest.\r
+Free the Goldenrod Radio Tower.\nThen show me a Noctowl.\r
+This Celebi trusts your Noctowl.\nLet it lead you to the Ilex shrine.\r
+Let Celebi lead and check the shrine\nin Ilex Forest to follow the signal.\r
+Beat the League and solve the Kabuto\nand Aerodactyl puzzles at Alph.\fThen bring an Unown to the lab.\r
+Your Unown can echo the old signal.\nBring only that Unown in your party.\fWalk into the Ruins of Alph plaza\non foot to reach Sinjoh Ruins.\r
+Make room in your party and return.\r
+This event is complete.\nCheck your Event Quest Log anytime.\r
+Event Quest Log  {STRVAR_1 1, 0, 0}/5\nA: Details     B: Back
+Pewter Museum: show a Geodude.\nHave Steven inspect the Enigma Stone.\fReward: the other roaming dragon.\r
+Kurt’s house: show a Mareep.\nLead with your shiny Pichu at Ilex.\fReward: Spiky-eared Pichu.\r
+Mahogany east house: free the Radio\nTower, then show a Noctowl.\fLead with Celebi at the Ilex shrine.\nEvent: travel to Giovanni’s past.\r
+Alph lab: beat the League, solve two\npuzzles, then bring one Unown.\fEnter the plaza on foot with that\nUnown alone. Reward: one creation trio.\r
+To discover: Pewter Museum
+{COLOR 3}Enigma Stone{COLOR 0}
+{COLOR 4}Enigma Stone complete{COLOR 0}
+To discover: Azalea Town
+{COLOR 3}Ilex Pichu{COLOR 0}
+{COLOR 4}Ilex Pichu complete{COLOR 0}
+To discover: Mahogany Town
+{COLOR 3}Ilex Celebi{COLOR 0}
+{COLOR 4}Ilex Celebi complete{COLOR 0}
+To discover: Ruins of Alph
+{COLOR 3}Sinjoh Ruins{COLOR 0}
+{COLOR 4}Sinjoh Ruins complete{COLOR 0}
+To discover: National Park
+{COLOR 3}Gracidea Flower{COLOR 0}
+{COLOR 4}Gracidea Flower complete{COLOR 0}
+National Park: show a Sunkern after\nyou free the Radio Tower.\fLead with Shaymin at the flower shop.\nReward: Gracidea.\r
+Lead with Shaymin and visit the\nGoldenrod Flower Shop for Gracidea.\r
+Free the Radio Tower, then show me\na Sunkern from the grass in this park.\r

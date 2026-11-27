@@ -6,7 +6,7 @@ Elm’s notebook for Mega Stone quests.\nShows the location and progress\nof eac
 A case for Mega Stones. Open it\nfrom the Bag to browse your stones\nand give them to your Pokémon.
 Use it by the water to fish up\nvarious kinds of Pokémon.
 This bike can be combined with the\nPokémon Rotom to use a turbo boost.
-- - -
+A journal of special events in\nJohto and Kanto. It tracks clues\nand completed quests.
 - - -
 One of the many ingredients\nthat can be used for cooking\nat your camp.\rThese sausages should be\nboiled before eating.
 One of the many ingredients\nthat can be used for cooking\nat your camp.\rThe tinned food that Bob sells\nis curiously popular in Galar.

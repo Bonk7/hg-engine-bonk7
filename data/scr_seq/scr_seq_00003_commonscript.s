@@ -123,6 +123,12 @@ scrdef EarlyTradeCherrygrove
 scrdef EarlyTradeViolet
 scrdef EarlyTradeAzalea
 scrdef EarlyTradeGoldenrod
+scrdef EventQuestEnigma
+scrdef EventQuestPichu
+scrdef EventQuestCelebi
+scrdef EventQuestSinjoh
+scrdef EventQuestLog
+scrdef EventQuestShaymin
 scrdef_end
 
 CenterServices:
@@ -2286,3 +2292,5 @@ FalknerMegaGate:
 #include "kanto_rocket.inc"
 
 #include "early_trades.inc"
+
+#include "event_quests.inc"

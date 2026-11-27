@@ -1085,7 +1085,7 @@
 #define ITEM_MEGA_STONE_BOX                1079
 #define ITEM_FISHING_ROD_SWSH            1080
 #define ITEM_ROTOM_BIKE_LAND_MODE        1081
-#define ITEM_UNKNOWN_1082                1082
+#define ITEM_EVENT_QUEST_LOG                1082
 #define ITEM_UNKNOWN_1083                1083
 #define ITEM_SAUSAGES                    1084
 #define ITEM_BOBS_FOOD_TIN               1085

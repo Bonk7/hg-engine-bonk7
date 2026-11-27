@@ -73,3 +73,17 @@ De 91 Mega Stones hebben elk een eigen bron. Beedrillite komt uit Elms verhaalqu
 De build controleert dat alle 91 stenen precies één geregistreerde bron hebben. In DeSmuME zijn de 20 nieuwe vindplaatsen vanaf een aangrenzende tegel opgepakt. Ook de teller van 68 opdrachten, een quiz, een voorwerpenruil, een Pokédex-opdracht en een optioneel trainergevecht zijn gecontroleerd. Voor de Pokédex-opdracht en trainerwinst is een testfixture gebruikt.
 
 Ook 40 gewone trainerteams in Johto en Kanto hebben elk één Mega Stone. De spreiding omvat onder meer rematches op Routes 31, 32, 34 en 38, het National Park, Union Cave, Mt. Mortar, de S.S. Aqua en enkele Gym-trainers. De teams behouden hun grootte en levels. De steen gaat naar een bestaand teamlid of een evolutie uit dezelfde lijn. Routes zonder passende kandidaat houden hun gewone partijen.
+
+## Event Quest Log
+
+De Event Quest Log opent vanuit Key Items en houdt actieve en afgeronde events bij op aparte tabbladen. De lijst toont ook waar je nog onontdekte quests kunt starten.
+
+| Locatie | Opdracht en vervolg |
+| --- | --- |
+| Pewter Museum | Toon Geodude voor de Enigma Stone. Die opent het Latias-event bij Steven in het museum. |
+| Kurt's huis in Azalea | Toon Mareep voor een shiny Pichu. Neem het mee naar de Ilex Shrine voor het Spiky-eared Pichu-event. |
+| Oostelijk huis in Mahogany | Toon Noctowl na de Radio Tower voor Celebi. Neem Celebi mee naar de Ilex Shrine voor het oorspronkelijke Giovanni-event. |
+| National Park | Toon Sunkern na de Radio Tower voor Shaymin. Neem Shaymin mee naar de bloemenwinkel in Goldenrod voor de Gracidea. |
+| Ruins of Alph Research Center | Win de League, los de Kabuto- en Aerodactyl-puzzels op en toon Unown. Ga met alleen Unown in je team naar de ingang van de ruïnes om de Sinjoh-quest te vervolgen. Arceus blijft de beloning voor een complete Pokédex. |
+
+De cloudbuild slaagde. De vijf NPC-gesprekken zijn in DeSmuME getest met voorbereide spelvoortgang. De volledige oorspronkelijke events zijn nog niet allemaal doorgespeeld.

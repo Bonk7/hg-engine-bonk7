@@ -976,3 +976,6 @@ BagApp_HandleCursorAction = 0x021FA73C | 1;
 OverlayManager_GetArgs = 0x020072A4 | 1;
 BagApp_ItemContextMenu_Use = 0x021FB680 | 1;
 BagAppMainTask_CancelContextMenu = 0x021FB604 | 1;
+
+/* Native follower checks for the Johto gift events. */
+ScrCmd_FollowerPokeIsEventTrigger = 0x02046420 | 1;

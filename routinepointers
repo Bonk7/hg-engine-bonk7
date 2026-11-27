@@ -14,3 +14,4 @@ arm9 BagMega_Init 020FA464
 arm9 BagMega_Main 020FA468
 arm9 BagMega_Exit 020FA46C
 0015 BagMega_UseItem 02201368
+arm9 EventQuest_FollowerTrigger 020FB64C

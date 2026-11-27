@@ -32,6 +32,9 @@ enum {
     MOVE_RELEARNER_HEAP = 32,
 };
 
+void EventQuest_FillLog(SCRIPTCONTEXT *ctx);
+BOOL EventQuest_GiveGift(SCRIPTCONTEXT *ctx, u16 gift);
+
 u16 Training_GetTargetLevel(void *saveData);
 BOOL Training_TrainPartyMember(void *saveData, u16 slot);
 BOOL Training_TransferStats(void *saveData, u16 slot, BOOL editIVs, u8 values[6], BOOL apply);
@@ -698,6 +701,14 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
             ClearWindowPixelBuffer(&sMegaQuestProgress, FALSE);
             RemoveWindow(&sMegaQuestProgress);
         }
+        break;
+
+    case 28:
+        EventQuest_FillLog(ctx);
+        break;
+
+    case 29:
+        VarSet(ctx->fsys, 0x8005, EventQuest_GiveGift(ctx, arg0));
         break;
 
     case SCRIPT_NEW_CMD_CENTER_EGG_MOVES:

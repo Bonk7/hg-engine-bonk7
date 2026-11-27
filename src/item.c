@@ -78,6 +78,21 @@ static void ItemMenuUseFunc_MegaQuestLog(struct ItemMenuUseData *data, const str
     menu->state = START_MENU_STATE_RESTORE_FIELD_FOR_TASK;
 }
 
+static BOOL ItemTask_OpenEventQuestLog(TaskManager *taskManager)
+{
+    StartScriptFromMenu(taskManager, 2186, NULL);
+    return FALSE;
+}
+
+static void ItemMenuUseFunc_EventQuestLog(struct ItemMenuUseData *data, const struct ItemCheckUseData *check UNUSED)
+{
+    struct BagViewAppWork *menu = data->taskManager->env;
+    FieldSystem_LoadFieldOverlay(data->taskManager->fieldSystem);
+    menu->atexit_TaskFunc = ItemTask_OpenEventQuestLog;
+    menu->atexit_TaskEnv = NULL;
+    menu->state = START_MENU_STATE_RESTORE_FIELD_FOR_TASK;
+}
+
 const struct ItemUseFuncDat sNewItemFieldUseFuncs[] = {
     { ItemMenuUseFunc_RevealGlass, ItemFieldUseFunc_RevealGlass, NULL },
     { ItemMenuUseFunc_DNASplicers, ItemFieldUseFunc_DNASplicers, NULL },
@@ -87,6 +102,8 @@ const struct ItemUseFuncDat sNewItemFieldUseFuncs[] = {
     { ItemMenuUseFunc_RotomCatalog, NULL, NULL },
     { ItemMenuUseFunc_BoxLink, NULL, ItemCheckUseFunc_BoxLink },
     { ItemMenuUseFunc_MegaQuestLog, NULL, NULL },
+    { NULL, NULL, NULL }, // The Bag handles the Mega Stone Box directly.
+    { ItemMenuUseFunc_EventQuestLog, NULL, NULL },
 };
 
 extern const struct ItemUseFuncDat sItemFieldUseFuncs[NUM_VANILLA_FIELD_USE_FUNCS];
@@ -115,6 +132,9 @@ void *LONG_CALL GetItemFieldUseFunc(int funcType, u16 itemType)
 u16 GetItemIndex(u16 item, u16 type)
 {
     u16 ret = 0;
+    if (item == ITEM_EVENT_QUEST_LOG && (type == ITEM_GET_ICON_CGX || type == ITEM_GET_ICON_PAL)) {
+        item = ITEM_MEGA_QUEST_LOG;
+    }
     if (item == ITEM_MEGA_STONE_BOX && (type == ITEM_GET_ICON_CGX || type == ITEM_GET_ICON_PAL)) {
         item = ITEM_APRICORN_BOX;
     }
@@ -165,6 +185,9 @@ void *GetItemNarcData(u16 item, u16 type, u32 heapID)
     int dataID, picID, palID;
 
     dataID = item;
+    if (item == ITEM_EVENT_QUEST_LOG) {
+        item = ITEM_MEGA_QUEST_LOG;
+    }
     if (item == ITEM_MEGA_STONE_BOX) {
         item = ITEM_APRICORN_BOX;
     }
