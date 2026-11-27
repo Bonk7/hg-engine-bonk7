@@ -414,3 +414,10 @@ To discover: National Park
 National Park: show a Sunkern after\nyou free the Radio Tower.\fLead with Shaymin at the flower shop.\nReward: Gracidea.\r
 Lead with Shaymin and visit the\nGoldenrod Flower Shop for Gracidea.\r
 Free the Radio Tower, then show me\na Sunkern from the grass in this park.\r
+Choose your walking appearance.\nYou can play as a familiar Trainer!
+Ethan
+Lyra
+Lance
+Misty
+Jasmine
+Palmer

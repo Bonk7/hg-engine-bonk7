@@ -2,6 +2,23 @@
 DebugSaveSetup:
     setvar VAR_DEBUG_SETUP, 0
     lockall
+DebugSaveAppearance:
+    msgbox_extern 40, 416
+    touchscreen_menu_hide
+    menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    menu_item_add 417, 255, 1
+    menu_item_add 418, 255, 2
+    menu_item_add 419, 255, 3
+    menu_item_add 420, 255, 4
+    menu_item_add 421, 255, 5
+    menu_item_add 422, 255, 6
+    menu_exec
+    touchscreen_menu_show
+    closemsg
+    compare VAR_SPECIAL_RESULT, 6
+    goto_if_gt DebugSaveAppearance
+    copyvar VAR_PLAYER_APPEARANCE, VAR_SPECIAL_RESULT
+    RunNewCommand 30, 0
     npc_msg 174
     touchscreen_menu_hide
     menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT

@@ -87,3 +87,7 @@ De Event Quest Log opent vanuit Key Items en houdt actieve en afgeronde events b
 | Ruins of Alph Research Center | Win de League, los de Kabuto- en Aerodactyl-puzzels op en toon Unown. Ga met alleen Unown in je team naar de ingang van de ruïnes om de Sinjoh-quest te vervolgen. Arceus blijft de beloning voor een complete Pokédex. |
 
 De cloudbuild slaagde. De vijf NPC-gesprekken zijn in DeSmuME getest met voorbereide spelvoortgang. De volledige oorspronkelijke events zijn nog niet allemaal doorgespeeld.
+
+## Speelbaar personage bij New Game
+
+Kies in de slaapkamer tussen Ethan, Lyra, Lance, Misty, Jasmine en Palmer. De keuze wordt opgeslagen en bepaalt hoe je personage er te voet uitziet. Daarna volgt de keuze tussen Normal en Debug. Het verhaal, de Trainer Card, gevechten en speciale animaties zoals fietsen en surfen gebruiken de oorspronkelijke protagonist. Bestaande saves behouden hun oorspronkelijke uiterlijk.

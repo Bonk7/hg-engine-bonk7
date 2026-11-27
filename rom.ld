@@ -312,6 +312,7 @@ PokeList_FormDemoOverlayLoad = 0x0207CB54 | 1;
 
 /* save stuff */
 SaveBlock2_get = 0x020272B0 | 1;
+PlayerAvatar_ReloadWalkingSprite = 0x021F1B38 | 1;
 Sav2_Misc_get = 0x0202A954 | 1;
 SavArray_Flags_get = 0x020503D0 | 1;
 PokeParty_Delete = 0x0207456C | 1;

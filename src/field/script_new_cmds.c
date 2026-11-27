@@ -24,6 +24,9 @@
 #define SCRIPT_NEW_CMD_EDIT_STATS 3
 #define SCRIPT_NEW_CMD_COUNT_MISSING_DEX 4
 #define SCRIPT_NEW_CMD_CENTER_EGG_MOVES 27
+#define SCRIPT_NEW_CMD_REFRESH_APPEARANCE 30
+
+extern void LONG_CALL PlayerAvatar_ReloadWalkingSprite(FIELD_PLAYER_AVATAR *avatar);
 
 enum {
     EGG_TUTOR_COUNT,
@@ -709,6 +712,10 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 
     case 29:
         VarSet(ctx->fsys, 0x8005, EventQuest_GiveGift(ctx, arg0));
+        break;
+
+    case SCRIPT_NEW_CMD_REFRESH_APPEARANCE:
+        PlayerAvatar_ReloadWalkingSprite(ctx->fsys->playerAvatar);
         break;
 
     case SCRIPT_NEW_CMD_CENTER_EGG_MOVES:
