@@ -375,6 +375,7 @@ all: $(OUTPUT) $(OVERLAY_OUTPUTS) $(TOOLS) $(BASE)/arm9.bin | $(VENV_READY)
 	$(PYTHON) scripts/make.py $(CFLAGS)
 # TODO: find a convenient way to not have this be a separate $(MAKE)
 	$(MAKE) move_narc
+	$(PYTHON) scripts/pack_player_card.py $(FILESYS)/a/0/4/9 data/graphics/player_card
 	$(ARMIPS) armips/global.s $(ARMIPS_FLAGS)
 	$(NARCHIVE) create $(FILESYS)/a/0/2/8 $(BUILD)/a028/ -nf
 	@echo "Making ROM..."

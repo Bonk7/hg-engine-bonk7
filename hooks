@@ -706,3 +706,6 @@ arm9 CaptureReview_FieldHook 02040764 3
 
 # R opens the sort menu while the Mega Quest Log is displaying its list.
 arm9 MegaQuestLog_ListInputHook 02001338 3
+
+0051 PlayerAppearance_DrawTrainerCard 021E6C6C 3
+arm9 PlayerAppearance_GetBattleBackpic 0207280C 2
