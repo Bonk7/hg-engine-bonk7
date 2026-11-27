@@ -50,7 +50,7 @@ static const struct MegaQuestEntry {
     u16 map, item, kind, argument, officeTitle, logObjective, requiredBadges;
 } sMegaQuests[] = {
     {FLAG_ELM_MEGA_STARTED, FLAG_ELM_MEGA_COMPLETE, {306, 308, 310}, {312, 314, 320}, {"elms discovery", "violet city", "beedrillite"}, 0, ITEM_BEEDRILLITE, 0, 0, 0, 345, 0},
-    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "azalea town", "heracronite"}, 0, ITEM_HERACRONITE, 0, 0, 0, 346, 0},
+    {FLAG_MEGA_GROVE_STARTED, FLAG_MEGA_GROVE_COMPLETE, {307, 309, 311}, {313, 315, 321}, {"grove supplies", "ilex forest", "heracronite"}, 0, ITEM_HERACRONITE, 0, 0, 0, 346, 0},
 #include "../../build/mega_research_table.inc"
 };
 
@@ -365,7 +365,7 @@ static BOOL MegaQuestLog_OpenDetail(SCRIPTCONTEXT *ctx, u16 selection)
     AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 12, 8, 0xFF, 0x07080F, NULL);
     FillWindowPixelRect(&sMegaQuestDetail, 2, 12, 25, 216, 1);
     ReadMsgDataIntoString(quest, status ? entry->logObjective : entry->details[0], line);
-    AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 12, 34, 0xFF, 0x01020F, NULL);
+    AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 12, 30, 0xFF, 0x01020F, NULL);
     if (status) {
         FillWindowPixelRect(&sMegaQuestDetail, 2, 12, 91, 216, 1);
         ReadMsgDataIntoString(ui, 343, line);
@@ -587,20 +587,6 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
 
     case 15:
         return LegendaryTrial_StartChallenge(ctx);
-
-    case 16: {
-        void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
-        int map = ctx->fsys->location->mapId;
-        for (int i = 2; i < (int)NELEMS(sMegaQuests); i++) {
-            const struct MegaQuestEntry *entry = &sMegaQuests[i];
-            if (entry->map == map && MegaQuestStatus(entry) != 2) {
-                MegaQuestBufferText(ctx, 860, entry->officeTitle, 4);
-                FieldListMenu_AddOption(menu, 339, 255, i);
-            }
-        }
-        FieldListMenu_AddOption(menu, 131, 255, 243);
-        break;
-    }
 
     case 17: {
         u16 index = VarGet(ctx->fsys, arg0);

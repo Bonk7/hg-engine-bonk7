@@ -305,21 +305,21 @@ No quests on this tab.
 Elm’s discovery
 Grove supplies
 To be discovered · Violet City
-To be discovered · Azalea Town
+To be discovered · Ilex Forest
 {COLOR 3}Elm’s discovery · In progress{COLOR 0}
 {COLOR 3}Grove supplies · In progress{COLOR 0}
 {COLOR 2}Elm’s discovery · Completed{COLOR 0}
 {COLOR 2}Grove supplies · Completed{COLOR 0}
 Violet City. Visit the entrance\nto Sprout Tower.
-Azalea Town. Ask about the grove\nat the Pokémon Center.
+Find the grove keeper in Ilex Forest.
 Violet City · Beedrillite\nDefeat Sage Li and report to Elm.
-Azalea Town · Heracronite\nBring an Oran Berry for the grove.
+Ilex Forest \nBring an Oran Berry for the grove.
 I tend the Heracross grove nearby.\nOne of them could use an Oran Berry.\rBring me one and you can keep\nthe stone I found in the grove.
 Give me one Oran Berry for Heracross?
 Thanks for helping our Heracross!\nHere is the Heracronite I promised.
 Heracross has perked up.\nThanks for helping the grove!
 Reward: Beedrillite\nDefeat Sage Li and report to Elm.
-Reward: Heracronite\nBring an Oran Berry for the grove.
+Ilex Forest \nBring an Oran Berry for the grove.
 You found {STRVAR_1 0, 0, 0}!
 Milestone rewards
 □□□□□
@@ -350,3 +350,4 @@ Adjust IVs   Max 31 per stat
 A Apply    B Cancel    Y Clear all
 D-pad Adjust   L/R Fast   X Clear
 Remaining
+Thanks again for completing my research.

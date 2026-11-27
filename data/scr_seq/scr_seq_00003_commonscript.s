@@ -2069,43 +2069,23 @@ CenterShinyTrialExit:
 .include "data/scr_seq/capture_review.inc"
 
 CenterMegaEvolution:
-    goto_if_set FLAG_ELM_MEGA_COMPLETE, CenterMegaRingOwned
+    goto_if_set FLAG_ELM_MEGA_COMPLETE, CenterMegaHelp
     msgbox_extern 40, 289
-    wait_button
-    closemsg
-    goto VioletTrainingExit
-
-CenterMegaRingOwned:
-    touchscreen_menu_hide
-    menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
-    menu_item_add 288, 255, 0
-    menu_item_add 287, 255, 1
-    menu_item_add 131, 255, 2
-    menu_exec
-    touchscreen_menu_show
-    switch VAR_SPECIAL_RESULT
-    case 0, CenterMegaStones
-    case 1, CenterMegaHelp
-    goto VioletTrainingExit
+    goto CenterMegaResearchMessage
 
 CenterMegaHelp:
     msgbox_extern 40, 286
-    wait_button
-    closemsg
-    goto CenterMegaRingOwned
+    goto CenterMegaResearchMessage
 
-CenterMegaStones:
-    msgbox_extern 40, 334
-    touchscreen_menu_hide
-    prepare_list_local_text 1, 1, 0, 1, VAR_SPECIAL_RESULT
-    RunNewCommand 16, 0
-    show_prepared_list
-    touchscreen_menu_show
-    closemsg
-    copyvar VAR_SPECIAL_x8004, VAR_SPECIAL_RESULT
+.include "build/mega_research_npcs.inc"
+
+MegaResearchNpc:
+    lockall
+    faceplayer
+    goto_if_unset FLAG_ELM_MEGA_COMPLETE, CenterMegaEvolution
     RunNewCommand 17, VAR_SPECIAL_x8004
     compare VAR_SPECIAL_x8005, 0
-    goto_if_eq CenterMegaRingOwned
+    goto_if_eq MegaResearchAlreadyComplete
     compare VAR_SPECIAL_x8006, 0
     goto_if_eq CenterMegaResearchAward
     RunNewCommand 25, 0
@@ -2116,7 +2096,7 @@ CenterMegaStones:
     case 2, CenterMegaResearchShow
     case 3, CenterMegaResearchQuiz
     case 4, CenterMegaResearchBattle
-    goto CenterMegaRingOwned
+    goto VioletTrainingExit
 
 CenterMegaResearchTrade:
     hasitem VAR_SPECIAL_x8007, 1, VAR_SPECIAL_RESULT
@@ -2126,7 +2106,7 @@ CenterMegaResearchTrade:
     yesno VAR_SPECIAL_RESULT
     closemsg
     compare VAR_SPECIAL_RESULT, 0
-    goto_if_ne CenterMegaStones
+    goto_if_ne VioletTrainingExit
     goto CenterMegaResearchAward
 CenterMegaResearchShow:
     RunNewCommand 24, VAR_SPECIAL_RESULT
@@ -2140,7 +2120,7 @@ CenterMegaResearchQuiz:
     show_prepared_list
     touchscreen_menu_show
     compare VAR_SPECIAL_RESULT, 3
-    goto_if_ge CenterMegaStones
+    goto_if_ge VioletTrainingExit
     compare VAR_SPECIAL_RESULT, VAR_SPECIAL_x8007
     goto_if_ne CenterMegaResearchWrong
     goto CenterMegaResearchSolved
@@ -2149,7 +2129,7 @@ CenterMegaResearchBattle:
     yesno VAR_SPECIAL_RESULT
     closemsg
     compare VAR_SPECIAL_RESULT, 0
-    goto_if_ne CenterMegaStones
+    goto_if_ne VioletTrainingExit
     trainer_battle VAR_SPECIAL_x8007, 0, 0, 0
     check_battle_won VAR_SPECIAL_RESULT
     compare VAR_SPECIAL_RESULT, 0
@@ -2170,6 +2150,9 @@ CenterMegaResearchFinish:
     msgbox_extern 40, 322
     wait_fanfare
     goto CenterMegaResearchMessage
+MegaResearchAlreadyComplete:
+    msgbox_extern 40, 352
+    goto CenterMegaResearchMessage
 CenterMegaResearchWrong:
     msgbox_extern 40, 337
     goto CenterMegaResearchMessage
@@ -2178,7 +2161,7 @@ CenterMegaResearchMissing:
 CenterMegaResearchMessage:
     wait_button
     closemsg
-    goto CenterMegaStones
+    goto VioletTrainingExit
 
 ElmMegaResearch:
     lockall

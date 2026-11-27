@@ -26,6 +26,11 @@ def wrap(text):
 def main(output):
     quests = rows("data/mega_stone_quests.tsv")
     pickups = rows("data/mega_stone_pickups.tsv")
+    location_rows = rows("data/mega_quest_locations.tsv")
+    locations = {stone: (int(map_id), int(bank), area, int(x), int(z), int(sprite))
+                 for stone, map_id, bank, area, x, z, sprite in location_rows}
+    if len(locations) != len(location_rows) or locations.keys() != {q[0] for q in quests} | {"HERACRONITE"}:
+        raise ValueError("Every Mega Stone sidequest must have one quest giver")
     stones = {item: species for species, item in re.findall(
         r"MEGA_STONE\(SPECIES_(\w+), ITEM_(\w+)", Path("include/mega_stones.inc").read_text()
     )}
@@ -39,10 +44,20 @@ def main(output):
     texts = []
     table, trainers, definitions, scripts, events = [], [], [], [], []
     objective = {"trade": 1, "show": 2, "quiz": 3, "battle": 4}
+    npc_scripts, npcs = [], []
+    _, grove_bank, _, grove_x, grove_z, grove_sprite = locations["HERACRONITE"]
+    npcs.append(f"{grove_bank},{grove_x},{grove_z},{grove_sprite},2085")
     trainer_id = 738
 
     for index, row in enumerate(quests):
-        stone, map_id, area, title, kind, arg, briefing, *choices = row
+        stone, title, kind, arg, briefing, *choices = row
+        map_id, bank, area, x, z, sprite = locations[stone]
+        npcs.append(f"{bank},{x},{z},{sprite},{2109 + index}")
+        npc_scripts.append(
+            f"MegaResearchNpc{index}:\n"
+            f"    setvar VAR_SPECIAL_x8004, {index + 2}\n"
+            "    goto MegaResearchNpc"
+        )
         if len(title) > 25:
             raise ValueError(f"Quest title too long: {title}")
         start_flag = 2635 + 3 * index
@@ -69,10 +84,10 @@ def main(output):
                     raise ValueError(f"{title}: invalid Johto badge requirement")
                 briefing = f"Earn {required_badges} Johto badges. " + briefing
         texts.extend((
-            f"To be discovered · {area}",
+            f"To be discovered · {area if len(area) <= 21 else area[:19].rstrip() + '…'}",
             f"{{COLOR 3}}{title}{{COLOR 0}}",
             f"{{COLOR 2}}{title}{{COLOR 0}}",
-            wrap(f"Ask the researcher at the {area} Pokémon Center."),
+            wrap(f"Find the quest giver at {area}."),
             wrap(briefing) + r"\rReward: " + reward,
             wrap(f"{title} completed.") + r"\nReward: " + reward,
             title,
@@ -120,6 +135,7 @@ def main(output):
         definitions.append(f"scrdef MegaStonePickup{index}")
         scripts.append(f"mega_pickup MegaStonePickup{index}, {item_ids[stone]}, {flag}, {local_id}")
         events.append(f"{bank},{x},{z},{event_script},{flag},{local_id}")
+    definitions.extend(f"scrdef MegaResearchNpc{i}" for i in range(len(quests)))
     output.mkdir(parents=True, exist_ok=True)
     for name, lines in {
         "mega_research_table.inc": table,
@@ -127,6 +143,8 @@ def main(output):
         "mega_research_definitions.inc": definitions,
         "mega_research_pickups.inc": scripts,
         "mega_research_events.csv": events,
+        "mega_research_npcs.csv": npcs,
+        "mega_research_npcs.inc": npc_scripts,
         "rawtext/860.txt": texts,
     }.items():
         path = output / name

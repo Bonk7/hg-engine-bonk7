@@ -740,13 +740,13 @@ ALPH_RESEARCH := $(SCR_SEQ_OBJ_DIR)/alph_research_entry
 $(eval $(call SCR_SEQ_RULE,$(SCR_SEQ_DEPENDENCIES_DIR)/alph_research_entry.s,alph_research_entry))
 
 MEGA_RESEARCH_OUTPUTS := $(addprefix $(BUILD)/,mega_research_table.inc mega_research_trainers.inc \
-    mega_research_definitions.inc mega_research_pickups.inc mega_research_events.csv rawtext/860.txt)
-$(MEGA_RESEARCH_OUTPUTS) &: scripts/build_mega_research.py data/mega_stone_quests.tsv data/mega_stone_pickups.tsv \
+    mega_research_definitions.inc mega_research_pickups.inc mega_research_events.csv mega_research_npcs.csv mega_research_npcs.inc rawtext/860.txt)
+$(MEGA_RESEARCH_OUTPUTS) &: scripts/build_mega_research.py data/mega_stone_quests.tsv data/mega_stone_pickups.tsv data/mega_quest_locations.tsv \
     include/mega_stones.inc include/constants/item.h data/text/222.txt
 	$(PYTHON) scripts/build_mega_research.py $(BUILD)
 	$(PYTHON) tools/source/dumptools/validate_text_archive.py $(CHARMAP) $(BUILD)/rawtext/860.txt
 
-$(SCR_SEQ_OBJ_DIR)/2_003: $(BUILD)/mega_research_definitions.inc $(BUILD)/mega_research_pickups.inc
+$(SCR_SEQ_OBJ_DIR)/2_003: $(BUILD)/mega_research_definitions.inc $(BUILD)/mega_research_pickups.inc $(BUILD)/mega_research_npcs.inc
 MSGDATA_COMPILETIME_DEPENDENCIES += $(BUILD)/rawtext/860.txt
 
 MEGA_GYM := $(SCR_SEQ_OBJ_DIR)/mega_gym_entry
@@ -807,14 +807,13 @@ endif
 endif
 # BUILD_DUMPED_EVENTDATA
 
-$(ZONE_EVENT_NARC): $(ZONE_EVENT_OBJS) $(BUILD)/mega_research_events.csv | $(ZONE_EVENT_DIR)
+$(ZONE_EVENT_NARC): $(ZONE_EVENT_OBJS) $(BUILD)/mega_research_events.csv $(BUILD)/mega_research_npcs.csv | $(ZONE_EVENT_DIR)
 	$(NARCHIVE) extract $(ZONE_EVENT_TARGET) -o $(ZONE_EVENT_DIR) -nf
 	$(if $(ZONE_EVENT_OBJS),cp $(ZONE_EVENT_OBJS) $(ZONE_EVENT_DIR)/)
 	$(PYTHON) scripts/add_center_staff.py $(ZONE_EVENT_DIR)
 	$(PYTHON) scripts/patch_mega_story.py elm $(ZONE_EVENT_DIR)/2_107
-	$(PYTHON) scripts/patch_mega_story.py grove $(ZONE_EVENT_DIR)/2_160
 	$(PYTHON) scripts/patch_mega_story.py early-stones $(ZONE_EVENT_DIR)/2_148 $(ZONE_EVENT_DIR)/2_151 $(ZONE_EVENT_DIR)/2_163 $(ZONE_EVENT_DIR)/2_033
-	$(PYTHON) scripts/patch_mega_story.py research $(ZONE_EVENT_DIR) $(BUILD)/mega_research_events.csv
+	$(PYTHON) scripts/patch_mega_story.py research $(ZONE_EVENT_DIR) $(BUILD)/mega_research_events.csv $(BUILD)/mega_research_npcs.csv
 	$(NARCHIVE) create $@ $(ZONE_EVENT_DIR) -nf
 
 .PHONY: $(ZONE_EVENT_NARC)

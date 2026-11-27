@@ -19,7 +19,7 @@ def add_quest_object(path, x, z, sprite, script, flag=0, local_id=None):
     if any(obj[12:14] == (x, z) for obj in objects):
         raise ValueError(f"{path}: quest NPC position ({x}, {z}) is occupied")
     if local_id is None:
-        local_id = max(obj[0] for obj in objects) + 1
+        local_id = max((obj[0] for obj in objects), default=-1) + 1
     if any(obj[0] == local_id for obj in objects):
         raise ValueError(f"{path}: quest object ID {local_id} is occupied")
     new_object = layout.pack(local_id, sprite, 15, 0, flag, script,
@@ -28,7 +28,7 @@ def add_quest_object(path, x, z, sprite, script, flag=0, local_id=None):
                      + events[start:end] + new_object + events[end:])
 
 
-def remove_generated_pickups(path, script_to_flag):
+def remove_generated_objects(path, script_to_flag, sprite=None):
     events = path.read_bytes()
     count_offset = 4 + 20 * struct.unpack_from("<I", events)[0]
     count = struct.unpack_from("<I", events, count_offset)[0]
@@ -36,7 +36,7 @@ def remove_generated_pickups(path, script_to_flag):
     layout = struct.Struct("<14HI")
     end = start + count * layout.size
     objects = list(layout.iter_unpack(events[start:end]))
-    kept = [obj for obj in objects if not (obj[1] == 87 and script_to_flag.get(obj[5]) == obj[4])]
+    kept = [obj for obj in objects if not ((sprite is None or obj[1] == sprite) and script_to_flag.get(obj[5]) == obj[4])]
     if len(kept) != count:
         path.write_bytes(events[:count_offset] + struct.pack("<I", len(kept))
                          + b"".join(layout.pack(*obj) for obj in kept) + events[end:])
@@ -61,23 +61,26 @@ if __name__ == "__main__":
     paths = list(map(Path, arguments))
     if operation == "elm":
         add_quest_object(*paths, 14, 25, 99, 2082)
-    elif operation == "grove":
-        add_quest_object(*paths, 12, 14, 325, 2085)
     elif operation == "early-stones":
         union_cave, tower, route_center, route_32 = paths
         add_quest_object(union_cave, 27, 31, 87, 2086, 2632, 30)
         add_quest_object(tower, 18, 8, 87, 2087, 2633, 30)
-        remove_generated_pickups(route_center, {2088: 2634})
+        remove_generated_objects(route_center, {2088: 2634}, 87)
         add_quest_object(route_32, 464, 421, 87, 2088, 2634, 30)
     elif operation == "research":
-        directory, placements = paths
+        directory, placements, npc_placements = paths
         with placements.open() as file:
             rows = [tuple(map(int, row)) for row in csv.reader(file)]
+        with npc_placements.open() as file:
+            npcs = [tuple(map(int, row)) for row in csv.reader(file)]
         script_to_flag = {script: flag for _, _, _, script, flag, _ in rows}
+        script_to_flag.update({script: 0 for _, _, _, _, script in npcs})
         for path in directory.glob("2_*"):
-            remove_generated_pickups(path, script_to_flag)
+            remove_generated_objects(path, script_to_flag)
         for bank, x, z, script, flag, local in rows:
             add_quest_object(directory / f"2_{bank:03d}", x, z, 87, script, flag, local)
+        for bank, x, z, sprite, script in npcs:
+            add_quest_object(directory / f"2_{bank:03d}", x, z, sprite, script)
     elif operation == "gym":
         require_research(*paths)
     else:
