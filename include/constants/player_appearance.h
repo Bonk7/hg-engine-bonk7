@@ -1,0 +1,19 @@
+#ifndef CONSTANTS_PLAYER_APPEARANCE_H
+#define CONSTANTS_PLAYER_APPEARANCE_H
+
+// Ordered as the avatar textures at the end of a/0/8/1.
+#define PLAYER_AVATAR_FIRST_TAG 7100
+#define PLAYER_AVATAR_FIRST_TEXTURE 1852
+
+#define PLAYER_AVATAR_ASH 0
+#define PLAYER_AVATAR_BRENDAN 1
+#define PLAYER_AVATAR_DAWN 2
+#define PLAYER_AVATAR_KRIS 3
+#define PLAYER_AVATAR_LEAF 4
+
+#define PLAYER_AVATAR_TEXTURE_COUNT 15
+
+#define PLAYER_AVATAR_TAG(avatar, texture) \
+    (PLAYER_AVATAR_FIRST_TAG + (avatar) * PLAYER_AVATAR_TEXTURE_COUNT + (texture))
+
+#endif

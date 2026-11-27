@@ -1,6 +1,7 @@
 #include "types.h"
 
 #include "constants/file.h"
+#include "constants/player_appearance.h"
 #include "constants/pokemon.h"
 #include "constants/species.h"
 
@@ -28,6 +29,27 @@
 
 #define MON_FOLLOWER_ENTRY(species, cbparams) \
     { .tag = MON_OVERWORLD_TAG_START + species, .gfx = MON_OVERWORLD_GFX_START + species, .callback_params = cbparams },
+
+#define PLAYER_AVATAR_ENTRY(avatar, texture, params) \
+    { PLAYER_AVATAR_TAG(avatar, texture), \
+      PLAYER_AVATAR_FIRST_TEXTURE + (avatar) * PLAYER_AVATAR_TEXTURE_COUNT + (texture), params },
+
+#define PLAYER_AVATAR_ENTRIES(avatar) \
+    PLAYER_AVATAR_ENTRY(avatar,  0, 0x1C60) \
+    PLAYER_AVATAR_ENTRY(avatar,  1, 0x1881) \
+    PLAYER_AVATAR_ENTRY(avatar,  2, 0x24E0) \
+    PLAYER_AVATAR_ENTRY(avatar,  3, 0x1C60) \
+    PLAYER_AVATAR_ENTRY(avatar,  4, 0x20A0) \
+    PLAYER_AVATAR_ENTRY(avatar,  5, 0x28C0) \
+    PLAYER_AVATAR_ENTRY(avatar,  6, 0x1C60) \
+    PLAYER_AVATAR_ENTRY(avatar,  7, 0x2D00) \
+    PLAYER_AVATAR_ENTRY(avatar,  8, 0x3D60) \
+    PLAYER_AVATAR_ENTRY(avatar,  9, 0x40A0) \
+    PLAYER_AVATAR_ENTRY(avatar, 10, 0x3540) \
+    PLAYER_AVATAR_ENTRY(avatar, 11, 0x3120) \
+    PLAYER_AVATAR_ENTRY(avatar, 12, 0x3540) \
+    PLAYER_AVATAR_ENTRY(avatar, 13, 0x3A60) \
+    PLAYER_AVATAR_ENTRY(avatar, 14, 0x40A0)
 
 // clang-format off
 struct OVERWORLD_TAG gOWTagToFileNum[] = // skip down a bit to see the parts that are specifically for pokémon
@@ -1691,6 +1713,12 @@ struct OVERWORLD_TAG gOWTagToFileNum[] = // skip down a bit to see the parts tha
         MON_FOLLOWER_ENTRY(SPECIES_IRON_CROWN, OVERWORLD_SIZE_SMALL)
         MON_FOLLOWER_ENTRY(SPECIES_TERAPAGOS, OVERWORLD_SIZE_SMALL)
         MON_FOLLOWER_ENTRY(SPECIES_PECHARUNT, OVERWORLD_SIZE_SMALL)
+
+        PLAYER_AVATAR_ENTRIES(PLAYER_AVATAR_ASH)
+        PLAYER_AVATAR_ENTRIES(PLAYER_AVATAR_BRENDAN)
+        PLAYER_AVATAR_ENTRIES(PLAYER_AVATAR_DAWN)
+        PLAYER_AVATAR_ENTRIES(PLAYER_AVATAR_KRIS)
+        PLAYER_AVATAR_ENTRIES(PLAYER_AVATAR_LEAF)
 
         { 0xFFFF, 0, 0 },
     };

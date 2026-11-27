@@ -423,3 +423,8 @@ Jasmine
 Palmer
 Blue
 More Trainers
+Ash
+Kris
+Leaf
+Brendan
+Dawn

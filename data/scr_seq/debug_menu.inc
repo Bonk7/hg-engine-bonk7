@@ -27,12 +27,31 @@ DebugSaveAppearanceMore:
     menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
     menu_item_add 422, 255, 6
     menu_item_add 423, 255, 7
-    menu_item_add 131, 255, 8
+    menu_item_add 425, 255, 8
+    menu_item_add 426, 255, 9
+    menu_item_add 427, 255, 10
+    menu_item_add 424, 255, 13
     menu_exec
     touchscreen_menu_show
     closemsg
-    compare VAR_SPECIAL_RESULT, 7
+    compare VAR_SPECIAL_RESULT, 13
+    goto_if_eq DebugSaveAppearanceLast
+    compare VAR_SPECIAL_RESULT, 10
     goto_if_gt DebugSaveAppearance
+    goto DebugSaveAppearanceApply
+
+DebugSaveAppearanceLast:
+    msgbox_extern 40, 416
+    touchscreen_menu_hide
+    menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    menu_item_add 428, 255, 11
+    menu_item_add 429, 255, 12
+    menu_item_add 131, 255, 13
+    menu_exec
+    touchscreen_menu_show
+    closemsg
+    compare VAR_SPECIAL_RESULT, 12
+    goto_if_gt DebugSaveAppearanceMore
 
 DebugSaveAppearanceApply:
     copyvar VAR_PLAYER_APPEARANCE, VAR_SPECIAL_RESULT

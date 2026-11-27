@@ -90,4 +90,8 @@ De cloudbuild slaagde. De vijf NPC-gesprekken zijn in DeSmuME getest met voorber
 
 ## Speelbaar personage bij New Game
 
-Kies in de slaapkamer tussen Ethan, Lyra, Lance, Misty, Jasmine, Palmer en Blue. De keuze wordt opgeslagen en bepaalt hoe je personage er te voet uitziet. Daarna volgt de keuze tussen Normal en Debug. Het verhaal, de Trainer Card, gevechten en speciale animaties zoals fietsen en surfen gebruiken de oorspronkelijke protagonist. Bestaande saves behouden hun oorspronkelijke uiterlijk.
+Kies in de slaapkamer tussen Ethan, Lyra, Lance, Misty, Jasmine, Palmer en Blue. De keuze wordt opgeslagen en bepaalt hoe je personage er te voet uitziet. Daarna volgt de keuze tussen Normal en Debug. Voor deze zeven keuzes blijven fietsen, surfen en andere speciale acties de oorspronkelijke protagonist gebruiken. Het verhaal, de Trainer Card en gevechten volgen de oorspronkelijke protagonist. Bestaande saves behouden hun oorspronkelijke uiterlijk.
+
+Ash, Kris, Leaf, Brendan en Dawn staan op de volgende pagina’s van **More Trainers**. Ze hebben elk vijftien overworldmodi, waaronder lopen, fietsen, surfen, vissen, ladders, de Pokéathlon en Apricorn-bomen. Voor acties zonder bronframes zijn de bestaande houdingen en timing als basis gebruikt en is de zichtbare sprite aangepast. De gevechtsanimaties en Trainer Card gebruiken de oorspronkelijke protagonist.
+
+De loop-, fiets- en visframes van Ash, Kris, Leaf en Brendan zijn gebaseerd op de [HGSS-sprites van gen1recomp-mods](https://github.com/LucianoNeo/gen1recomp-mods/blob/master/hgss_sprites/README.md). Daar staan de oorspronkelijke bijdragen van PKMNTrainerRick, diegowt en hyo en de bronnotities voor Leaf. Dawns loopframes komen uit de bestaande DP-spelerssprite in HeartGold.

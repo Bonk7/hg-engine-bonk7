@@ -474,9 +474,17 @@ $(OVERWORLDS_DIR)/1_%.bin:$(OVERWORLDS_DEPENDENCIES_DIR)/%.bin
 $(OVERWORLDS_DIR)/2_%.btx0:$(OVERWORLDS_DEPENDENCIES_DIR)/custom/%.png $(OVERWORLDS_DEPENDENCIES_DIR)/custom/%.json $(OVERWORLDS_DEPENDENCIES_DIR)/custom/%*.pal
 	$(BTX) $< $@
 
-# and then followers are 3_
+# Followers are 3_. Keep playable avatar textures after them.
+PLAYER_AVATAR_DIR := data/graphics/player_avatars
+PLAYER_AVATAR_SRCS := $(wildcard $(PLAYER_AVATAR_DIR)/*.png)
+PLAYER_AVATAR_OBJS := $(patsubst $(PLAYER_AVATAR_DIR)/%.png,$(OVERWORLDS_DIR)/4_%.btx0,$(PLAYER_AVATAR_SRCS))
 
-$(OVERWORLDS_NARC): $(ALL_OVERWORLDS_SRCS) $(ALL_OVERWORLDS_OBJS)
+$(OVERWORLDS_DIR)/4_%.btx0: $(PLAYER_AVATAR_DIR)/%.png $(PLAYER_AVATAR_DIR)/%.json $(PLAYER_AVATAR_DIR)/%*.pal | $(BTX)
+	$(BTX) $< $@
+
+
+$(OVERWORLDS_NARC): $(ALL_OVERWORLDS_SRCS) $(ALL_OVERWORLDS_OBJS) $(PLAYER_AVATAR_OBJS)
+	@test $(words $(filter-out 4_%,$(notdir $(wildcard $(OVERWORLDS_DIR)/*)))) -eq $(shell sed -n 's/^#define PLAYER_AVATAR_FIRST_TEXTURE //p' include/constants/player_appearance.h)
 	$(NARCHIVE) create $@ $(OVERWORLDS_DIR) -nf
 
 NARC_FILES += $(OVERWORLDS_NARC)
