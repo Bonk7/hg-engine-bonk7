@@ -421,3 +421,5 @@ Lance
 Misty
 Jasmine
 Palmer
+Blue
+More Trainers

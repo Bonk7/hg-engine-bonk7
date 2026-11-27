@@ -10,6 +10,7 @@ enum {
     APPEARANCE_MISTY,
     APPEARANCE_JASMINE,
     APPEARANCE_PALMER,
+    APPEARANCE_BLUE,
     APPEARANCE_COUNT
 };
 
@@ -24,6 +25,7 @@ u32 PlayerAppearance_GetSprite(s32 state, u32 gender)
         [APPEARANCE_MISTY] = 370,    // SPRITE_GSLEADER11
         [APPEARANCE_JASMINE] = 357,  // SPRITE_GSLEADER6
         [APPEARANCE_PALMER] = 169,   // SPRITE_TOWERBOSS
+        [APPEARANCE_BLUE] = 375,     // SPRITE_GSLEADER16
     };
 
     if (state == 0 && SaveBlock2_get() != NULL) {

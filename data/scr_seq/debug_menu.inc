@@ -11,12 +11,30 @@ DebugSaveAppearance:
     menu_item_add 419, 255, 3
     menu_item_add 420, 255, 4
     menu_item_add 421, 255, 5
-    menu_item_add 422, 255, 6
+    menu_item_add 424, 255, 8
     menu_exec
     touchscreen_menu_show
     closemsg
-    compare VAR_SPECIAL_RESULT, 6
+    compare VAR_SPECIAL_RESULT, 8
+    goto_if_eq DebugSaveAppearanceMore
+    compare VAR_SPECIAL_RESULT, 5
     goto_if_gt DebugSaveAppearance
+    goto DebugSaveAppearanceApply
+
+DebugSaveAppearanceMore:
+    msgbox_extern 40, 416
+    touchscreen_menu_hide
+    menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
+    menu_item_add 422, 255, 6
+    menu_item_add 423, 255, 7
+    menu_item_add 131, 255, 8
+    menu_exec
+    touchscreen_menu_show
+    closemsg
+    compare VAR_SPECIAL_RESULT, 7
+    goto_if_gt DebugSaveAppearance
+
+DebugSaveAppearanceApply:
     copyvar VAR_PLAYER_APPEARANCE, VAR_SPECIAL_RESULT
     RunNewCommand 30, 0
     npc_msg 174

@@ -90,4 +90,4 @@ De cloudbuild slaagde. De vijf NPC-gesprekken zijn in DeSmuME getest met voorber
 
 ## Speelbaar personage bij New Game
 
-Kies in de slaapkamer tussen Ethan, Lyra, Lance, Misty, Jasmine en Palmer. De keuze wordt opgeslagen en bepaalt hoe je personage er te voet uitziet. Daarna volgt de keuze tussen Normal en Debug. Het verhaal, de Trainer Card, gevechten en speciale animaties zoals fietsen en surfen gebruiken de oorspronkelijke protagonist. Bestaande saves behouden hun oorspronkelijke uiterlijk.
+Kies in de slaapkamer tussen Ethan, Lyra, Lance, Misty, Jasmine, Palmer en Blue. De keuze wordt opgeslagen en bepaalt hoe je personage er te voet uitziet. Daarna volgt de keuze tussen Normal en Debug. Het verhaal, de Trainer Card, gevechten en speciale animaties zoals fietsen en surfen gebruiken de oorspronkelijke protagonist. Bestaande saves behouden hun oorspronkelijke uiterlijk.
