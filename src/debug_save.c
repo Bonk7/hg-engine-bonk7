@@ -1,5 +1,9 @@
 #include "types.h"
 #include "save.h"
+#include "debug_catalog.h"
+
+// The naming screen can reload the field overlay before the results appear.
+struct DebugCatalogState gDebugCatalog = { .query = { CATALOG_TEXT_END } };
 
 void DebugSave_InitNewGame(SaveData *save)
 {

@@ -6,8 +6,6 @@
 #include "message.h"
 
 enum {
-    CATALOG_PAGE_SIZE = 20,
-    CATALOG_QUERY_LENGTH = 10,
     CATALOG_SEARCH = 240,
     CATALOG_PREVIOUS = 241,
     CATALOG_NEXT = 242,
@@ -21,7 +19,6 @@ enum {
     CATALOG_MSG_NO_MATCHES = 199,
     CATALOG_ITEMS_BANK = 222,
     CATALOG_SPECIES_BANK = 237,
-    CATALOG_TEXT_END = 0xFFFF,
     SCRIPT_MODE_NATIVE = 2,
     NAMING_SCREEN_FREE_TEXT = 6,
     FIELD_MENU_INPUT_STATE_OFFSET = 0x10C,
@@ -48,21 +45,11 @@ void LONG_CALL FieldSystem_LaunchApplication(FieldSystem *field, const struct Ov
 BOOL LONG_CALL FieldSystem_ApplicationIsRunning(FieldSystem *field);
 void LONG_CALL FieldListMenu_AddOption(void *menu, u16 message, u16 description, u8 value);
 
-static struct {
-    BOOL pokemon;
-    u16 page;
-    u16 count;
-    u16 ids[CATALOG_PAGE_SIZE];
-    u16 query[CATALOG_QUERY_LENGTH + 1];
-} catalog;
-
-static struct DebugNamingArgs *namingArgs;
-
 void DebugCatalog_Reset(BOOL pokemon)
 {
-    catalog.pokemon = pokemon;
-    catalog.page = 0;
-    catalog.query[0] = CATALOG_TEXT_END;
+    gDebugCatalog.pokemon = pokemon;
+    gDebugCatalog.page = 0;
+    gDebugCatalog.query[0] = CATALOG_TEXT_END;
 }
 
 static u16 FoldNameCharacter(u16 ch)
@@ -96,7 +83,7 @@ static BOOL NameMatches(const String *name)
     u16 first;
     // Start at each letter or digit so both full and partial names can match.
     while ((first = NextNameCharacter(&start)) != 0) {
-        const u16 *query = catalog.query;
+        const u16 *query = gDebugCatalog.query;
         u16 wanted = NextNameCharacter(&query);
         if (wanted == 0) {
             return TRUE;
@@ -118,17 +105,17 @@ u16 DebugCatalog_FillMenu(SCRIPTCONTEXT *ctx)
 {
     void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
     MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
-    int bank = catalog.pokemon ? CATALOG_SPECIES_BANK : CATALOG_ITEMS_BANK;
-    int limit = catalog.pokemon ? SPECIES_MAX_MON_NUM : MAX_TOTAL_ITEM_NUM;
+    int bank = gDebugCatalog.pokemon ? CATALOG_SPECIES_BANK : CATALOG_ITEMS_BANK;
+    int limit = gDebugCatalog.pokemon ? SPECIES_MAX_MON_NUM : MAX_TOTAL_ITEM_NUM;
     MsgData *names = NewMsgDataFromNarc(MSGDATA_LOAD_DIRECT, ARC_MSG_DATA, bank, HEAPID_FIELD1);
     BOOL nextPage = FALSE;
-    catalog.count = 0;
+    gDebugCatalog.count = 0;
 
     FieldListMenu_AddOption(menu, CATALOG_MSG_SEARCH, 255, CATALOG_SEARCH);
-    if (catalog.query[0] != CATALOG_TEXT_END) {
+    if (gDebugCatalog.query[0] != CATALOG_TEXT_END) {
         FieldListMenu_AddOption(menu, CATALOG_MSG_CLEAR, 255, CATALOG_CLEAR);
     }
-    if (catalog.page != 0) {
+    if (gDebugCatalog.page != 0) {
         FieldListMenu_AddOption(menu, CATALOG_MSG_PREVIOUS, 255, CATALOG_PREVIOUS);
     }
 
@@ -136,9 +123,9 @@ u16 DebugCatalog_FillMenu(SCRIPTCONTEXT *ctx)
         if (limit >= names->direct->count) {
             limit = names->direct->count - 1;
         }
-        int skip = catalog.page * CATALOG_PAGE_SIZE;
+        int skip = gDebugCatalog.page * CATALOG_PAGE_SIZE;
         for (int id = 1; id <= limit; id++) {
-            if (catalog.pokemon && (id == SPECIES_EGG || id == SPECIES_BAD_EGG)) {
+            if (gDebugCatalog.pokemon && (id == SPECIES_EGG || id == SPECIES_BAD_EGG)) {
                 continue;
             }
             ReadMsgDataIntoString(names, id, format->buffer);
@@ -149,13 +136,13 @@ u16 DebugCatalog_FillMenu(SCRIPTCONTEXT *ctx)
                 skip--;
                 continue;
             }
-            if (catalog.count == CATALOG_PAGE_SIZE) {
+            if (gDebugCatalog.count == CATALOG_PAGE_SIZE) {
                 nextPage = TRUE;
                 break;
             }
             SetStringAsPlaceholder(format, 0, format->buffer, NULL);
-            FieldListMenu_AddOption(menu, CATALOG_MSG_NAME, 255, catalog.count);
-            catalog.ids[catalog.count++] = id;
+            FieldListMenu_AddOption(menu, CATALOG_MSG_NAME, 255, gDebugCatalog.count);
+            gDebugCatalog.ids[gDebugCatalog.count++] = id;
         }
         DestroyMsgData(names);
     }
@@ -163,11 +150,11 @@ u16 DebugCatalog_FillMenu(SCRIPTCONTEXT *ctx)
     if (nextPage) {
         FieldListMenu_AddOption(menu, CATALOG_MSG_NEXT, 255, CATALOG_NEXT);
     }
-    if (catalog.count == 0) {
+    if (gDebugCatalog.count == 0) {
         FieldListMenu_AddOption(menu, CATALOG_MSG_NO_MATCHES, 255, CATALOG_NO_MATCHES);
     }
-    if (catalog.query[0] != CATALOG_TEXT_END) {
-        CopyU16ArrayToString(format->buffer, catalog.query);
+    if (gDebugCatalog.query[0] != CATALOG_TEXT_END) {
+        CopyU16ArrayToString(format->buffer, gDebugCatalog.query);
         SetStringAsPlaceholder(format, 0, format->buffer, NULL);
         return TRUE;
     }
@@ -176,19 +163,19 @@ u16 DebugCatalog_FillMenu(SCRIPTCONTEXT *ctx)
 
 u16 DebugCatalog_GetSelection(u16 choice)
 {
-    if (choice < catalog.count) {
-        return catalog.ids[choice];
+    if (choice < gDebugCatalog.count) {
+        return gDebugCatalog.ids[choice];
     }
     switch (choice) {
     case CATALOG_PREVIOUS:
-        catalog.page--;
+        gDebugCatalog.page--;
         break;
     case CATALOG_NEXT:
-        catalog.page++;
+        gDebugCatalog.page++;
         break;
     case CATALOG_CLEAR:
-        catalog.query[0] = CATALOG_TEXT_END;
-        catalog.page = 0;
+        gDebugCatalog.query[0] = CATALOG_TEXT_END;
+        gDebugCatalog.page = 0;
         break;
     }
     return 0;
@@ -200,12 +187,12 @@ static BOOL DebugCatalog_FinishSearch(SCRIPTCONTEXT *ctx)
         return FALSE;
     }
 
-    if (!namingArgs->noInput) {
-        CopyStringToU16Array(namingArgs->input, catalog.query, CATALOG_QUERY_LENGTH + 1);
-        catalog.page = 0;
+    if (!gDebugCatalog.namingArgs->noInput) {
+        CopyStringToU16Array(gDebugCatalog.namingArgs->input, gDebugCatalog.query, CATALOG_QUERY_LENGTH + 1);
+        gDebugCatalog.page = 0;
     }
-    NamingScreen_DeleteArgs(namingArgs);
-    namingArgs = NULL;
+    NamingScreen_DeleteArgs(gDebugCatalog.namingArgs);
+    gDebugCatalog.namingArgs = NULL;
     return TRUE;
 }
 
@@ -214,9 +201,9 @@ BOOL DebugCatalog_Search(SCRIPTCONTEXT *ctx)
     FieldSystem *field = ctx->fsys;
     void *options = Save_PlayerData_GetOptionsAddr(field->savedata);
     void *menuInput = (u8 *)field + FIELD_MENU_INPUT_STATE_OFFSET;
-    namingArgs = NamingScreen_CreateArgs(HEAPID_WORLD, NAMING_SCREEN_FREE_TEXT, 0,
+    gDebugCatalog.namingArgs = NamingScreen_CreateArgs(HEAPID_WORLD, NAMING_SCREEN_FREE_TEXT, 0,
         CATALOG_QUERY_LENGTH, options, menuInput);
-    FieldSystem_LaunchApplication(field, &DebugNamingScreenTemplate, namingArgs);
+    FieldSystem_LaunchApplication(field, &DebugNamingScreenTemplate, gDebugCatalog.namingArgs);
     ctx->native_ptr = DebugCatalog_FinishSearch;
     ctx->mode = SCRIPT_MODE_NATIVE;
     return TRUE;
