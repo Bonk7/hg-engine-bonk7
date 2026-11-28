@@ -36,6 +36,9 @@ BOOL BattleSpeed_IsLocked(struct BattleSystem *battle)
 
 BOOL BattleSpeed_RunFrame(void *manager)
 {
+    if (gSystem.newAndRepeatedKeys || gSystem.newKeysRaw || gSystem.touchHeld) {
+        return Battle_RunNativeFrame(manager);
+    }
     struct BattleSystem *battle = OverlayManager_GetData(manager);
     if (BattleSpeed_IsLocked(battle)) {
         return Battle_RunNativeFrame(manager);
@@ -45,14 +48,13 @@ BOOL BattleSpeed_RunFrame(void *manager)
         extra = 0;
     }
     while (extra--) {
-        // A physical input edge must reach the UI only once.
-        if (gSystem.newAndRepeatedKeys || gSystem.newKeysRaw || gSystem.touchHeld) {
-            break;
-        }
         if (Battle_RunNativeFrame(manager)) {
             return TRUE;
         }
         Battle_RunTaskQueue(gSystem.mainTaskQueue);
+        if (gSystem.newAndRepeatedKeys || gSystem.newKeysRaw || gSystem.touchHeld) {
+            break;
+        }
     }
     return Battle_RunNativeFrame(manager);
 }
