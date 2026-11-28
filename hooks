@@ -710,3 +710,4 @@ arm9 MegaQuestLog_ListInputHook 02001338 3
 0051 PlayerAppearance_DrawTrainerCard 021E6C6C 3
 arm9 PlayerAppearance_GetBattleBackpic 0207280C 2
 0012 BattleSpeed_FrameHook 02237A10 3
+0054 OptionsBattleSpeed_InputHook 021E5BCA 3

@@ -719,7 +719,6 @@ BOOL Script_RunNewCmd(SCRIPTCONTEXT *ctx)
         void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
         FieldListMenu_AddOption(menu, 274, 255, 0);
         FieldListMenu_AddOption(menu, 275, 255, 1);
-        FieldListMenu_AddOption(menu, 430, 255, 2);
         FieldListMenu_AddOption(menu, 131, 255, 3);
         break;
     }

@@ -2007,7 +2007,6 @@ CenterBattleSettings:
     switch VAR_SPECIAL_RESULT
     case 0, CenterBattlePace
     case 1, CenterTypeHints
-    case 2, CenterAnimSpeed
     goto CenterPaceDone
 
 CenterTypeHints:
@@ -2024,21 +2023,6 @@ CenterEnableHints:
     compare VAR_SPECIAL_RESULT, 0
     goto_if_ne CenterPaceDone
     clearflag FLAG_HIDE_BATTLE_TYPE_HINTS
-    goto CenterPaceDone
-
-CenterAnimSpeed:
-    msgbox_extern 40, 431
-    touchscreen_menu_hide
-    menu_init 1, 1, 0, 1, VAR_SPECIAL_RESULT
-    menu_item_add 432, 255, 0
-    menu_item_add 433, 255, 1
-    menu_item_add 434, 255, 2
-    menu_item_add 435, 255, 3
-    menu_exec
-    touchscreen_menu_show
-    compare VAR_SPECIAL_RESULT, 4
-    goto_if_ge CenterPaceDone
-    copyvar VAR_BATTLE_ANIM_SPEED, VAR_SPECIAL_RESULT
     goto CenterPaceDone
 
 CenterBattlePace:
