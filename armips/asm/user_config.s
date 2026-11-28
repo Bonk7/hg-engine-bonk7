@@ -25,6 +25,11 @@ battleStyleSelectionCallback:
 
 .endif
 
+// Restore the retail loop on incremental builds previously patched for uncapped FPS.
+.org 0x02000E26
+str r0, [r4, #0x2C]
+str r5, [r4, #0x30]
+
 .if ALWAYS_UNCAPPED_FRAME_RATE | DEBUG_BATTLE_SCENARIOS
 
 .org 0x02000E28

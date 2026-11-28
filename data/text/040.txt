@@ -428,3 +428,9 @@ Kris
 Leaf
 Brendan
 Dawn
+Animation speed
+Regular battle speed? Boss battles stay at 1x.\r
+1x
+2x
+3x
+4x

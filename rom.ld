@@ -984,3 +984,6 @@ ScrCmd_FollowerPokeIsEventTrigger = 0x02046A1C | 1;
 AvatarCard_LoadTiles = 0x0201C0C0 | 1;
 AvatarCard_CopyTilemap = 0x0201C4EC | 1;
 AvatarCard_CommitTilemap = 0x0201BF7C | 1;
+
+Battle_RunNativeFrame = 0x02238358 | 1;
+Battle_RunTaskQueue = 0x0201F880 | 1;

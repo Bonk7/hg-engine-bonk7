@@ -2670,6 +2670,7 @@ typedef void (*anim_scr_cmd_func)(ANIM_CMD_STRUCT *animCmdStruct);
 
 extern const anim_scr_cmd_func gAnimScrTable[NUM_VANILLA_ANIM_SCRIPT_COMMANDS];
 extern struct BattleSystem *gBattleSystem;
+BOOL BattleSpeed_IsLocked(struct BattleSystem *battle);
 
 enum {
     SWITCH_IN_CHECK_WEATHER = 0,

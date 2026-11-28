@@ -636,6 +636,7 @@ BOOL BattleScriptCommandHandler(void *bw, struct BattleStruct *sp)
 
         BOOL fastPace = (command == 30 || command == 69)
             && !(BattleTypeGet(bw) & BATTLE_TYPE_LINK)
+            && !BattleSpeed_IsLocked(bw)
             && CheckScriptFlag(FLAG_SHORT_BATTLE_PAUSES);
         int animation = fastPace && command == 69 ? sp->SkillSeqWork[sp->skill_seq_no + 2] : BATTLE_ANIMATION_NONE;
         if ((animation >= BATTLE_ANIMATION_STAT_BOOST && animation <= BATTLE_ANIMATION_RESTORE_HP)
