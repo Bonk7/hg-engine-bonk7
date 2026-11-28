@@ -4,8 +4,6 @@
 
 #define CAPTURE_REVIEW_SCRIPT 2080
 #define SCRIPT_MODE_NATIVE 2
-// Size of a party member in the native save and overlay APIs.
-#define NATIVE_PARTY_MON_SIZE 0xEC
 
 struct CaptureSummaryArgs {
     struct Party *party;
@@ -44,15 +42,23 @@ void CaptureReview_Record(PCStorage *storage, int box, int slot, u32 pid)
     capture.pending = TRUE;
 }
 
-static struct BoxPokemon *CaptureReview_Find(struct Party *party)
+static struct BoxPokemon *CaptureReview_Find(struct Party *party, SaveData *save)
 {
     struct BoxPokemon *mon;
-    if (capture.box < 0) {
-        if (capture.slot < 0 || capture.slot >= party->count) {
+    if (!capture.storage || capture.storage != SaveArray_Get(save, 41)
+        || capture.slot < 0 || party->count < 0 || party->count > party->maxPossibleCount
+        || (unsigned)party->maxPossibleCount > NELEMS(party->members)) {
+        return NULL;
+    }
+    if (capture.box == -1) {
+        if (capture.slot >= party->count) {
             return NULL;
         }
         mon = &Party_GetMonByIndex(party, capture.slot)->box;
     } else {
+        if ((unsigned)capture.box >= NUM_PC_BOXES || capture.slot >= MONS_PER_BOX) {
+            return NULL;
+        }
         mon = &capture.storage->boxes[capture.box].mons[capture.slot];
     }
 
@@ -67,7 +73,7 @@ BOOL CaptureReview_TryStart(FieldSystem *field, u8 type)
     }
 
     capture.pending = FALSE;
-    if (!CaptureReview_Find(SaveData_GetPlayerPartyPtr(field->savedata))) {
+    if (!CaptureReview_Find(SaveData_GetPlayerPartyPtr(field->savedata), field->savedata)) {
         return FALSE;
     }
     EventSet_Script(field, CAPTURE_REVIEW_SCRIPT, NULL);
@@ -87,19 +93,22 @@ static BOOL CaptureReview_FinishSummary(SCRIPTCONTEXT *ctx)
 BOOL CaptureReview_ShowSummary(SCRIPTCONTEXT *ctx)
 {
     struct Party *party = SaveData_GetPlayerPartyPtr(ctx->fsys->savedata);
-    struct BoxPokemon *mon = CaptureReview_Find(party);
+    struct BoxPokemon *mon = CaptureReview_Find(party, ctx->fsys->savedata);
     if (!mon) {
         return FALSE;
     }
     summaryParty.maxPossibleCount = 1;
     summaryParty.count = 1;
     if (capture.box < 0) {
-        memcpy(&summaryParty.members[0], Party_GetMonByIndex(party, capture.slot), NATIVE_PARTY_MON_SIZE);
+        summaryParty.members[0] = *Party_GetMonByIndex(party, capture.slot);
     } else {
         CopyBoxPokemonToPokemon(mon, &summaryParty.members[0]);
     }
 
     summaryArgs = CaptureSummary_CreateArgs(ctx->fsys, 3, 0);
+    if (!summaryArgs) {
+        return FALSE;
+    }
     summaryArgs->party = &summaryParty;
     summaryArgs->partyCount = 1;
     summaryArgs->partySlot = 0;
@@ -113,11 +122,14 @@ BOOL CaptureReview_ShowSummary(SCRIPTCONTEXT *ctx)
 u16 CaptureReview_Apply(SCRIPTCONTEXT *ctx, u16 action)
 {
     struct Party *party = SaveData_GetPlayerPartyPtr(ctx->fsys->savedata);
-    struct BoxPokemon *mon = CaptureReview_Find(party);
+    struct BoxPokemon *mon = CaptureReview_Find(party, ctx->fsys->savedata);
     if (!mon) {
         return 2;
     }
 
+    if (action > 2) {
+        return 2;
+    }
     if (action == 0) {
         if (capture.box >= 0) {
             return 0;
@@ -175,7 +187,7 @@ u16 CaptureReview_Apply(SCRIPTCONTEXT *ctx, u16 action)
     *mon = outgoing->box;
     RestoreBoxMonPP(mon);
     PCStorage_SetBoxModified(capture.storage, capture.box);
-    memcpy(outgoing, &caught, NATIVE_PARTY_MON_SIZE);
+    *outgoing = caught;
     CaptureParty_ClearSlotModifiers(party, slot);
     return 0;
 }

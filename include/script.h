@@ -107,10 +107,23 @@ void LONG_CALL ScriptJump(SCRIPTCONTEXT *ctx, const u8 *ptr); // this is importa
 void *LONG_CALL FieldSysGetAttrAddr(FieldSystem *fsys, int field);
 u32 LONG_CALL Fsys_GetWeather_HandleDiamondDust(FieldSystem *fsys, u32 mapID);
 
-// there are actual functions for ScriptReadHalfword and ScriptReadWord, but it's whatever
-#define ScriptReadByte(ctx)     *(u8 *)(ctx->script_ptr++)
-#define ScriptReadHalfword(ctx) (ScriptReadByte(ctx) | (ScriptReadByte(ctx) << 8))
-#define ScriptReadWord(ctx)     (ScriptReadHalfword(ctx) | (ScriptReadHalfword(ctx) << 16))
+static inline u8 ScriptReadByte(SCRIPTCONTEXT *ctx)
+{
+    return *ctx->script_ptr++;
+}
+
+static inline u16 ScriptReadHalfword(SCRIPTCONTEXT *ctx)
+{
+    const u8 *bytes = ctx->script_ptr;
+    ctx->script_ptr += 2;
+    return bytes[0] | (bytes[1] << 8);
+}
+
+static inline u32 ScriptReadWord(SCRIPTCONTEXT *ctx)
+{
+    u32 low = ScriptReadHalfword(ctx);
+    return low | ((u32)ScriptReadHalfword(ctx) << 16);
+}
 
 #define ScriptGetVarPointer(ctx) GetVarPointer(ctx->fsys, ScriptReadHalfword(ctx))
 #define ScriptGetVar(ctx)        VarGet(ctx->fsys, ScriptReadHalfword(ctx))

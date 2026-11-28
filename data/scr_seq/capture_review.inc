@@ -14,7 +14,7 @@ CaptureReviewMenu:
     case 1, CaptureReviewSummary
     case 2, CaptureReviewBox
     case 3, CaptureReviewParty
-    goto CaptureReviewMenu
+    goto CaptureReviewEnd
 CaptureReviewSummary:
     fade_screen 6, 1, 0, RGB_BLACK
     wait_fade

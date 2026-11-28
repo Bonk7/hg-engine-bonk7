@@ -176,9 +176,8 @@ u32 UseItemMonAttrChangeCheck(struct PartyMenu *wk, void *dat)
 
             // grab reshiram from save
             // add reshiram to party--can't just use PokeParty_Add because icons freak out when you tell them to animate something that isn't there
-            // PokeParty_Add(wk->args->party, &saveMiscData->storedMons[STORED_MONS_DNA_SPLICERS]);
-            struct PartyPokemon *reshiram = Party_GetMonByIndex(wk->args->party, splicer_pos);
-            *reshiram = saveMiscData->storedMons[STORED_MONS_DNA_SPLICERS];
+            struct PartyPokemon *reshiram = &wk->args->party->members[splicer_pos];
+            *reshiram = saveMiscData->storedMons[STORED_MONS_DNA_SPLICERS].mon;
             partyMenuSignal = 1;
 
             // delete reshiram from save--may just be able to leave the old data without having to deal with memset as long as we flag it as no mon there
@@ -190,11 +189,11 @@ u32 UseItemMonAttrChangeCheck(struct PartyMenu *wk, void *dat)
             ChangePartyPokemonToForm(pp, 0);
             SwapPartyPokemonMove(pp, currForm == 1 ? MOVE_ICE_BURN : MOVE_FREEZE_SHOCK, MOVE_GLACIATE);
             SwapPartyPokemonMove(pp, currForm == 1 ? MOVE_FUSION_FLARE : MOVE_FUSION_BOLT, MOVE_SCARY_FACE);
-        } else if (saveMiscData->isMonStored[STORED_MONS_DNA_SPLICERS] == 0) // return nothing otherwise
+        } else if (GetMonData(pp, MON_DATA_FORM, NULL) == 0 && !saveMiscData->isMonStored[STORED_MONS_DNA_SPLICERS]) // return nothing otherwise
         {
             // grab reshiram from party
             // store reshiram in save
-            saveMiscData->storedMons[STORED_MONS_DNA_SPLICERS] = *Party_GetMonByIndex(wk->args->party, splicer_pos); // may have to directly memcpy this but this is good for the moment
+            saveMiscData->storedMons[STORED_MONS_DNA_SPLICERS].mon = *Party_GetMonByIndex(wk->args->party, splicer_pos); // may have to directly memcpy this but this is good for the moment
             // delete reshiram from party--splicer_pos has the position to delete
             PokeParty_Delete(wk->args->party, splicer_pos);
             saveMiscData->isMonStored[STORED_MONS_DNA_SPLICERS] = 1;
@@ -323,15 +322,16 @@ u32 CanUseDNASplicersGrabSplicerPos(struct PartyPokemon *pp, struct Party *party
         return 6;
     }
 
-    for (s32 i = 0; i < ((form_no != 0) ? 6 : party->count); i++) // check all 6 party slots if looking to revert
+    if (form_no != 0) {
+        return (unsigned)party->count < NELEMS(party->members) && party->count < party->maxPossibleCount
+            ? (u32)party->count : 6;
+    }
+    for (s32 i = 0; i < party->count; i++)
     {
         struct PartyPokemon *currentmon = Party_GetMonByIndex(party, i);
         u32 species2 = GetMonData(currentmon, MON_DATA_SPECIES, NULL);
 
-        if (species2 == 0 && form_no != 0) // looking for empty slot to dump reshiram to from save
-        {
-            return i;
-        } else if ((species2 == SPECIES_RESHIRAM || species2 == SPECIES_ZEKROM) && form_no == 0) // looking for a reshiram to store to the save
+        if (species2 == SPECIES_RESHIRAM || species2 == SPECIES_ZEKROM)
         {
             return (species2 == SPECIES_RESHIRAM ? RESHIRAM_MASK : 0) | i;
         }

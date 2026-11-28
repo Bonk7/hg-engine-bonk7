@@ -258,10 +258,14 @@ ldr r0, [r5, r0]
 ldr r2, =0x0200BBA0 | 1 // NewString_ReadMsgData
 bl bx_r2
 
-// reset partyMenuSignal to 0 to clear out its usage
+// r0 is the new String. Keep the pending party append until the menu exits.
 ldr r1, =partyMenuSignal
+ldr r2, [r1]
+cmp r2, #1
+beq 1f
 mov r2, #0
-str r2, [r0]
+str r2, [r1]
+1:
 
 ldr r1, =0x021E5A76 | 1
 bx r1

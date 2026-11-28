@@ -275,7 +275,7 @@ typedef struct {
     /* 0x16 */ u8 Unused;
     /* 0x17 */ u8 originGame;
     // TODO: Finish SinnohRibbonSet2
-    /* 0x18 */ u64 sinnohRibbons2; // cool, ...
+    /* 0x18 */ u64 sinnohRibbons2 __attribute__((packed, aligned(4))); // cool, ...
 } PokemonDataBlockC;
 
 typedef struct {
@@ -363,7 +363,12 @@ struct Party {
     s32 maxPossibleCount;
     s32 count;
     struct PartyPokemon members[6];
+    u8 aprijuiceModifiers[6][5];
 };
+
+_Static_assert(sizeof(struct BoxPokemon) == 0x88, "HeartGold boxed Pokemon layout");
+_Static_assert(sizeof(struct PartyPokemon) == 0xEC, "HeartGold party member stride");
+_Static_assert(sizeof(struct Party) == 0x5B0, "HeartGold party save layout");
 
 enum {
     MON_DATA_PERSONALITY = 0,

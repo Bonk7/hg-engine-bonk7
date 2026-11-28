@@ -8,9 +8,6 @@ enum {
     TEAM_SIZE = 6,
     PRESET_BOXES = 4,
     PC_SAVE_BLOCK = 41,
-    PARTY_MON_SIZE = 0xEC,
-    PARTY_MODIFIER_SIZE = 5,
-    PARTY_MODIFIERS_OFFSET = 8 + TEAM_SIZE * PARTY_MON_SIZE,
     PRESET_EMPTY = 0,
     PRESET_OK,
     PRESET_MISSING,
@@ -51,14 +48,15 @@ static u16 SavePreset(PCStorage *storage, struct Party *party, int preset)
     struct PresetMember members[TEAM_SIZE] = {0};
     struct PresetHeader header = {PRESET_MAGIC, party->count};
 
-    if (party->count <= 0 || party->count > TEAM_SIZE) {
-        return PRESET_EMPTY;
-    }
-
     for (int i = 0; i < party->count; i++) {
         struct PartyPokemon *mon = Party_GetMonByIndex(party, i);
         members[i].personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
         members[i].trainer = GetMonData(mon, MON_DATA_OTID, NULL);
+        for (int j = 0; j < i; j++) {
+            if (members[i].personality == members[j].personality && members[i].trainer == members[j].trainer) {
+                return PRESET_MISSING;
+            }
+        }
     }
 
     // Each box save sector has 16 padding bytes. Keep the existing save layout.
@@ -77,9 +75,6 @@ static struct BoxPokemon *GetStoredMon(PCStorage *storage, int slot)
 static BOOL MatchMembers(struct BoxPokemon *mon, const struct PresetMember *members, int count,
                          int *locations, int location)
 {
-    if (!GetBoxMonData(mon, MON_DATA_SPECIES_EXISTS, NULL)) {
-        return TRUE;
-    }
     u32 personality = GetBoxMonData(mon, MON_DATA_PERSONALITY, NULL);
     for (int i = 0; i < count; i++) {
         if (members[i].personality == personality && members[i].trainer == GetBoxMonData(mon, MON_DATA_OTID, NULL)) {
@@ -96,7 +91,7 @@ static u16 LoadPreset(PCStorage *storage, struct Party *party, int preset)
 {
     struct PresetHeader header;
     memcpy(&header, PresetBlock(storage, preset, 3), sizeof(header));
-    if (header.magic != PRESET_MAGIC || header.count == 0 || header.count > TEAM_SIZE) {
+    if (header.magic != PRESET_MAGIC || header.count == 0 || header.count > (u32)party->maxPossibleCount) {
         return PRESET_EMPTY;
     }
 
@@ -115,17 +110,17 @@ static u16 LoadPreset(PCStorage *storage, struct Party *party, int preset)
     }
     for (int i = 0; i < boxCapacity; i++) {
         struct BoxPokemon *mon = GetStoredMon(storage, i);
-        if (!MatchMembers(mon, members, header.count, locations, TEAM_SIZE + i)) {
+        if (!GetBoxMonData(mon, MON_DATA_SPECIES_EXISTS, NULL)) {
+            if (slots < TEAM_SIZE) {
+                freeSlots[slots++] = i;
+            }
+        } else if (!MatchMembers(mon, members, header.count, locations, TEAM_SIZE + i)) {
             return PRESET_MISSING;
-        }
-        if (slots < TEAM_SIZE && !GetBoxMonData(mon, MON_DATA_SPECIES_EXISTS, NULL)) {
-            freeSlots[slots++] = i;
         }
     }
 
     struct PartyPokemon incoming[TEAM_SIZE];
-    u8 modifiers[TEAM_SIZE][PARTY_MODIFIER_SIZE] = {0};
-    u8 *partyModifiers = (u8 *)party + PARTY_MODIFIERS_OFFSET;
+    u8 modifiers[TEAM_SIZE][sizeof(party->aprijuiceModifiers[0])] = {0};
     u32 retained = 0;
     BOOL canBattle = FALSE;
     for (u32 i = 0; i < header.count; i++) {
@@ -140,8 +135,8 @@ static u16 LoadPreset(PCStorage *storage, struct Party *party, int preset)
         }
         if (from < TEAM_SIZE) {
             retained |= 1 << from;
-            memcpy(&incoming[i], Party_GetMonByIndex(party, from), PARTY_MON_SIZE);
-            memcpy(modifiers[i], partyModifiers + PARTY_MODIFIER_SIZE * from, PARTY_MODIFIER_SIZE);
+            incoming[i] = *Party_GetMonByIndex(party, from);
+            memcpy(modifiers[i], party->aprijuiceModifiers[from], sizeof(modifiers[i]));
         } else {
             CopyBoxPokemonToPokemon(GetStoredMon(storage, from - TEAM_SIZE), &incoming[i]);
             if (slots < TEAM_SIZE) {
@@ -186,11 +181,14 @@ static u16 LoadPreset(PCStorage *storage, struct Party *party, int preset)
                                               &Party_GetMonByIndex(party, i)->box);
         }
     }
+    for (int i = header.count; i < party->count; i++) {
+        ZeroMonData(Party_GetMonByIndex(party, i));
+    }
     party->count = header.count;
     for (u32 i = 0; i < header.count; i++) {
-        memcpy(Party_GetMonByIndex(party, i), &incoming[i], PARTY_MON_SIZE);
+        *Party_GetMonByIndex(party, i) = incoming[i];
     }
-    memcpy(partyModifiers, modifiers, sizeof(modifiers));
+    memcpy(party->aprijuiceModifiers, modifiers, sizeof(modifiers));
     return PRESET_OK;
 }
 
@@ -202,6 +200,9 @@ u16 BoxLink_ApplyPreset(SCRIPTCONTEXT *ctx, u16 preset, BOOL saving)
     SaveData *save = ctx->fsys->savedata;
     PCStorage *storage = SaveArray_Get(save, PC_SAVE_BLOCK);
     struct Party *party = SaveData_GetPlayerPartyPtr(save);
+    if (party->count < 1 || party->count > party->maxPossibleCount || party->maxPossibleCount > TEAM_SIZE) {
+        return PRESET_EMPTY;
+    }
     return saving ? SavePreset(storage, party, preset) : LoadPreset(storage, party, preset);
 }
 

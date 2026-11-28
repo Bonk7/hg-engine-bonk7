@@ -115,11 +115,20 @@ struct SAVE_MISC_DATA {
 #ifdef ALLOW_SAVE_CHANGES
 
     // expanded fields - offset 0x2E0 and up
-    struct PartyPokemon storedMons[NUM_OF_STORED_MONS];
+    // Earlier hg-engine saves reserved 240 bytes per fusion slot.
+    struct {
+        struct PartyPokemon mon;
+        u8 padding[4];
+    } storedMons[NUM_OF_STORED_MONS] __attribute__((aligned(8)));
     u8 isMonStored[NUM_OF_STORED_MONS];
 
 #endif
 };
+
+#ifdef ALLOW_SAVE_CHANGES
+_Static_assert(__builtin_offsetof(struct SAVE_MISC_DATA, isMonStored) == 0x6A0, "Fusion save flags");
+_Static_assert(sizeof(struct SAVE_MISC_DATA) == 0x6A8, "Fusion save block size");
+#endif
 
 // vars
 typedef struct ScriptState {

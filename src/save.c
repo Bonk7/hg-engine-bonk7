@@ -27,7 +27,8 @@ void LONG_CALL InitStoredMons(struct SAVE_MISC_DATA *saveMiscData)
 {
 #ifdef ALLOW_SAVE_CHANGES
 
-    memset(&saveMiscData->storedMons[0], 0, 4 * sizeof(struct PartyPokemon) + 4); // catch isMonStored in this process
+    memset(saveMiscData->storedMons, 0, sizeof(saveMiscData->storedMons));
+    memset(saveMiscData->isMonStored, 0, sizeof(saveMiscData->isMonStored));
 
 #endif
 }

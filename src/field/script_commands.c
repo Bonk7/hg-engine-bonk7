@@ -125,11 +125,12 @@ BOOL ScrCmd_GiveTogepiEgg(SCRIPTCONTEXT *ctx)
         ClearScriptFlag(HIDDEN_ABILITIES_FLAG);
     }
 
-    PokeParty_Add(party, togepi);
-
+    if (PokeParty_Add(party, togepi)) {
+        SaveMisc_SetTogepiPersonalityGender(Sav2_Misc_get(fsys->savedata),
+                                           GetMonData(togepi, MON_DATA_PERSONALITY, NULL),
+                                           GetMonData(togepi, MON_DATA_GENDER, NULL));
+    }
     sys_FreeMemoryEz(togepi);
-
-    SaveMisc_SetTogepiPersonalityGender(Sav2_Misc_get(fsys->savedata), GetMonData(togepi, MON_DATA_PERSONALITY, 0), GetMonData(togepi, MON_DATA_GENDER, 0));
 
     return FALSE;
 }
