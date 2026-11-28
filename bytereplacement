@@ -599,3 +599,9 @@ arm9 0206CDBC 3D DB
 0023 02259910 11 36
 0023 022599CC 11 35
 0023 02259D1A 11 36
+
+# Options overlay. Expand the title window to 18x2 using its existing 36 tiles.
+0054 021E600E 12 20
+0054 021E6012 02 20
+# Use the green foreground for the active native option, including Frame.
+0054 021E65CA 03

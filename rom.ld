@@ -988,3 +988,4 @@ AvatarCard_CommitTilemap = 0x0201BF7C | 1;
 Battle_RunNativeFrame = 0x02238358 | 1;
 Battle_RunTaskQueue = 0x0201F880 | 1;
 OptionsApp_HandleNativeInput = 0x021E681C | 1;
+OptionsApp_HighlightRow = 0x021E69D4 | 1;
