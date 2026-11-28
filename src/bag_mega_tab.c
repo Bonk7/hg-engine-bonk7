@@ -212,7 +212,7 @@ BOOL BagMega_Init(void *manager, int *state)
         return TRUE;
     }
     memset(tab, 0, sizeof(*tab));
-    MsgData *text = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 40, BAG_APP_HEAP);
+    MsgData *text = OpenLazyMessageBank(ARC_MSG_DATA, 40, BAG_APP_HEAP);
     if (text == NULL) {
         sys_FreeMemoryEz(tab);
         return TRUE;
@@ -220,6 +220,16 @@ BOOL BagMega_Init(void *manager, int *state)
     tab->label = NewString_ReadMsgData(text, 372);
     tab->title = NewString_ReadMsgData(text, 373);
     DestroyMsgData(text);
+    if (tab->label && tab->title) {
+        AddWindowParameterized(*(void **)app, &tab->button, BAG_SUB_BG, MEGA_TAB_X, MEGA_TAB_Y,
+                               MEGA_TAB_WIDTH, MEGA_TAB_HEIGHT, 11, 0x350);
+    }
+    if (!tab->button.pixelBuffer) {
+        if (tab->label) String_Delete(tab->label);
+        if (tab->title) String_Delete(tab->title);
+        sys_FreeMemoryEz(tab);
+        return TRUE;
+    }
     tab->original = items->slots;
     ITEM_SLOT *normal = tab->items;
     ITEM_SLOT *stones = tab->stones;
@@ -236,8 +246,6 @@ BOOL BagMega_Init(void *manager, int *state)
     }
     sMegaTab = tab;
     items->slots = tab->items;
-    AddWindowParameterized(*(void **)app, &tab->button, BAG_SUB_BG, MEGA_TAB_X, MEGA_TAB_Y,
-                           MEGA_TAB_WIDTH, MEGA_TAB_HEIGHT, 11, 0x350);
     if (view->current == POCKET_ITEMS) {
         u8 selected = 0;
         *GetCursor(app) = POCKET_ITEMS;
@@ -258,7 +266,8 @@ BOOL BagMega_Main(void *manager, int *state)
     BOOL browsing = *state == BAG_STATE_NORMAL || *state == BAG_STATE_GIVE;
     if (browsing) {
         BOOL megaPressed = gSystem.touchNew && gSystem.touchX >= MEGA_TAB_X * 8
-            && gSystem.touchX < (MEGA_TAB_X + MEGA_TAB_WIDTH) * 8 && gSystem.touchY >= MEGA_TAB_Y * 8;
+            && gSystem.touchX < (MEGA_TAB_X + MEGA_TAB_WIDTH) * 8 && gSystem.touchY >= MEGA_TAB_Y * 8
+            && gSystem.touchY < (MEGA_TAB_Y + MEGA_TAB_HEIGHT) * 8;
         BOOL itemsPressed = tab->active && gSystem.touchNew && gSystem.touchX < 32 && gSystem.touchY < 32;
         BOOL closeBox = tab->active && (gSystem.newKeys & PAD_BUTTON_B);
         if (megaPressed || itemsPressed || closeBox || (gSystem.newKeys & PAD_BUTTON_SELECT)) {

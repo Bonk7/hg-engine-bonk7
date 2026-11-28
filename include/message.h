@@ -54,6 +54,17 @@ typedef struct MessageFormat {
 } MessageFormat;
 
 MsgData *LONG_CALL NewMsgDataFromNarc(MsgDataLoadType type, u32 narc, s32 fileId, u32 heapId);
+// The native lazy loader can return the outer record even if the archive allocation failed.
+static inline MsgData *OpenLazyMessageBank(u32 narc, s32 fileId, u32 heapId)
+{
+    MsgData *bank = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, narc, fileId, heapId);
+    if (bank && !bank->lazy) {
+        sys_FreeMemoryEz(bank);
+        return NULL;
+    }
+    return bank;
+}
+
 void LONG_CALL ReadMsgDataIntoU16Array(MsgData *msgData, u32 msgno, u16 *dest);
 void LONG_CALL DestroyMsgData(MsgData *msgData);
 void LONG_CALL CopyU16ArrayToString(String *string, const u16 *src);

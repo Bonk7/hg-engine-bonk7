@@ -91,13 +91,13 @@ static int MegaQuestStatus(const struct MegaQuestEntry *entry)
     return CheckScriptFlag(entry->started) != 0;
 }
 
-static BOOL MegaQuestSortsBefore(int left, int right, u16 sort)
+static BOOL MegaQuestSortsBefore(int left, int right, u16 sort, const u8 *status)
 {
     const struct MegaQuestEntry *a = &sMegaQuests[left];
     const struct MegaQuestEntry *b = &sMegaQuests[right];
     // Sort unrevealed rows by the common placeholder, then by their visible area.
-    const char *first = sort == 0 && !MegaQuestStatus(a) ? "to be discovered" : a->sortKey[sort];
-    const char *second = sort == 0 && !MegaQuestStatus(b) ? "to be discovered" : b->sortKey[sort];
+    const char *first = sort == 0 && !status[left] ? "to be discovered" : a->sortKey[sort];
+    const char *second = sort == 0 && !status[right] ? "to be discovered" : b->sortKey[sort];
     while (*first == *second && *first != '\0') {
         first++;
         second++;
@@ -105,7 +105,7 @@ static BOOL MegaQuestSortsBefore(int left, int right, u16 sort)
     if (*first != *second) {
         return *first < *second;
     }
-    return sort == 0 && MegaQuestSortsBefore(left, right, 1);
+    return sort == 0 && MegaQuestSortsBefore(left, right, 1, status);
 }
 
 enum { MEGA_QUEST_MILESTONE_INTERVAL = 5, MEGA_QUESTS_PER_PAGE = 12 };
@@ -113,7 +113,7 @@ enum { MEGA_QUEST_MILESTONE_INTERVAL = 5, MEGA_QUESTS_PER_PAGE = 12 };
 static void MegaQuestBufferText(SCRIPTCONTEXT *ctx, u16 bank, u16 message, u8 slot)
 {
     MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
-    MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, bank, HEAPID_FIELD1);
+    MsgData *texts = OpenLazyMessageBank(ARC_MSG_DATA, bank, HEAPID_FIELD1);
     if (texts != NULL) {
         ReadMsgDataIntoString(texts, message, format->buffer);
         SetStringAsPlaceholder(format, slot, format->buffer, NULL);
@@ -205,6 +205,24 @@ static void TrainingSlider_Draw(void)
     CopyWindowToVram(window);
 }
 
+static void TrainingSlider_Close(void)
+{
+    if (sTrainingSliders.window.pixelBuffer) {
+        ClearWindowPixelBuffer(&sTrainingSliders.window, FALSE);
+        RemoveWindow(&sTrainingSliders.window);
+    }
+    for (unsigned i = 0; i < NELEMS(sTrainingSliders.labels); i++) {
+        if (sTrainingSliders.labels[i]) {
+            String_Delete(sTrainingSliders.labels[i]);
+            sTrainingSliders.labels[i] = NULL;
+        }
+    }
+    if (sTrainingSliders.number) {
+        String_Delete(sTrainingSliders.number);
+        sTrainingSliders.number = NULL;
+    }
+}
+
 static BOOL TrainingSlider_HandleInput(SCRIPTCONTEXT *ctx)
 {
     u32 pressed = gSystem.newKeys;
@@ -215,14 +233,7 @@ static BOOL TrainingSlider_HandleInput(SCRIPTCONTEXT *ctx)
                                         sTrainingSliders.values, TRUE);
         }
         VarSet(ctx->fsys, sTrainingSliders.result, ok);
-        ClearWindowPixelBuffer(&sTrainingSliders.window, FALSE);
-        RemoveWindow(&sTrainingSliders.window);
-        for (u32 i = 0; i < NELEMS(sTrainingSliders.labels); i++) {
-            if (sTrainingSliders.labels[i] != NULL) {
-                String_Delete(sTrainingSliders.labels[i]);
-            }
-        }
-        String_Delete(sTrainingSliders.number);
+        TrainingSlider_Close();
         return TRUE;
     }
     u32 keys = gSystem.newAndRepeatedKeys;
@@ -264,17 +275,32 @@ static BOOL TrainingSlider_Open(SCRIPTCONTEXT *ctx, u16 result)
         VarSet(ctx->fsys, result, FALSE);
         return FALSE;
     }
-    MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 40, HEAPID_FIELD1);
-    for (int i = 0; i < 6; i++) {
-        sTrainingSliders.labels[i] = NewString_ReadMsgData(texts, 133 + i);
+    MsgData *texts = OpenLazyMessageBank(ARC_MSG_DATA, 40, HEAPID_FIELD1);
+    VarSet(ctx->fsys, result, FALSE);
+    if (!texts) {
+        return FALSE;
     }
-    sTrainingSliders.labels[6] = NewString_ReadMsgData(texts, sTrainingSliders.editIVs ? 348 : 347);
-    sTrainingSliders.labels[7] = NewString_ReadMsgData(texts, 349);
-    sTrainingSliders.labels[8] = NewString_ReadMsgData(texts, 350);
-    sTrainingSliders.labels[9] = sTrainingSliders.editIVs ? NULL : NewString_ReadMsgData(texts, 351);
+    const u16 messages[] = {133, 134, 135, 136, 137, 138, sTrainingSliders.editIVs ? 348 : 347, 349, 350, 351};
+    unsigned count = NELEMS(messages) - (sTrainingSliders.editIVs ? 1 : 0);
+    for (unsigned i = 0; i < count; i++) {
+        sTrainingSliders.labels[i] = NewString_ReadMsgData(texts, messages[i]);
+        if (!sTrainingSliders.labels[i]) {
+            DestroyMsgData(texts);
+            TrainingSlider_Close();
+            return FALSE;
+        }
+    }
     DestroyMsgData(texts);
     sTrainingSliders.number = String_New(8, HEAPID_FIELD1);
+    if (!sTrainingSliders.number) {
+        TrainingSlider_Close();
+        return FALSE;
+    }
     AddWindowParameterized(ctx->fsys->bg_config, &sTrainingSliders.window, 3, 1, 1, 30, 21, 13, 61);
+    if (!sTrainingSliders.window.pixelBuffer) {
+        TrainingSlider_Close();
+        return FALSE;
+    }
     LoadUserFrameGfx1(ctx->fsys->bg_config, 3, 985, 11, 0, HEAPID_FIELD1);
     DrawFrameAndWindow1(&sTrainingSliders.window, 1, 985, 11);
     TrainingSlider_Draw();
@@ -293,8 +319,10 @@ static void MegaQuestLog_DrawRewardIcon(void *bgConfig, u16 item)
     enum { ITEM_ICON_NCGR = 1, ITEM_ICON_NCLR = 2, NCGR_PIXELS = 0x30, NCLR_COLORS = 0x28 };
     u8 *image = LoadItemDataOrGfx(item, ITEM_ICON_NCGR, HEAPID_FIELD1);
     u8 *palette = LoadItemDataOrGfx(item, ITEM_ICON_NCLR, HEAPID_FIELD1);
-    if (image != NULL && palette != NULL) {
+    if (image && palette) {
         AddWindowParameterized(bgConfig, &sMegaQuestRewardIcon, 3, 3, 13, 4, 4, 12, 720);
+    }
+    if (sMegaQuestRewardIcon.pixelBuffer) {
         const u16 *colors = (const u16 *)(palette + NCLR_COLORS);
         for (int i = 0; i < 16; i++) {
             sMegaQuestSavedPalette[i] = sMegaQuestIconPalette[i];
@@ -368,10 +396,18 @@ static BOOL MegaQuestLog_OpenDetail(SCRIPTCONTEXT *ctx, u16 selection)
     }
     const struct MegaQuestEntry *entry = &sMegaQuests[selection];
     int status = MegaQuestStatus(entry);
-    MsgData *ui = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 40, HEAPID_FIELD1);
-    MsgData *quest = selection < 2 ? ui : NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 860, HEAPID_FIELD1);
+    MsgData *ui = OpenLazyMessageBank(ARC_MSG_DATA, 40, HEAPID_FIELD1);
+    MsgData *quest = selection < 2 ? ui : OpenLazyMessageBank(ARC_MSG_DATA, 860, HEAPID_FIELD1);
     String *line = String_New(256, HEAPID_FIELD1);
-    AddWindowParameterized(ctx->fsys->bg_config, &sMegaQuestDetail, 3, 1, 1, 30, 21, 13, 61);
+    if (ui && quest && line) {
+        AddWindowParameterized(ctx->fsys->bg_config, &sMegaQuestDetail, 3, 1, 1, 30, 21, 13, 61);
+    }
+    if (!sMegaQuestDetail.pixelBuffer) {
+        if (line) String_Delete(line);
+        if (quest != ui) DestroyMsgData(quest);
+        DestroyMsgData(ui);
+        return FALSE;
+    }
     FillWindowPixelBuffer(&sMegaQuestDetail, 15);
 
     ReadMsgDataIntoString(quest, entry->title[status], line);
@@ -384,10 +420,12 @@ static BOOL MegaQuestLog_OpenDetail(SCRIPTCONTEXT *ctx, u16 selection)
         ReadMsgDataIntoString(ui, 343, line);
         AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 58, 96, 0xFF, 0x07080F, NULL);
         AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 59, 96, 0xFF, 0x070800, NULL);
-        MsgData *items = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 222, HEAPID_FIELD1);
-        ReadMsgDataIntoString(items, entry->item, line);
-        AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 58, 115, 0xFF, 0x01020F, NULL);
-        DestroyMsgData(items);
+        MsgData *items = OpenLazyMessageBank(ARC_MSG_DATA, 222, HEAPID_FIELD1);
+        if (items) {
+            ReadMsgDataIntoString(items, entry->item, line);
+            AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 58, 115, 0xFF, 0x01020F, NULL);
+            DestroyMsgData(items);
+        }
     }
     ReadMsgDataIntoString(ui, 344, line);
     AddTextPrinterParameterizedWithColor(&sMegaQuestDetail, 1, line, 12, 147, 0xFF, 0x07080F, NULL);
@@ -409,7 +447,7 @@ static BOOL MegaQuestLog_OpenDetail(SCRIPTCONTEXT *ctx, u16 selection)
 static void MegaQuestLog_DrawProgress(SCRIPTCONTEXT *ctx)
 {
     MessageFormat *format = *(MessageFormat **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MSGFMT);
-    MsgData *texts = NewMsgDataFromNarc(MSGDATA_LOAD_LAZY, ARC_MSG_DATA, 40, HEAPID_FIELD1);
+    MsgData *texts = OpenLazyMessageBank(ARC_MSG_DATA, 40, HEAPID_FIELD1);
     if (texts == NULL) {
         return;
     }
@@ -417,7 +455,17 @@ static void MegaQuestLog_DrawProgress(SCRIPTCONTEXT *ctx)
 
     ReadMsgDataIntoString(texts, 297 + VarGet(ctx->fsys, 0x8005), format->buffer);
     SetStringAsPlaceholder(format, 0, format->buffer, NULL);
-    AddWindowParameterized(ctx->fsys->bg_config, &sMegaQuestProgress, 3, 1, 18, 29, 5, 13, 640);
+    String *line = String_New(64, HEAPID_FIELD1);
+    String *expanded = String_New(64, HEAPID_FIELD1);
+    if (line && expanded && !sMegaQuestProgress.pixelBuffer) {
+        AddWindowParameterized(ctx->fsys->bg_config, &sMegaQuestProgress, 3, 1, 18, 29, 5, 13, 640);
+    }
+    if (!sMegaQuestProgress.pixelBuffer || !line || !expanded) {
+        if (expanded) String_Delete(expanded);
+        if (line) String_Delete(line);
+        DestroyMsgData(texts);
+        return;
+    }
     FillWindowPixelBuffer(&sMegaQuestProgress, 15);
     FillWindowPixelRect(&sMegaQuestProgress, 2, 8, 22, 120, 11);
     FillWindowPixelRect(&sMegaQuestProgress, 15, 9, 23, 118, 9);
@@ -427,8 +475,6 @@ static void MegaQuestLog_DrawProgress(SCRIPTCONTEXT *ctx)
     }
     FillWindowPixelRect(&sMegaQuestProgress, 2, 137, 4, 1, 32);
 
-    String *line = String_New(64, HEAPID_FIELD1);
-    String *expanded = String_New(64, HEAPID_FIELD1);
     const u16 messages[] = {295, 341, 342};
     for (u32 i = 0; i < NELEMS(messages); i++) {
         ReadMsgDataIntoString(texts, messages[i], line);
@@ -448,7 +494,16 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
 {
     void *menu = *(void **)FieldSysGetAttrAddr(ctx->fsys, SCRIPTENV_MENU_WINDOW);
     u16 sort = VarGet(ctx->fsys, 0x8005);
-    int count = MegaQuestCompletedCount();
+    if (sort >= NELEMS(sMegaQuests[0].sortKey)) {
+        sort = 0;
+        VarSet(ctx->fsys, 0x8005, sort);
+    }
+    u8 status[NELEMS(sMegaQuests)];
+    int count = 0;
+    for (unsigned i = 0; i < NELEMS(sMegaQuests); i++) {
+        status[i] = MegaQuestStatus(&sMegaQuests[i]);
+        count += status[i] == 2;
+    }
     VarSet(ctx->fsys, 0x8006, count);
     VarSet(ctx->fsys, 0x8008, 100 * count / NELEMS(sMegaQuests));
     VarSet(ctx->fsys, 0x8007, NELEMS(sMegaQuests));
@@ -456,7 +511,7 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
     u8 order[NELEMS(sMegaQuests)];
     for (int i = 0; i < (int)NELEMS(sMegaQuests); i++) {
         int position = i;
-        while (position > 0 && MegaQuestSortsBefore(i, order[position - 1], sort)) {
+        while (position > 0 && MegaQuestSortsBefore(i, order[position - 1], sort, status)) {
             order[position] = order[position - 1];
             position--;
         }
@@ -470,7 +525,7 @@ static void MegaQuestLog_Fill(SCRIPTCONTEXT *ctx, BOOL completed)
     for (int i = 0; i < (int)NELEMS(sMegaQuests); i++) {
         int index = order[i];
         const struct MegaQuestEntry *entry = &sMegaQuests[index];
-        int state = MegaQuestStatus(entry);
+        int state = status[index];
         if ((state == 2) == completed) {
             if (skip > 0) {
                 skip--;

@@ -32,13 +32,18 @@ struct DebugNamingArgs {
     int gender;
     BOOL noInput;
     String *input;
+    u16 flatInput[20];
+    int battleMessage;
+    void *storage;
+    void *options;
+    void *menuInput;
 };
+
+_Static_assert(sizeof(struct DebugNamingArgs) == 0x54, "Native naming screen arguments");
 
 struct OverlayManagerTemplate;
 
 extern const struct OverlayManagerTemplate DebugNamingScreenTemplate;
-struct DebugNamingArgs *LONG_CALL NamingScreen_CreateArgs(int heap, int kind, int param, int maxLen,
-    void *options, void *menuInput);
 void LONG_CALL NamingScreen_DeleteArgs(struct DebugNamingArgs *args);
 void *LONG_CALL Save_PlayerData_GetOptionsAddr(void *save);
 void LONG_CALL FieldSystem_LaunchApplication(FieldSystem *field, const struct OverlayManagerTemplate *app, void *args);
@@ -168,7 +173,7 @@ u16 DebugCatalog_GetSelection(u16 choice)
     }
     switch (choice) {
     case CATALOG_PREVIOUS:
-        gDebugCatalog.page--;
+        if (gDebugCatalog.page) gDebugCatalog.page--;
         break;
     case CATALOG_NEXT:
         gDebugCatalog.page++;
@@ -199,11 +204,23 @@ static BOOL DebugCatalog_FinishSearch(SCRIPTCONTEXT *ctx)
 BOOL DebugCatalog_Search(SCRIPTCONTEXT *ctx)
 {
     FieldSystem *field = ctx->fsys;
-    void *options = Save_PlayerData_GetOptionsAddr(field->savedata);
-    void *menuInput = (u8 *)field + FIELD_MENU_INPUT_STATE_OFFSET;
-    gDebugCatalog.namingArgs = NamingScreen_CreateArgs(HEAPID_WORLD, NAMING_SCREEN_FREE_TEXT, 0,
-        CATALOG_QUERY_LENGTH, options, menuInput);
-    FieldSystem_LaunchApplication(field, &DebugNamingScreenTemplate, gDebugCatalog.namingArgs);
+    struct DebugNamingArgs *args = sys_AllocMemory(HEAPID_WORLD, sizeof(*args));
+    if (!args) {
+        return FALSE;
+    }
+    memset(args, 0, sizeof(*args));
+    args->input = String_New(32, HEAPID_WORLD);
+    if (!args->input) {
+        sys_FreeMemoryEz(args);
+        return FALSE;
+    }
+    args->kind = NAMING_SCREEN_FREE_TEXT;
+    args->maxLen = CATALOG_QUERY_LENGTH;
+    args->flatInput[0] = CATALOG_TEXT_END;
+    args->options = Save_PlayerData_GetOptionsAddr(field->savedata);
+    args->menuInput = (u8 *)field + FIELD_MENU_INPUT_STATE_OFFSET;
+    gDebugCatalog.namingArgs = args;
+    FieldSystem_LaunchApplication(field, &DebugNamingScreenTemplate, args);
     ctx->native_ptr = DebugCatalog_FinishSearch;
     ctx->mode = SCRIPT_MODE_NATIVE;
     return TRUE;
